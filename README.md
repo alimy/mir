@@ -27,7 +27,7 @@ func main() {
 	engine := gin.Default()
 
     // Setup mir engine
-	mir.Setup(ginE.Engine())
+	mir.Setup(ginE.Mir(egine))
 	
 	// Register handler to engine by mir
 	mir.Register(&site{})
