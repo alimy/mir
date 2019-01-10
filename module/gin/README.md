@@ -18,22 +18,17 @@ type site struct {
 	index mir.Get `mir:"/index/"`
 }
 
+// Index handler of the index field that in site struct, the struct tag indicate
+// this handler will register to path "/index/" and method is http.MethodGet.
 func (h *site) Index(context gin.Context) {
 	context.String(http.StatusOK, "get index data")
 }
 
 func main() {
-	// Default gin engine
-	engine := gin.Default()
-
-    // Setup mir engine
-	mir.Setup(ginE.Mir(egine))
-	
-	// Register handler to engine by mir
-	mir.Register(&site{})
-	
-	// Start serve
-	engine.Run()
+	engine := gin.Default()     // Default gin engine
+	mir.Setup(ginE.Mir(egine))  // Setup mir engine
+	mir.Register(&site{})       // Register handler to engine by mir
+	engine.Run()                // Start gin engine serve
 }
 
 ```
