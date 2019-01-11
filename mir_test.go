@@ -7,8 +7,12 @@ func TestRegister(t *testing.T) {
 	Setup(e)
 	Register(&site{})
 	handler := e.pathHandler["/index/"]
-	ret := handler()
-	if ret != "Index" {
-		t.Errorf("want Index but actual is %s", ret)
+	if handler != nil {
+		ret := handler()
+		if ret != "Index" {
+			t.Errorf("want Index but actual is %s", ret)
+		}
+	} else {
+		t.Errorf("not register success")
 	}
 }

@@ -51,25 +51,34 @@ type TagFields []*TagField
 
 // TagFieldsFrom build TagFields from entry
 func TagFieldsFrom(entry interface{}) (TagFields, error) {
-	// used to find method from T and lookup struct tag string of mir tag information
+	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
+	isPtr := false
 
 	if entryType.Kind() == reflect.Ptr {
+		isPtr = true
 		entryType = entryType.Elem()
 	}
 	if entryType.Kind() != reflect.Struct {
 		return nil, tagNotValideType
 	}
 
-	// used to find method from *T
-	entryPtrType := reflect.PtrTo(entryType)
+	// used to find method from T and lookup struct tag string of mir tag information
+	var entryValue, entryPtrValue reflect.Value
+	if isPtr {
+		entryPtrValue = reflect.ValueOf(entry)
+		entryValue = entryPtrValue.Elem()
+	} else {
+		entryValue = reflect.ValueOf(entry)
+		entryPtrValue = entryValue.Addr()
+	}
 
 	// get tagFields from entryType and entryPtrType
 	tagFields := make(TagFields, 0)
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
 		if tagInfo, err := tagInfoFrom(field); err == nil || err == tagNotExist {
-			if tagField, err := tagFieldFrom(entryType, entryPtrType, tagInfo); err == nil {
+			if tagField, err := tagFieldFrom(entryValue, entryPtrValue, tagInfo); err == nil {
 				tagFields = append(tagFields, tagField)
 			} else {
 				return nil, err
@@ -100,21 +109,23 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 }
 
 // tagFieldFrom build tagField from entry and tagInfo
-func tagFieldFrom(entryType reflect.Type, entryPtrType reflect.Type, tagInfo *tagInfo) (tagField *TagField, err error) {
-	var m reflect.Method
-	if method, ok := entryType.MethodByName(tagInfo.Handler); ok {
-		m = method
-	} else if method, ok = entryPtrType.MethodByName(tagInfo.Handler); ok {
-		m = method
+func tagFieldFrom(entryValue reflect.Value, entryPtrValue reflect.Value, tagInfo *tagInfo) (*TagField, error) {
+	var m reflect.Value
+	if v := entryValue.MethodByName(tagInfo.Handler); v.IsValid() {
+		m = v
+	} else if v := entryPtrValue.MethodByName(tagInfo.Handler); v.IsValid() {
+		m = v
 	} else {
-		err = fmt.Errorf("not found methd %s in struct %s or *%s", tagInfo.Handler, entryType.Name(), entryType.Name())
+		typeName := entryValue.Type().Name()
+		err := fmt.Errorf("not found method %s in struct type %s or *%s", tagInfo.Handler, typeName, typeName)
+		return nil, err
 	}
-	tagField = &TagField{
+	tagField := &TagField{
 		Host:    tagInfo.Host,
 		Path:    tagInfo.Path,
 		Queries: tagInfo.Queries,
-		Handler: m.Func.Interface()}
-	return
+		Handler: m.Interface()}
+	return tagField, nil
 }
 
 // tagInfoFrom build tagInfo from field
