@@ -1,7 +1,7 @@
 package mir
 
 // Group indicator a default group for handler to register to server engine
-type Group string
+type Group struct{}
 
 // Get indicator a GET method handler used placeholder register info in struct tag
 type Get struct{}
@@ -20,6 +20,12 @@ type Head struct{}
 
 // Patch indicator a PATCH method handler used placeholder register info in struct tag
 type Patch struct{}
+
+// Trace indicator a TRACE method handler used placeholder register info in struct tag
+type Trace struct{}
+
+// Connect indicator a CONNECT method handler used placeholder register info in struct tag
+type Connect struct{}
 
 // Options indicator a OPTIONS method handler used placeholder register info in struct tag
 type Options struct{}
