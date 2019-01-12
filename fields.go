@@ -234,9 +234,14 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	if handler == "" {
 		firstRune, size := utf8.DecodeRuneInString(field.Name)
 		upperFirst := unicode.ToUpper(firstRune)
-		methoName := make([]byte, 0, len(field.Name))
-		utf8.EncodeRune(methoName, upperFirst)
+
+		// encode upperFirst to []byte
+		methoName := make([]byte, 4, len(field.Name))
+		number := utf8.EncodeRune(methoName, upperFirst)
+		methoName = methoName[:number]
 		methoName = append(methoName, field.Name[size:]...)
+
+		// assign handler name
 		handler = string(methoName)
 	}
 
