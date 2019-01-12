@@ -90,12 +90,13 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 	tagFields := make(TagFields, 0)
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
-		if tagInfo, err := tagInfoFrom(field); err == nil || err == tagNotExist {
+		switch tagInfo, err := tagInfoFrom(field); err {
+		case nil:
 			// group field so just parse group info.group info only have one field
 			if tagInfo.isGroup() {
 				if group == "" {
 					group = tagInfo.Group
-					continue
+					break
 				} else {
 					return nil, tagMultGroupInfo
 				}
@@ -106,7 +107,9 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 			} else {
 				return nil, err
 			}
-		} else {
+		case tagNotExist:
+			// normal field but had no mir tag info so just break to continue process next field
+		default:
 			return nil, err
 		}
 	}
