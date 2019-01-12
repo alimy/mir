@@ -58,4 +58,5 @@ func registerWith(router gin.IRouter, fields []*mir.TagField) error {
 			return fmt.Errorf("handler not func(*gin.Context) function")
 		}
 	}
+	return nil
 }
