@@ -46,10 +46,10 @@ func (e *mirEngine) Register(entries ...interface{}) error {
 func registerWith(router gin.IRouter, fields []*mir.TagField) {
 	for _, field := range fields {
 		if handlerFunc, ok := field.Handler.(gin.HandlerFunc); ok {
-			if field.Metod == mir.MethodAny {
+			if field.Method == mir.MethodAny {
 				router.Any(field.Path, handlerFunc)
 			} else {
-				router.Handle(field.Metod, field.Path, handlerFunc)
+				router.Handle(field.Method, field.Path, handlerFunc)
 			}
 		}
 	}
