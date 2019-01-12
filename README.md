@@ -10,7 +10,7 @@ import(
 	"github.com/alimy/mir"
 	"net/http"
 	
-	ginE "gihub.com/alimy/mir/module/gin"
+	ginE "github.com/alimy/mir/module/gin"
 )
 
 type site struct {
@@ -38,7 +38,7 @@ func (h *site) GetArticles(context gin.Context) {
 
 func main() {
 	engine := gin.Default()     // Default gin engine
-	mir.Setup(ginE.Mir(egine))  // Setup mir engine
+	mir.Setup(ginE.Mir(engine))  // Setup mir engine
 	mir.Register(&site{})       // Register handler to engine by mir
 	engine.Run()                // Start gin engine serve
 }

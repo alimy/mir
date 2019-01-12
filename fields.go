@@ -26,28 +26,34 @@ func (e tagError) Error() string {
 	return string(e)
 }
 
-// tagInfo indicate mir tag information in struct tag string
-type tagInfo struct {
+// tagMir indicate mir tag common information in struct tag string exclude handler
+type tagMir struct {
 	Group   string   // Group indicate group information in struct tag string
-	Metod   string   // Method indicate method information in struct tag string
+	Method  string   // Method indicate method information in struct tag string
 	Host    string   // Host indicate host information in struct tag string
 	Path    string   // Path indicate path information in struct tag string
 	Queries []string // Queries indicate path information in struct tag string
-	Handler string   // Handler indicate handler information in struct tag string
+}
+
+// tagInfo indicate mir tag information in struct tag string
+type tagInfo struct {
+	tagMir
+	Handler string // Handler indicate handler information in struct tag string
 }
 
 // TagField indicate mir tag info used to register route info to engine
 type TagField struct {
-	Group   string      // Group indicate group information
-	Metod   string      // Method indicate method information
-	Host    string      // Host indicate host information
-	Path    string      // Path indicate path information
-	Queries []string    // Queries indicate path information
+	tagMir
 	Handler interface{} // Handler indicate handler method
 }
 
 // TagFields contains *TagField in entry
 type TagFields []*TagField
+
+// isGroup return whether mir tag is a group field
+func (m *tagInfo) isGroup() bool {
+	return m.Group != "" && m.Method == "" && m.Path == ""
+}
 
 // TagFieldsFrom build TagFields from entry
 func TagFieldsFrom(entry interface{}) (TagFields, error) {
@@ -55,10 +61,13 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 	entryType := reflect.TypeOf(entry)
 	isPtr := false
 
+	// get real entry type
 	if entryType.Kind() == reflect.Ptr {
 		isPtr = true
 		entryType = entryType.Elem()
 	}
+
+	// entry must struct type
 	if entryType.Kind() != reflect.Struct {
 		return nil, tagNotValideType
 	}
@@ -73,11 +82,24 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 		entryPtrValue = entryValue.Addr()
 	}
 
+	// group information
+	var group string
+
 	// get tagFields from entryType and entryPtrType
 	tagFields := make(TagFields, 0)
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
 		if tagInfo, err := tagInfoFrom(field); err == nil || err == tagNotExist {
+			// group field so just parse group info.group info only have one field
+			if tagInfo.isGroup() {
+				if group == "" {
+					group = tagInfo.Group
+					continue
+				} else {
+					return nil, tagMultGroupInfo
+				}
+			}
+			// method field build tagField first
 			if tagField, err := tagFieldFrom(entryValue, entryPtrValue, tagInfo); err == nil {
 				tagFields = append(tagFields, tagField)
 			} else {
@@ -88,17 +110,7 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 		}
 	}
 
-	// check tagFields and set group info if need
-	var group string
-	for _, tagField := range tagFields {
-		if tagField.Group != "" {
-			if group == "" {
-				group = tagField.Group
-			} else {
-				return nil, tagMultGroupInfo
-			}
-		}
-	}
+	// setup group info to tagFields item
 	if group != "" {
 		for _, tagField := range tagFields {
 			tagField.Group = group
@@ -121,9 +133,7 @@ func tagFieldFrom(entryValue reflect.Value, entryPtrValue reflect.Value, tagInfo
 		return nil, err
 	}
 	tagField := &TagField{
-		Host:    tagInfo.Host,
-		Path:    tagInfo.Path,
-		Queries: tagInfo.Queries,
+		tagMir:  tagInfo.tagMir,
 		Handler: m.Interface()}
 	return tagField, nil
 }
@@ -151,7 +161,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	// group info or method info
 	switch field.Type.Name() {
 	case "Group":
-		return &tagInfo{Group: tag}, nil
+		return &tagInfo{tagMir: tagMir{Group: tag}}, nil
 	case "Get":
 		method = MethodGet
 	case "Put":
@@ -230,5 +240,5 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		handler = string(methoName)
 	}
 
-	return &tagInfo{Metod: method, Host: host, Path: path, Queries: queries, Handler: handler}, nil
+	return &tagInfo{tagMir: tagMir{Method: method, Host: host, Path: path, Queries: queries}, Handler: handler}, nil
 }
