@@ -3,6 +3,7 @@ package mir
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 )
@@ -207,7 +208,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 
 	// queries and handler info
 	for len(tag) != 0 {
-		switch tag[i] {
+		switch tag[0] {
 		case '#':
 			i := 1
 			for i < len(tag) && tag[i] != '?' {
@@ -217,14 +218,12 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 			tag = tag[i:]
 		case '?':
 			i := 1
-			j := 1
-			queries = make([]string, 0)
 			for i < len(tag) && tag[i] != '#' {
-				if tag[i] == '&' {
-					queries = append(queries, tag[j:i])
-					j = i + 1
-				}
 				i++
+			}
+			queryStr := tag[1:i]
+			if queryStr != "" {
+				queries = strings.Split(queryStr, "&")
 			}
 			tag = tag[i:]
 		}
