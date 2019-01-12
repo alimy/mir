@@ -1,6 +1,7 @@
 package gin
 
 import (
+	"fmt"
 	"github.com/alimy/mir"
 	"github.com/gin-gonic/gin"
 )
@@ -37,20 +38,24 @@ func (e *mirEngine) Register(entries ...interface{}) error {
 		} else {
 			router = e.engine.Group(group)
 		}
-		registerWith(router, fields)
+		if err := registerWith(router, fields); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 // registerWith register fields to give router
-func registerWith(router gin.IRouter, fields []*mir.TagField) {
+func registerWith(router gin.IRouter, fields []*mir.TagField) error {
 	for _, field := range fields {
-		if handlerFunc, ok := field.Handler.(gin.HandlerFunc); ok {
+		if handlerFunc, ok := field.Handler.(func(*gin.Context)); ok {
 			if field.Method == mir.MethodAny {
 				router.Any(field.Path, handlerFunc)
 			} else {
 				router.Handle(field.Method, field.Path, handlerFunc)
 			}
+		} else {
+			return fmt.Errorf("handler not func(*gin.Context) function")
 		}
 	}
 }
