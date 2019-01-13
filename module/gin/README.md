@@ -35,10 +35,10 @@ func (h *site) GetArticles(context gin.Context) {
 }
 
 func main() {
-	engine := gin.Default()     // Default gin engine
-	mir.Setup(ginE.Mir(engine))  // Setup mir engine
-	mir.Register(&site{})       // Register handler to engine by mir
-	engine.Run()                // Start gin engine serve
+	engine := gin.Default()         // Default gin engine
+	mirE := ginE.Mir(engine)        // instance a mir engine
+	mir.Register(mirE, &site{})     // Register handler to engine by mir
+	engine.Run()                    // Start gin engine serve
 }
 
 ```
