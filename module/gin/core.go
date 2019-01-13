@@ -12,35 +12,15 @@ type mirEngine struct {
 }
 
 // Register register entries to gin engine
-func (e *mirEngine) Register(entries ...interface{}) error {
-	handlerGroup := make(map[string][]*mir.TagField)
-
-	// collect TagField by group info
+func (e *mirEngine) Register(entries []*mir.TagMir) error {
 	for _, entry := range entries {
-		if tagFields, err := mir.TagFieldsFrom(entry); err == nil {
-			for _, tagField := range tagFields {
-				fileds := handlerGroup[tagField.Group]
-				if fileds == nil {
-					fileds = make([]*mir.TagField, 0)
-				}
-				handlerGroup[tagField.Group] = append(fileds, tagField)
-			}
-		} else {
-			return err
-		}
-	}
-
-	// register TagFields from handlerGroup
-	for group, fields := range handlerGroup {
 		var router gin.IRouter
-		if group == "" || group == "/" {
+		if entry.Group == "" || entry.Group == "/" {
 			router = e.engine
 		} else {
-			router = e.engine.Group(group)
+			router = e.engine.Group(entry.Group)
 		}
-		if err := registerWith(router, fields); err != nil {
-			return err
-		}
+		return registerWith(router, entry.Fields)
 	}
 	return nil
 }
