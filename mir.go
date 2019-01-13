@@ -16,8 +16,13 @@ func Setup(e Engine) {
 
 // Register use entries's info to register handler to engine
 func Register(entries ...interface{}) error {
-	if engine != nil {
-		return engine.Register(entries...)
+	if engine == nil {
+		return fmt.Errorf("you should need setup a engine instance first then call this function")
 	}
-	return fmt.Errorf("you should need setup a engine instance first then call this function")
+	if tagMirs, err := TagMirFrom(entries...); err == nil {
+		return engine.Register(tagMirs...)
+	} else {
+		return err
+	}
+
 }

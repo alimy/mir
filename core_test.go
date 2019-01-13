@@ -20,18 +20,10 @@ type simpleEngine struct {
 	pathHandler map[string]handlerFunc
 }
 
-func (e *simpleEngine) Register(entries ...interface{}) error {
+func (e *simpleEngine) Register(entries ...*TagMir) error {
 	for _, entry := range entries {
-		if tagFields, err := TagFieldsFrom(entry); err == nil {
-			for _, tagField := range tagFields {
-				if tagField.Handler != nil {
-					if h, ok := tagField.Handler.(func() string); ok {
-						e.pathHandler[tagField.Path] = h
-					}
-				}
-			}
-		} else {
-			return err
+		for _, field := range entry.Fields {
+			e.pathHandler[field.Path] = field.Handler.(func() string)
 		}
 	}
 	return nil

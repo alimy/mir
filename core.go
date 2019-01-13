@@ -35,6 +35,9 @@ type Options struct{}
 // HEAD, PATCH, OPTIONS)
 type Any struct{}
 
+// Engine register mir tag info's handler to engine.
+// Other http engine router can implement this interface then use mir to register
+// handler engine(eg: gin,echo,mux,httprouter)
 type Engine interface {
-	Register(...interface{}) error
+	Register(...*TagMir) error
 }

@@ -27,9 +27,8 @@ func (e tagError) Error() string {
 	return string(e)
 }
 
-// tagMir indicate mir tag common information in struct tag string exclude handler
-type tagMir struct {
-	Group   string   // Group indicate group information in struct tag string
+// tagBase indicate mir tag common information in struct tag string exclude handler
+type tagBase struct {
 	Method  string   // Method indicate method information in struct tag string
 	Host    string   // Host indicate host information in struct tag string
 	Path    string   // Path indicate path information in struct tag string
@@ -38,26 +37,62 @@ type tagMir struct {
 
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
-	tagMir
-	Handler string // Handler indicate handler information in struct tag string
+	tagBase
+	isGroup bool   // indicate whether a group field
+	group   string // indicate group information in struct tag string
+	handler string // indicate handler information in struct tag string
 }
 
 // TagField indicate mir tag info used to register route info to engine
 type TagField struct {
-	tagMir
+	tagBase
 	Handler interface{} // Handler indicate handler method
 }
 
-// TagFields contains *TagField in entry
-type TagFields []*TagField
-
-// isGroup return whether mir tag is a group field
-func (m *tagInfo) isGroup() bool {
-	return m.Group != "" && m.Method == "" && m.Path == ""
+// TagMir contains TagFields by group
+type TagMir struct {
+	Group  string
+	Fields []*TagField
 }
 
-// TagFieldsFrom build TagFields from entry
-func TagFieldsFrom(entry interface{}) (TagFields, error) {
+// tagFieldsGroup indicate group-tagFields map
+type tagFieldsGroup map[string]*TagMir
+
+// TagMirFrom build TagMir items from entries slice
+func TagMirFrom(entries ...interface{}) ([]*TagMir, error) {
+	mergedTagMirs := make(tagFieldsGroup)
+	for _, entry := range entries {
+		if tagFields, err := tagMirFrom(entry); err == nil {
+			// no actual field so just continue
+			if len(tagFields.Fields) == 0 {
+				continue
+			}
+			// merge tagFields by group
+			if mergedFields, exist := mergedTagMirs[tagFields.Group]; exist {
+				mergedFields.Fields = append(mergedFields.Fields, tagFields.Fields...)
+			} else {
+				mergedFields = &TagMir{
+					Group:  tagFields.Group,
+					Fields: make([]*TagField, 0, len(tagFields.Fields)),
+				}
+				mergedFields.Fields = append(mergedFields.Fields, tagFields.Fields...)
+				mergedTagMirs[tagFields.Group] = mergedFields
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	// build result
+	tagMirSlice := make([]*TagMir, 0, len(mergedTagMirs))
+	for _, item := range mergedTagMirs {
+		tagMirSlice = append(tagMirSlice, item)
+	}
+	return tagMirSlice, nil
+}
+
+// tagMirFrom build tagMir items from a entry
+func tagMirFrom(entry interface{}) (*TagMir, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
 	isPtr := false
@@ -83,19 +118,16 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 		entryPtrValue = entryValue.Addr()
 	}
 
-	// group information
-	var group string
-
-	// get tagFields from entryType and entryPtrType
-	tagFields := make(TagFields, 0)
+	// get tagMir from entryType and entryPtrType
+	tagMir := &TagMir{Fields: make([]*TagField, 0)}
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
 		switch tagInfo, err := tagInfoFrom(field); err {
 		case nil:
 			// group field so just parse group info.group info only have one field
-			if tagInfo.isGroup() {
-				if group == "" {
-					group = tagInfo.Group
+			if tagInfo.isGroup {
+				if tagMir.Group == "" {
+					tagMir.Group = tagInfo.group
 					break
 				} else {
 					return nil, tagMultGroupInfo
@@ -103,7 +135,7 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 			}
 			// method field build tagField first
 			if tagField, err := tagFieldFrom(entryValue, entryPtrValue, tagInfo); err == nil {
-				tagFields = append(tagFields, tagField)
+				tagMir.Fields = append(tagMir.Fields, tagField)
 			} else {
 				return nil, err
 			}
@@ -113,31 +145,23 @@ func TagFieldsFrom(entry interface{}) (TagFields, error) {
 			return nil, err
 		}
 	}
-
-	// setup group info to tagFields item
-	if group != "" {
-		for _, tagField := range tagFields {
-			tagField.Group = group
-		}
-	}
-
-	return tagFields, nil
+	return tagMir, nil
 }
 
 // tagFieldFrom build tagField from entry and tagInfo
 func tagFieldFrom(entryValue reflect.Value, entryPtrValue reflect.Value, tagInfo *tagInfo) (*TagField, error) {
 	var m reflect.Value
-	if v := entryValue.MethodByName(tagInfo.Handler); v.IsValid() {
+	if v := entryValue.MethodByName(tagInfo.handler); v.IsValid() {
 		m = v
-	} else if v := entryPtrValue.MethodByName(tagInfo.Handler); v.IsValid() {
+	} else if v := entryPtrValue.MethodByName(tagInfo.handler); v.IsValid() {
 		m = v
 	} else {
 		typeName := entryValue.Type().Name()
-		err := fmt.Errorf("not found method %s in struct type %s or *%s", tagInfo.Handler, typeName, typeName)
+		err := fmt.Errorf("not found method %s in struct type %s or *%s", tagInfo.handler, typeName, typeName)
 		return nil, err
 	}
 	tagField := &TagField{
-		tagMir:  tagInfo.tagMir,
+		tagBase: tagInfo.tagBase,
 		Handler: m.Interface()}
 	return tagField, nil
 }
@@ -165,7 +189,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	// group info or method info
 	switch field.Type.Name() {
 	case "Group":
-		return &tagInfo{tagMir: tagMir{Group: tag}}, nil
+		return &tagInfo{group: tag, isGroup: true}, nil
 	case "Get":
 		method = MethodGet
 	case "Put":
@@ -247,5 +271,11 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		handler = string(methoName)
 	}
 
-	return &tagInfo{tagMir: tagMir{Method: method, Host: host, Path: path, Queries: queries}, Handler: handler}, nil
+	// build a TagInfo instance
+	info := &tagInfo{
+		tagBase: tagBase{Method: method, Host: host, Path: path, Queries: queries},
+		handler: handler,
+	}
+
+	return info, nil
 }
