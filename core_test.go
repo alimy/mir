@@ -20,7 +20,7 @@ type simpleEngine struct {
 	pathHandler map[string]handlerFunc
 }
 
-func (e *simpleEngine) Register(entries ...*TagMir) error {
+func (e *simpleEngine) Register(entries []*TagMir) error {
 	for _, entry := range entries {
 		for _, field := range entry.Fields {
 			e.pathHandler[field.Path] = field.Handler.(func() string)

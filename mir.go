@@ -6,21 +6,30 @@ var (
 	engine Engine
 )
 
-// Setup set engine for register handler
-func Setup(e Engine) {
+// SetDefault set default engine for register handler.
+func SetDefault(e Engine) {
 	if engine != nil {
 		panic("mir: Setup called twice for engine")
 	}
 	engine = e
 }
 
-// Register use entries's info to register handler to engine
-func Register(entries ...interface{}) error {
+// RegisterDefault use entries's info to register handler to default engine.
+// You must call SetDefault(...)  setup a default engine first or return error.
+func RegisterDefault(entries ...interface{}) error {
 	if engine == nil {
-		return fmt.Errorf("you should need setup a engine instance first then call this function")
+		return fmt.Errorf("setup a default engine instance first then call this function")
+	}
+	return Register(engine, entries...)
+}
+
+// Register use entries's info to register handler to give engine.
+func Register(e Engine, entries ...interface{}) error {
+	if e == nil {
+		return fmt.Errorf("register entiries to a nil engine")
 	}
 	if tagMirs, err := TagMirFrom(entries...); err == nil {
-		return engine.Register(tagMirs)
+		return e.Register(tagMirs)
 	} else {
 		return err
 	}
