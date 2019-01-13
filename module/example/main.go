@@ -28,11 +28,9 @@ func (h *site) GetArticles(context *gin.Context) {
 func main() {
 	engine := gin.Default()
 
-	// Setup mir engine
-	mir.Setup(ginE.Mir(engine))
-
 	// Register handler to engine by mir
-	if err := mir.Register(&site{}); err != nil {
+	e := ginE.Mir(engine)
+	if err := mir.Register(e, &site{}); err != nil {
 		panic(err)
 	}
 
