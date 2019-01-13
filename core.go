@@ -39,5 +39,5 @@ type Any struct{}
 // Other http engine router can implement this interface then use mir to register
 // handler engine(eg: gin,echo,mux,httprouter)
 type Engine interface {
-	Register(...*TagMir) error
+	Register([]*TagMir) error
 }

@@ -20,9 +20,8 @@ func Register(entries ...interface{}) error {
 		return fmt.Errorf("you should need setup a engine instance first then call this function")
 	}
 	if tagMirs, err := TagMirFrom(entries...); err == nil {
-		return engine.Register(tagMirs...)
+		return engine.Register(tagMirs)
 	} else {
 		return err
 	}
-
 }
