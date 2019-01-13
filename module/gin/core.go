@@ -22,7 +22,10 @@ func (e *mirEngine) Register(entries []*mir.TagMir) error {
 		} else {
 			router = e.engine.Group(entry.Group)
 		}
-		return registerWith(router, entry.Fields)
+		// notice just return if catch a error
+		if err := registerWith(router, entry.Fields); err != nil {
+			return err
+		}
 	}
 	return nil
 }
