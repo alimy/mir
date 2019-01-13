@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var _ mir.Engine = &mirEngine{}
+
 // mirEngine used to implements mir.Engine interface
 type mirEngine struct {
 	engine *gin.Engine
