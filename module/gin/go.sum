@@ -1,5 +1,5 @@
-github.com/alimy/mir v0.2.1-0.20190114091302-9372c3253355 h1:7j0gBbNzvJNQWXQEeutSM1CgRJHsiU4IWuC4lq3dxjk=
-github.com/alimy/mir v0.2.1-0.20190114091302-9372c3253355/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
+github.com/alimy/mir v0.2.1-0.20190114162331-aa8a3d90784a h1:3YB4u6gzgDT0stGcUcg39kF5b4XsFn/oylH741KOjbs=
+github.com/alimy/mir v0.2.1-0.20190114162331-aa8a3d90784a/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 h1:AzN37oI0cOS+cougNAV9szl6CVoj2RYwzS3DpUQNtlY=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
 github.com/gin-gonic/gin v1.3.0 h1:kCmZyPklC0gVdL728E6Aj20uYBJV93nj/TkwBTKhFbs=
