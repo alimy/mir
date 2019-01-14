@@ -22,10 +22,10 @@ func (e *mirEngine) Register(entries []*mir.TagMir) error {
 		} else {
 			router = e.engine.Group(entry.Group)
 		}
-		if err := handlerChainTo(router, entry.HandlerChain); err != nil {
+		if err := handlerChainTo(router, entry.Chain); err != nil {
 			return err
 		}
-		// notice just return if catch a error
+		// Notice just return if catch a error or continue next entry register
 		if err := registerWith(router, entry.Fields); err != nil {
 			return err
 		}
@@ -50,24 +50,15 @@ func registerWith(router gin.IRouter, fields []*mir.TagField) error {
 }
 
 // handlerChainTo setup handlers to router that grouped
-func handlerChainTo(router gin.IRouter, handlers []interface{}) error {
-	// just return if empty chains
-	if len(handlers) == 0 {
+func handlerChainTo(router gin.IRouter, chain mir.Chain) error {
+	// just return if empty chain
+	if chain == nil {
 		return nil
 	}
-
-	// assert method to gin.HandlerFunc
-	handlersChain := make(gin.HandlersChain, 0, len(handlers))
-	for _, handler := range handlers {
-		if h, ok := handler.(func(*gin.Context)); ok {
-			handlersChain = append(handlersChain, h)
-		} else {
-			return fmt.Errorf("not a gin.HandlerFunc method in mir.HandlerChain")
-		}
+	if handlerChain, ok := chain.(gin.HandlersChain); ok {
+		router.Use(handlerChain...)
+	} else {
+		return fmt.Errorf("chain type not gin.HandlersChain")
 	}
-
-	// setup handlersChain to router
-	router.Use(handlersChain...)
-
 	return nil
 }
