@@ -1,8 +1,7 @@
-github.com/alimy/mir v0.1.1-0.20190113144103-39e136f8bdd7 h1:i+C9hnMgoJ9zZfZ1AruU9JD5nM7uBOgPgAuzrhOaUx8=
-github.com/alimy/mir v0.1.1-0.20190113144103-39e136f8bdd7/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
-github.com/alimy/mir/module/gin v0.0.0-20190113145925-dd7ebc5ab34b/go.mod h1:yGAiKOJAXdFc+3ydS/d/T6hYp/nkpx90EkbgqFhmwm8=
-github.com/alimy/mir/module/gin v0.0.0-20190113151920-d2376f91351b h1:tyhs+VXA6RtmC/+9MfdhfTDS81UO+SDmFnOt9SX8EQM=
-github.com/alimy/mir/module/gin v0.0.0-20190113151920-d2376f91351b/go.mod h1:yGAiKOJAXdFc+3ydS/d/T6hYp/nkpx90EkbgqFhmwm8=
+github.com/alimy/mir v0.2.1-0.20190114162331-aa8a3d90784a h1:3YB4u6gzgDT0stGcUcg39kF5b4XsFn/oylH741KOjbs=
+github.com/alimy/mir v0.2.1-0.20190114162331-aa8a3d90784a/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
+github.com/alimy/mir/module/gin v0.0.0-20190114163331-dbb71683e1c9 h1:kIN9Ovomlz1fQHcAO4NGtJroBR47u1Ze8NslCdTvlco=
+github.com/alimy/mir/module/gin v0.0.0-20190114163331-dbb71683e1c9/go.mod h1:1Vm1tyc5v/H7AI9D5k6pX3A4M+uy4OuyJMvtK9EiLng=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 h1:AzN37oI0cOS+cougNAV9szl6CVoj2RYwzS3DpUQNtlY=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
 github.com/gin-gonic/gin v1.3.0 h1:kCmZyPklC0gVdL728E6Aj20uYBJV93nj/TkwBTKhFbs=
