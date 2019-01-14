@@ -15,15 +15,10 @@ import(
 )
 
 type site struct {
+	Chain mir.Chain     `mir:"-"`
 	Group mir.Group     `mir:"v1"`
 	index mir.Get       `mir:"/index/"`
 	articles mir.Get    `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
-}
-
-type blog struct {
-	Chain mir.Chain     `mir:"-"`
-	Group mir.Group     `mir:"v1"`
-	articles mir.Get    `mir:"/articles/:category"`
 }
 
 // Index handler of the index field that in site struct, the struct tag indicate
@@ -43,32 +38,13 @@ func (h *site) GetArticles(c gin.Context) {
 	c.String(http.StatusOK, "get articles data")
 }
 
-// Articles handler of articles indicator that contains Host/Path/Queries/Handler info.
-func (b *blog) Articles(c gin.Context) {
-	c.String(http.StatusOK, "get articles data")
-}
-
 func main() {
 	engine := gin.New()             // Default gin engine
 	
 	mirE := ginE.Mir(engine)        // instance a mir engine
-	entries := mirEntries()
-	mir.Register(mirE, entries...)  // Register handler to engine by mir
+	mir.Register(mirE, &site{})     // Register handler to engine by mir
 	
 	engine.Run()                    // Start gin engine serve
-}
-
-// get all entries to register
-func mirEntries()[]interface{} {
-	return []interface{} {
-		&site{},
-		&blog{
-			Group:"v2", // direct custom group to v2 override default v1 in mir tag defined
-			Chain: gin.HandlersChain {
-				gin.Logger(),
-	            gin.Recovery(),
-			}},
-	}
 }
 
 ```
