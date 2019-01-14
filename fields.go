@@ -276,8 +276,8 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		firstRune, size := utf8.DecodeRuneInString(field.Name)
 		upperFirst := unicode.ToUpper(firstRune)
 
-		// encode upperFirst to []byte
-		methoName := make([]byte, 4, len(field.Name))
+		// encode upperFirst to []byte,use max byte for contain unicode
+		methoName := make([]byte, 4)
 		number := utf8.EncodeRune(methoName, upperFirst)
 		methoName = methoName[:number]
 		methoName = append(methoName, field.Name[size:]...)
