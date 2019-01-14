@@ -38,9 +38,10 @@ type tagBase struct {
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
 	tagBase
-	isGroup bool   // indicate whether a group field
-	group   string // indicate group information in struct tag string
-	handler string // indicate handler information in struct tag string
+	isGroup   bool   // indicate whether a group field
+	group     string // indicate group information in struct tag string
+	groupName string // indicate group field name that tag group info
+	handler   string // indicate handler information in struct tag string
 }
 
 // TagField indicate mir tag info used to register route info to engine
@@ -51,8 +52,9 @@ type TagField struct {
 
 // TagMir contains TagFields by group
 type TagMir struct {
-	Group  string
-	Fields []*TagField
+	Group        string
+	HandlerChain []interface{}
+	Fields       []*TagField
 }
 
 // tagFieldsGroup indicate group-tagFields map
@@ -120,14 +122,18 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 
 	// get tagMir from entryType and entryPtrType
 	tagMir := &TagMir{Fields: make([]*TagField, 0)}
+	groupSetuped := false
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
 		switch tagInfo, err := tagInfoFrom(field); err {
 		case nil:
 			// group field so just parse group info.group info only have one field
 			if tagInfo.isGroup {
-				if tagMir.Group == "" {
-					tagMir.Group = tagInfo.group
+				if !groupSetuped {
+					groupSetuped = true
+					if err := inflateGroupInfo(tagMir, entryValue, entryPtrValue, tagInfo); err != nil {
+						return nil, err
+					}
 					break
 				} else {
 					return nil, tagMultGroupInfo
@@ -149,29 +155,17 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 }
 
 // tagFieldFrom build tagField from entry and tagInfo
-func tagFieldFrom(entryValue reflect.Value, entryPtrValue reflect.Value, tagInfo *tagInfo) (*TagField, error) {
-	var m reflect.Value
-	if v := entryValue.MethodByName(tagInfo.handler); v.IsValid() {
-		m = v
-	} else if v := entryPtrValue.MethodByName(tagInfo.handler); v.IsValid() {
-		m = v
+func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, error) {
+	if m, err := methodByName(v, ptrV, t.handler); err == nil {
+		return &TagField{tagBase: t.tagBase, Handler: m}, nil
 	} else {
-		typeName := entryValue.Type().Name()
-		err := fmt.Errorf("not found method %s in struct type %s or *%s", tagInfo.handler, typeName, typeName)
 		return nil, err
 	}
-	tagField := &TagField{
-		tagBase: tagInfo.tagBase,
-		Handler: m.Interface()}
-	return tagField, nil
 }
 
 // tagInfoFrom build tagInfo from field
 func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
-	var (
-		method, host, path, handler string
-		queries                     []string
-	)
+	info := &tagInfo{}
 
 	// lookup mir tag info from struct field
 	tag, exist := field.Tag.Lookup(TagName)
@@ -189,27 +183,29 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	// group info or method info
 	switch field.Type.Name() {
 	case "Group":
-		return &tagInfo{group: tag, isGroup: true}, nil
+		info.isGroup = true
+		info.group = tag
+		info.groupName = field.Name
 	case "Get":
-		method = MethodGet
+		info.Method = MethodGet
 	case "Put":
-		method = MethodPut
+		info.Method = MethodPut
 	case "Post":
-		method = MethodPost
+		info.Method = MethodPost
 	case "Delete":
-		method = MethodDelete
+		info.Method = MethodDelete
 	case "Head":
-		method = MethodHead
+		info.Method = MethodHead
 	case "Options":
-		method = MethodOptions
+		info.Method = MethodOptions
 	case "Patch":
-		method = MethodPatch
+		info.Method = MethodPatch
 	case "Trace":
-		method = MethodTrace
+		info.Method = MethodTrace
 	case "Connect":
-		method = MethodConnect
+		info.Method = MethodConnect
 	case "Any":
-		method = "ANY"
+		info.Method = "ANY"
 	}
 
 	// host info
@@ -218,19 +214,19 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		for i < len(tag) && tag[i] != '/' {
 			i++
 		}
-		host = tag[2:i]
+		info.Host = tag[2:i]
 		tag = tag[i:]
 	}
 
-	// path info
-	if len(tag) == 0 {
+	// path info. must have path info if not a group field
+	if len(tag) == 0 && !info.isGroup {
 		return nil, tagNoPathInfo
 	}
 	i = 0
 	for i < len(tag) && tag[i] != '?' && tag[i] != '#' {
 		i++
 	}
-	path = tag[0:i]
+	info.Path = tag[0:i]
 	tag = tag[i:]
 
 	// queries and handler info
@@ -241,7 +237,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 			for i < len(tag) && tag[i] != '?' {
 				i++
 			}
-			handler = tag[1:i]
+			info.handler = tag[1:i]
 			tag = tag[i:]
 		case '?':
 			i := 1
@@ -250,14 +246,14 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 			}
 			queryStr := tag[1:i]
 			if queryStr != "" {
-				queries = strings.Split(queryStr, "&")
+				info.Queries = strings.Split(queryStr, "&")
 			}
 			tag = tag[i:]
 		}
 	}
 
-	// check handler
-	if handler == "" {
+	// check handler if not group field
+	if info.handler == "" && !info.isGroup {
 		firstRune, size := utf8.DecodeRuneInString(field.Name)
 		upperFirst := unicode.ToUpper(firstRune)
 
@@ -268,14 +264,56 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		methoName = append(methoName, field.Name[size:]...)
 
 		// assign handler name
-		handler = string(methoName)
-	}
-
-	// build a TagInfo instance
-	info := &tagInfo{
-		tagBase: tagBase{Method: method, Host: host, Path: path, Queries: queries},
-		handler: handler,
+		info.handler = string(methoName)
 	}
 
 	return info, nil
+}
+
+// inflateGroupInfo setup tag group info to TagMir instance
+func inflateGroupInfo(m *TagMir, v reflect.Value, ptrV reflect.Value, t *tagInfo) error {
+	// group field value assign to m.group first or tag group string info assigned
+	if group := v.FieldByName(t.groupName).String(); group != "" {
+		m.Group = group
+	} else {
+		m.Group = t.group
+	}
+
+	// setup handlerChain info
+	if handlerChain, err := handlerChainFrom(v, ptrV, t); err == nil {
+		m.HandlerChain = handlerChain
+	} else {
+		return err
+	}
+	return nil
+}
+
+// handlerChainFrom return methods from group tag's handler info
+func handlerChainFrom(entryValue reflect.Value, entryPtrValue reflect.Value, tagInfo *tagInfo) ([]interface{}, error) {
+	if tagInfo.handler == "" {
+		return nil, nil
+	}
+	methods := strings.Split(tagInfo.handler, "&")
+	handlers := make([]interface{}, 0)
+	for _, name := range methods {
+		if m, err := methodByName(entryValue, entryPtrValue, name); err == nil {
+			handlers = append(handlers, m)
+		} else {
+			return nil, err
+		}
+	}
+	return handlers, nil
+}
+
+// methodByName return a method interface from value and method name
+func methodByName(value reflect.Value, ptrValue reflect.Value, name string) (m interface{}, err error) {
+	if v := value.MethodByName(name); v.IsValid() {
+		m = v.Interface()
+	} else if v := ptrValue.MethodByName(name); v.IsValid() {
+		m = v.Interface()
+	} else {
+		typeName := value.Type().Name()
+		err = fmt.Errorf("not found method %s in struct type %s or *%s", name, typeName, typeName)
+	}
+	return
 }

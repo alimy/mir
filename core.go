@@ -1,7 +1,7 @@
 package mir
 
 // Group indicator a default group for handler to register to server engine
-type Group struct{}
+type Group string
 
 // Get indicator a GET method handler used placeholder register info in struct tag
 type Get struct{}
