@@ -18,6 +18,7 @@ var (
 	tagNoPathInfo    tagError = "mir struct tag not contains path info"
 	tagNotValideType tagError = "not valide type, just struct and struct ptr is avalibale"
 	tagMultGroupInfo tagError = "multiple group info in struct defined"
+	tagMultChainInfo tagError = "multiple chain info in struct defined"
 )
 
 // tagError indicate error information
@@ -40,7 +41,8 @@ type tagInfo struct {
 	tagBase
 	isGroup   bool   // indicate whether a group field
 	group     string // indicate group information in struct tag string
-	groupName string // indicate group field name that tag group info
+	groupName string // indicate group field name
+	chainName string // indicate chain field name
 	handler   string // indicate handler information in struct tag string
 }
 
@@ -52,9 +54,9 @@ type TagField struct {
 
 // TagMir contains TagFields by group
 type TagMir struct {
-	Group        string
-	HandlerChain []interface{}
-	Fields       []*TagField
+	Group  string
+	Chain  Chain
+	Fields []*TagField
 }
 
 // tagFieldsGroup indicate group-tagFields map
@@ -123,6 +125,7 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 	// get tagMir from entryType and entryPtrType
 	tagMir := &TagMir{Fields: make([]*TagField, 0)}
 	groupSetuped := false
+	chainSetuped := false
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
 		switch tagInfo, err := tagInfoFrom(field); err {
@@ -131,12 +134,20 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 			if tagInfo.isGroup {
 				if !groupSetuped {
 					groupSetuped = true
-					if err := inflateGroupInfo(tagMir, entryValue, entryPtrValue, tagInfo); err != nil {
-						return nil, err
-					}
+					inflateGroupInfo(tagMir, entryValue, tagInfo)
 					break
 				} else {
 					return nil, tagMultGroupInfo
+				}
+			}
+			// chain field so just parse chain info only have one field
+			if tagInfo.chainName != "" {
+				if !chainSetuped {
+					chainSetuped = true
+					tagMir.Chain = entryValue.FieldByName(tagInfo.chainName).Interface()
+					break
+				} else {
+					return nil, tagMultChainInfo
 				}
 			}
 			// method field build tagField first
@@ -180,12 +191,16 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	}
 	tag = tag[i:]
 
-	// group info or method info
+	// group info or method info or chain info
 	switch field.Type.Name() {
+	case "Chain":
+		info.chainName = field.Name
+		return info, nil
 	case "Group":
 		info.isGroup = true
 		info.group = tag
 		info.groupName = field.Name
+		return info, nil
 	case "Get":
 		info.Method = MethodGet
 	case "Put":
@@ -253,7 +268,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	}
 
 	// check handler if not group field
-	if info.handler == "" && !info.isGroup {
+	if info.handler == "" {
 		firstRune, size := utf8.DecodeRuneInString(field.Name)
 		upperFirst := unicode.ToUpper(firstRune)
 
@@ -271,38 +286,13 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 }
 
 // inflateGroupInfo setup tag group info to TagMir instance
-func inflateGroupInfo(m *TagMir, v reflect.Value, ptrV reflect.Value, t *tagInfo) error {
+func inflateGroupInfo(m *TagMir, v reflect.Value, t *tagInfo) {
 	// group field value assign to m.group first or tag group string info assigned
 	if group := v.FieldByName(t.groupName).String(); group != "" {
 		m.Group = group
 	} else {
 		m.Group = t.group
 	}
-
-	// setup handlerChain info
-	if handlerChain, err := handlerChainFrom(v, ptrV, t); err == nil {
-		m.HandlerChain = handlerChain
-	} else {
-		return err
-	}
-	return nil
-}
-
-// handlerChainFrom return methods from group tag's handler info
-func handlerChainFrom(entryValue reflect.Value, entryPtrValue reflect.Value, tagInfo *tagInfo) ([]interface{}, error) {
-	if tagInfo.handler == "" {
-		return nil, nil
-	}
-	methods := strings.Split(tagInfo.handler, "&")
-	handlers := make([]interface{}, 0)
-	for _, name := range methods {
-		if m, err := methodByName(entryValue, entryPtrValue, name); err == nil {
-			handlers = append(handlers, m)
-		} else {
-			return nil, err
-		}
-	}
-	return handlers, nil
 }
 
 // methodByName return a method interface from value and method name

@@ -22,7 +22,7 @@ func TestRegister(t *testing.T) {
 }
 
 func TestTagMirFrom(t *testing.T) {
-	tagMirs, err := TagMirFrom(&site{}, &blog{group: "v2"})
+	tagMirs, err := TagMirFrom(&site{}, &blog{Group: "v2", Chain: mirChains()})
 	if err != nil {
 		t.Error(err)
 	}
@@ -50,8 +50,8 @@ func assertTagMir(t *testing.T, tagMirs []*TagMir) {
 }
 
 func checkGroupV1(t *testing.T, mir *TagMir) {
-	if len(mir.HandlerChain) != 0 {
-		t.Errorf("want zero handlerChain but have %d", len(mir.HandlerChain))
+	if mir.Chain != nil {
+		t.Errorf("want nil chain but not")
 	}
 	if len(mir.Fields) != 2 {
 		t.Errorf("want 2 TagFields but hava %d", len(mir.Fields))
@@ -59,8 +59,15 @@ func checkGroupV1(t *testing.T, mir *TagMir) {
 }
 
 func checkGroupV2(t *testing.T, mir *TagMir) {
-	if len(mir.HandlerChain) != 2 {
-		t.Errorf("want 2 handlerChain but have %d", len(mir.HandlerChain))
+	if mir.Chain == nil {
+		t.Errorf("want a non nil chain but not")
+	}
+	if chains, ok := mir.Chain.([]func() string); ok {
+		if len(chains) != 2 {
+			t.Errorf("want 2 handler in chain but have %d", len(chains))
+		}
+	} else {
+		t.Errorf("want chain in type []func()string but not")
 	}
 	if len(mir.Fields) != 2 {
 		t.Errorf("want 2 TagFields but have %d", len(mir.Fields))

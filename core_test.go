@@ -30,7 +30,8 @@ func (e *simpleEngine) Register(entries []*TagMir) error {
 }
 
 type blog struct {
-	group    Group `mir:"v1#Log&Count"`
+	Chain    Chain `mir:"-"`
+	Group    Group `mir:"v1"`
 	index    Get   `mir:"/index/"`
 	articles Get   `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
 }
@@ -43,10 +44,17 @@ func (b *blog) GetArticles() string {
 	return "GetArticles"
 }
 
-func (b *blog) Log() string {
-	return "Log"
+func pingChain() string {
+	return "simpleChain"
 }
 
-func (b *blog) Count() string {
-	return "Count"
+func pongChain() string {
+	return "pongChain"
+}
+
+func mirChains() []func() string {
+	return []func() string{
+		pingChain,
+		pongChain,
+	}
 }

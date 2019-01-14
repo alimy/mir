@@ -15,15 +15,22 @@ import(
 )
 
 type site struct {
-	v1 mir.Group `mir:"v1"`
+	Chain mir.Chain `mir:"-"`
+	Group mir.Group `mir:"v1"`
 	index mir.Get `mir:"/index/"`
 	articles mir.Get `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
 }
 
+type blog struct {
+	Chain mir.Chain     `mir:"-"`
+	Group mir.Group     `mir:"v1"`
+	articles mir.Get    `mir:"/articles/:category"`
+}
+
 // Index handler of the index field that in site struct, the struct tag indicate
 // this handler will register to path "/index/" and method is http.MethodGet.
-func (h *site) Index(context gin.Context) {
-	context.String(http.StatusOK, "get index data")
+func (h *site) Index(c gin.Context) {
+	c.String(http.StatusOK, "get index data")
 }
 
 // GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
@@ -33,15 +40,36 @@ func (h *site) Index(context gin.Context) {
 // Handler info is forth info start with '#' that indicate real handler method name(eg: GetArticles).if no handler info will
 // use field name capital first char as default handler name(eg: if articles had no #GetArticles then the handler name will
 // is Articles) 
-func (h *site) GetArticles(context gin.Context) {
-	context.String(http.StatusOK, "get articles data")
+func (h *site) GetArticles(c gin.Context) {
+	c.String(http.StatusOK, "get articles data")
+}
+
+// Articles handler of articles indicator that contains Host/Path/Queries/Handler info.
+func (b *blog) Articles(c gin.Context) {
+	c.String(http.StatusOK, "get articles data")
 }
 
 func main() {
-	engine := gin.Default()         // Default gin engine
+	engine := gin.New()             // Default gin engine
+	
 	mirE := ginE.Mir(engine)        // instance a mir engine
-	mir.Register(mirE, &site{})     // Register handler to engine by mir
+	entries := mirEntries()
+	mir.Register(mirE, entries...)  // Register handler to engine by mir
+	
 	engine.Run()                    // Start gin engine serve
+}
+
+// get all entries to register
+func mirEntries()[]interface{} {
+	return []interface{} {
+		&site{},
+		&blog{
+			Group:"v2", // direct custom group to v2 override default v1 in mir tag defined
+			Chain: gin.HandlersChain {
+				gin.Logger(),
+	            gin.Recovery(),
+			}},
+	}
 }
 
 ```
