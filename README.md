@@ -15,10 +15,9 @@ import(
 )
 
 type site struct {
-	Chain mir.Chain `mir:"-"`
-	Group mir.Group `mir:"v1"`
-	index mir.Get `mir:"/index/"`
-	articles mir.Get `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
+	Group mir.Group     `mir:"v1"`
+	index mir.Get       `mir:"/index/"`
+	articles mir.Get    `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
 }
 
 type blog struct {
