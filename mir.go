@@ -10,6 +10,13 @@ var (
 	engine Engine
 )
 
+// SetTag set custom mir's struct tag name(eg: mir)
+func SetTag(name string) {
+	if name != "" {
+		tagName = name
+	}
+}
+
 // SetDefault set default engine for register handler.
 func SetDefault(e Engine) {
 	if engine != nil {

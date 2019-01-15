@@ -12,9 +12,15 @@ import (
 	"unicode/utf8"
 )
 
+
 const (
-	// TagName mir's struct tag string name
-	TagName = "mir"
+	// DefaultTag indicate default mir's struct tag name
+	DefaultTag = "mir"
+)
+
+var (
+	// tagName indicate mir's struct tag string name
+	tagName = DefaultTag
 )
 
 var (
@@ -186,7 +192,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	info := &tagInfo{}
 
 	// lookup mir tag info from struct field
-	tag, exist := field.Tag.Lookup(TagName)
+	tag, exist := field.Tag.Lookup(tagName)
 	if !exist {
 		return nil, tagNotExist
 	}

@@ -36,6 +36,29 @@ func TestTagMirFrom(t *testing.T) {
 	assertTagMir(t, tagMirs)
 }
 
+func TestSetTag(t *testing.T) {
+	// set custom tag name
+	SetTag("urban")
+
+	tagMirs, err := TagMirFrom(&comment{})
+	if err != nil {
+		t.Error(err)
+	}
+	if len(tagMirs) != 1 {
+		t.Errorf("want one TagMir but have %d", len(tagMirs))
+	}
+	tagMir := tagMirs[0]
+	if len(tagMir.Fields) != 1 {
+		t.Errorf("want one TagFields but hava %d", len(tagMir.Fields))
+	}
+	if tagMir.Group != "v1" {
+		t.Errorf("want group v1 but is %s", tagMir.Group)
+	}
+
+	// Reset tag name to default
+	SetTag(DefaultTag)
+}
+
 func assertTagMir(t *testing.T, tagMirs []*TagMir) {
 	isCheckedGroupV2 := false
 	for _, mir := range tagMirs {
