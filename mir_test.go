@@ -71,7 +71,7 @@ func checkGroupV2(t *testing.T, mir *TagMir) {
 			t.Errorf("want 2 handler in chain but have %d", len(chains))
 		}
 	} else {
-		t.Errorf("want chain in type []func()string but not")
+		t.Errorf("want chain in type []func()string but is %t", mir.Chain)
 	}
 	if len(mir.Fields) != 2 {
 		t.Errorf("want 2 TagFields but have %d", len(mir.Fields))

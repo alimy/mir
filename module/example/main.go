@@ -13,6 +13,7 @@ import (
 )
 
 type site struct {
+	Chain    mir.Chain `mir:"-"`
 	v1       mir.Group `mir:"v1"`
 	index    mir.Get   `mir:"/index/"`
 	articles mir.Get   `mir:"/articles/:category/#GetArticles"`
@@ -34,7 +35,7 @@ func main() {
 
 	// Register handler to engine by mir
 	e := ginE.Mir(engine)
-	if err := mir.Register(e, &site{}); err != nil {
+	if err := mir.Register(e, &site{Chain: gin.HandlersChain{gin.Logger(), gin.Recovery()}}); err != nil {
 		panic(err)
 	}
 

@@ -76,16 +76,21 @@ func TagMirFrom(entries ...interface{}) ([]*TagMir, error) {
 				continue
 			}
 			// merge tagFields by group
-			if mergedFields, exist := mergedTagMirs[tagFields.Group]; exist {
-				mergedFields.Fields = append(mergedFields.Fields, tagFields.Fields...)
+			var tagMir *TagMir
+			if item, exist := mergedTagMirs[tagFields.Group]; exist {
+				tagMir = item
 			} else {
-				mergedFields = &TagMir{
+				tagMir = &TagMir{
 					Group:  tagFields.Group,
 					Fields: make([]*TagField, 0, len(tagFields.Fields)),
 				}
-				mergedFields.Fields = append(mergedFields.Fields, tagFields.Fields...)
-				mergedTagMirs[tagFields.Group] = mergedFields
+				mergedTagMirs[tagFields.Group] = tagMir
 			}
+			// Notice: override tagMir.Chain if tagFields.Chain not nil
+			if tagFields.Chain != nil {
+				tagMir.Chain = tagFields.Chain
+			}
+			tagMir.Fields = append(tagMir.Fields, tagFields.Fields...)
 		} else {
 			return nil, err
 		}
@@ -148,7 +153,7 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 			if tagInfo.chainName != "" {
 				if !chainSetuped {
 					chainSetuped = true
-					tagMir.Chain = entryValue.FieldByName(tagInfo.chainName).Interface()
+					tagMir.Chain = entryValue.FieldByName(tagInfo.chainName).Elem().Interface()
 					break
 				} else {
 					return nil, tagMultChainInfo
