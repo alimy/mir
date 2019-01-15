@@ -1,5 +1,5 @@
-github.com/alimy/mir v0.2.1-0.20190114162939-f1ab38c0e9b0 h1:Oc6O5WrNIXmfz6U61SoX3QAaEo+8drBabCmJ5EJqImE=
-github.com/alimy/mir v0.2.1-0.20190114162939-f1ab38c0e9b0/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
+github.com/alimy/mir v0.2.1-0.20190115142210-7ece0119ad1e h1:WkywsiOS8/I4yeuEnLeyYkVAZsxXNTZLIBUx6Z0SQ3U=
+github.com/alimy/mir v0.2.1-0.20190115142210-7ece0119ad1e/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
 github.com/gin-gonic/gin v1.3.0/go.mod h1:7cKuhb5qV2ggCFctp2fJQ+ErvciLZrIeoOSOm6mUr7Y=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=

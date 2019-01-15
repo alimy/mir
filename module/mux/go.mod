@@ -3,7 +3,7 @@ module github.com/alimy/mir/module/mux
 go 1.12
 
 require (
-	github.com/alimy/mir v0.2.1-0.20190114162939-f1ab38c0e9b0
+	github.com/alimy/mir v0.2.1-0.20190115142210-7ece0119ad1e
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
