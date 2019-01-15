@@ -1,7 +1,7 @@
-github.com/alimy/mir v0.3.1-0.20190115155546-286222e50845 h1:UnBfeP0nSYT+xKNua0hknTDmbnVe2vTzSs4HZpF2Fyk=
-github.com/alimy/mir v0.3.1-0.20190115155546-286222e50845/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
-github.com/alimy/mir/module/gin v0.0.0-20190115160130-67c7d025254b h1:ylH/nhc7ib9P/ATnHuDI9KavTGdOoWSrQmMJeK0oeJk=
-github.com/alimy/mir/module/gin v0.0.0-20190115160130-67c7d025254b/go.mod h1:ObwUAuz0ReehNaSXpPlWggcWuwZupM6wC9omVri5Gd0=
+github.com/alimy/mir v0.4.0 h1:sHHe5Lux6lufrvsIAzp7SZkPBaM56brTlyqBPlx28v0=
+github.com/alimy/mir v0.4.0/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
+github.com/alimy/mir/module/gin v0.0.0-20190115172208-cbe6c950f89b h1:frXsXZKv0KMZ/+KkUfnEFiqJg9kwZaWXieNNaJQ9Ku4=
+github.com/alimy/mir/module/gin v0.0.0-20190115172208-cbe6c950f89b/go.mod h1:ylXdWSzlBFvTGyILNR0CjDjOoro8lY5hC81dS5a/L6A=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 h1:AzN37oI0cOS+cougNAV9szl6CVoj2RYwzS3DpUQNtlY=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
 github.com/gin-gonic/gin v1.3.0 h1:kCmZyPklC0gVdL728E6Aj20uYBJV93nj/TkwBTKhFbs=
