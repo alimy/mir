@@ -31,7 +31,7 @@ func (h *site) GetArticles(context *gin.Context) {
 }
 
 func main() {
-	engine := gin.Default()
+	engine := gin.New()
 
 	// Register handler to engine by mir
 	e := ginE.Mir(engine)
