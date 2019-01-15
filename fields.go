@@ -76,10 +76,8 @@ func TagMirFrom(entries ...interface{}) ([]*TagMir, error) {
 				continue
 			}
 			// merge tagFields by group
-			var tagMir *TagMir
-			if item, exist := mergedTagMirs[tagFields.Group]; exist {
-				tagMir = item
-			} else {
+			tagMir, exist := mergedTagMirs[tagFields.Group]
+			if !exist {
 				tagMir = &TagMir{
 					Group:  tagFields.Group,
 					Fields: make([]*TagField, 0, len(tagFields.Fields)),
