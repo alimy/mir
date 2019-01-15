@@ -18,7 +18,7 @@ type site struct {
 	Chain mir.Chain     `mir:"-"`
 	Group mir.Group     `mir:"v1"`
 	index mir.Get       `mir:"/index/"`
-	articles mir.Get    `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
+	articles mir.Get    `mir:"/articles/:category/#GetArticles"`
 }
 
 // Index handler of the index field that in site struct, the struct tag indicate
@@ -28,9 +28,7 @@ func (h *site) Index(c gin.Context) {
 }
 
 // GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
-// Host info is the first segment start with '//'(eg:{subdomain}.domain.com)
-// Path info is the second or first(if no host info) segment start with '/'(eg: /articles/{category}/{id:[0-9]+}?{filter})
-// Queries info is the third info start with '?' and delimiter by '&'(eg: {filter}&{pages})
+// Path info is the second or first(if no host info) segment start with '/'(eg: /articles/:category/#GetArticles)
 // Handler info is forth info start with '#' that indicate real handler method name(eg: GetArticles).if no handler info will
 // use field name capital first char as default handler name(eg: if articles had no #GetArticles then the handler name will
 // is Articles) 
@@ -39,12 +37,15 @@ func (h *site) GetArticles(c gin.Context) {
 }
 
 func main() {
-	engine := gin.New()             // Default gin engine
+	//Create a new gin engine
+	engine := gin.New()
 	
-	mirE := ginE.Mir(engine)        // instance a mir engine
-	mir.Register(mirE, &site{})     // Register handler to engine by mir
+	// Register handler to engine by mir
+	mirE := ginE.Mir(engine)
+	mir.Register(mirE, &site{Chain: gin.HandlersChain{gin.Logger()}})
 	
-	engine.Run()                    // Start gin engine serve
+	// Start gin engine serve
+	engine.Run()
 }
 
 ```

@@ -14,7 +14,7 @@ import (
 type site struct {
 	count    uint32
 	v1       mir.Group `mir:"v1"`
-	add      mir.Post  `mir:"/add/:id"`
+	add      mir.Post  `mir:"/add/{id}"`
 	index    mir.Get   `mir:"/index/"`
 	articles mir.Get   `mir:"//localhost:8013/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}#GetArticles"`
 }

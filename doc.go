@@ -11,7 +11,7 @@ type site struct {
 	Chain mir.Chain     `mir:"-"`
 	Group mir.Group     `mir:"v1"`
 	index mir.Get       `mir:"/index/"`
-	articles mir.Get    `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
+	articles mir.Get    `mir:"//localhost:8013/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}#GetArticles"`
 }
 
 // Index handler of the index field that in site struct, the struct tag indicate
@@ -33,15 +33,26 @@ func (h *site) GetArticles(c gin.Context) {
 
 Then register entry such use gin engine:
 
+import (
+	"github.com/alimy/mir"
+	"github.com/gorilla/mux"
+	"net/http"
+	"log"
+
+	muxE "github.com/alimy/mir/module/mux"
+)
+
 func main() {
-	engine := gin.New()             // Default gin engine
+	// Create a new mux router instance
+	r := mux.NewRouter()
 
-	mirE := ginE.Mir(engine)        // instance a mir engine
-	mir.Register(mirE, &site{})     // Register handler to engine by mir
+	// Register handler to engine by mir
+	mir.SetDefault(muxE.Mir(r))
+	mir.Register(&site{})
 
-	engine.Run()                    // Start gin engine serve
+	// Bind to a port and pass our router in
+	log.Fatal(http.ListenAndServe(":8000", r))
 }
-
 */
 
 package mir
