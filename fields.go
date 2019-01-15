@@ -12,7 +12,6 @@ import (
 	"unicode/utf8"
 )
 
-
 const (
 	// DefaultTag indicate default mir's struct tag name
 	DefaultTag = "mir"

@@ -49,8 +49,8 @@ func (b *blog) GetArticles() string {
 }
 
 type comment struct {
-	group    Group `urban:"v1"`
-	index    Get   `urban:"/index/"`
+	group Group `urban:"v1"`
+	index Get   `urban:"/index/"`
 }
 
 func (c *comment) Index() string {
