@@ -1,0 +1,4 @@
+github.com/alimy/mir v0.4.1-0.20190116055657-4397498f098b h1:tWIN0AmXKZ84982HjosnouM6K3gCGpydrhk7s0cV7FM=
+github.com/alimy/mir v0.4.1-0.20190116055657-4397498f098b/go.mod h1:OcrVTghXSDdFJYE301IkBL2FZy5Lk6RdVMx1lZA2Bsg=
+github.com/julienschmidt/httprouter v1.2.0 h1:TDTW5Yz1mjftljbcKqRcrYhd4XeOoI98t+9HbQbYf7g=
+github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=

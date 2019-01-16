@@ -1,0 +1,49 @@
+# Mir.httprouter
+Mir.httprouter module provider mir.Engine implement backend [httprouter](github.com/julienschmidt/httprouter).
+
+### Usage 
+```go
+package main
+
+import(
+	"github.com/alimy/mir"
+    "github.com/julienschmidt/httprouter"
+	"log"
+	"net/http"
+	
+	httprouterE "github.com/alimy/mir/module/httprouter"
+)
+
+type site struct {
+	index mir.Get       `mir:"/index/"`
+	articles mir.Get    `mir:"/articles/:category/#GetArticles"`
+}
+
+// Index handler of the index field that in site struct, the struct tag indicate
+// this handler will register to path "/index/" and method is http.MethodGet.
+func (h *site) Index(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	rw.Write([]byte("get index data"))
+}
+
+// GetArticles handler of articles indicator that contains Host/Path/Handler info.
+// Path info is the second or first(if no host info) segment start with '/'(eg: /articles/:category)
+// Handler info is forth info start with '#' that indicate real handler method name(eg: GetArticles).if no handler info will
+// use field name capital first char as default handler name(eg: if articles had no #GetArticles then the handler name will
+// is Articles) 
+func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+    rw.Write([]byte("get articles data"))
+}
+
+func main() {
+	// Create a new httprouter instance
+	 r := httprouter.New()             
+	
+	// Register handler to engine by mir
+	mirE := httprouterE.Mir(r)
+	mir.Register(mirE, &site{})
+	
+	// Start http serve
+	log.Fatal(http.ListenAndServe(":8080", r))
+}
+
+```
