@@ -37,9 +37,17 @@ func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request) {
 }
 
 func TestMir(t *testing.T) {
-	engine := mux.NewRouter()
-	mir.SetDefault(Mir(engine))
-	if err := mir.RegisterDefault(&site{}); err != nil {
+	r := mux.NewRouter()
+	mirE := Mir(r)
+	if err := mir.Register(mirE, &site{}); err != nil {
+		t.Error(err)
+	}
+	// TODO: add httptest assert
+}
+
+func TestRegister(t *testing.T) {
+	r := mux.NewRouter()
+	if err := Register(r, &site{}); err != nil {
 		t.Error(err)
 	}
 	// TODO: add httptest assert

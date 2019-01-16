@@ -6,12 +6,12 @@ Mir.Mux module provider mir.Engine implement backend [Mux](https://github.com/go
 package main
 
 import(
-	"github.com/gorilla/mux"
 	"github.com/alimy/mir"
-	"net/http"
+	"github.com/gorilla/mux"
 	"log"
+	"net/http"
 	
-	muxE "github.com/alimy/mir/module/mux"
+	mirE "github.com/alimy/mir/module/mux"
 )
 
 type site struct {
@@ -40,11 +40,11 @@ func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Create a new mux router instance
 	r := mux.NewRouter()
 	
 	// Instance a mir engine to register handler for mux router by mir
-	mirE := muxE.Mir(r)
-	mir.Register(mirE, &site{}) 
+	mirE.Register(r, &site{}) 
 	
 	// Bind to a port and pass our router in
 	log.Fatal(http.ListenAndServe(":8000", r)) 

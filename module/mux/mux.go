@@ -14,3 +14,9 @@ import (
 func Mir(r *mux.Router) mir.Engine {
 	return &mirEngine{engine: r}
 }
+
+// Register use entries's info to register handler to mux router.
+func Register(r *mux.Router, entries ...interface{}) error {
+	mirE := Mir(r)
+	return mir.Register(mirE, entries...)
+}
