@@ -11,6 +11,12 @@ import (
 
 // Mir return mir.Engine interface implements instance.Used to register routes
 // to iris application with struct tag string's information.
-func Mir(e *iris.Application) mir.Engine {
-	return &mirEngine{engine: e}
+func Mir(app *iris.Application) mir.Engine {
+	return &mirEngine{engine: app}
+}
+
+// Register use entries's info to register handler to iris application.
+func Register(app *iris.Application, entries ...interface{}) error {
+	mirE := Mir(app)
+	return mir.Register(mirE, entries...)
 }

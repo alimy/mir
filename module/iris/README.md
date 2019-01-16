@@ -14,7 +14,7 @@ import(
 	"net/http"
 
 	
-	irisE "github.com/alimy/mir/module/iris"
+	mirE "github.com/alimy/mir/module/iris"
 )
 
 type site struct {
@@ -62,9 +62,8 @@ func main() {
 	app := iris.New()          
 	
 	// Register handler to engine by mir
-	mirE := irisE.Mir(app)
 	entries := mirEntries()
-	mir.Register(mirE, entries...)
+	mirE.Register(app, entries...)
 	
 	// Start iris application
 	app.Run(iris.Addr(":8013"))

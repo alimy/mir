@@ -59,6 +59,15 @@ func TestMir(t *testing.T) {
 	// TODO: add httptest assert
 }
 
+func TestRegister(t *testing.T) {
+	app := iris.New()
+	entries := mirEntries()
+	if err := Register(app, entries...); err != nil {
+		t.Error(err)
+	}
+	// TODO: add httptest assert
+}
+
 // get all entries to register
 func mirEntries() []interface{} {
 	return []interface{}{
