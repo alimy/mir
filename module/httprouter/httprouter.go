@@ -14,3 +14,9 @@ import (
 func Mir(r *httprouter.Router) mir.Engine {
 	return &mirEngine{engine: r}
 }
+
+// Register use entries's info to register handler to httprouter router.
+func Register(r *httprouter.Router, entries ...interface{}) error {
+	mirE := Mir(r)
+	return mir.Register(mirE, entries...)
+}

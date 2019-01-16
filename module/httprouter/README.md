@@ -11,7 +11,7 @@ import(
 	"log"
 	"net/http"
 	
-	httprouterE "github.com/alimy/mir/module/httprouter"
+	mirE "github.com/alimy/mir/module/httprouter"
 )
 
 type site struct {
@@ -39,8 +39,7 @@ func main() {
 	 r := httprouter.New()             
 	
 	// Register handler to engine by mir
-	mirE := httprouterE.Mir(r)
-	mir.Register(mirE, &site{})
+	mirE.Register(r, &site{})
 	
 	// Start http serve
 	log.Fatal(http.ListenAndServe(":8080", r))

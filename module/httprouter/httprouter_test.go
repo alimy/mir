@@ -42,3 +42,11 @@ func TestMir(t *testing.T) {
 	}
 	// TODO: add httptest assert
 }
+
+func TestRegister(t *testing.T) {
+	r := httprouter.New()
+	if err := Register(r, &site{}); err != nil {
+		t.Error(err)
+	}
+	// TODO: add httptest assert
+}
