@@ -14,3 +14,9 @@ import (
 func Mir(e *gin.Engine) mir.Engine {
 	return &mirEngine{engine: e}
 }
+
+// Register use entries's info to register handler to gin engine.
+func Register(e *gin.Engine, entries ...interface{}) error {
+	mirE := Mir(e)
+	return mir.Register(mirE, entries...)
+}

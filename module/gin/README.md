@@ -6,11 +6,11 @@ Mir.Gin module provider mir.Engine implement backend [Gin](https://github.com/gi
 package main
 
 import(
-	"github.com/gin-gonic/gin"
 	"github.com/alimy/mir"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	
-	ginE "github.com/alimy/mir/module/gin"
+	mirE "github.com/alimy/mir/module/gin"
 )
 
 type site struct {
@@ -46,13 +46,15 @@ func (b *blog) Articles(c gin.Context) {
 }
 
 func main() {
-	engine := gin.New()             // Default gin engine
+	// Default gin engine
+	engine := gin.New()             
 	
-	mirE := ginE.Mir(engine)        // instance a mir engine
+	// Register handler to engine by mir
 	entries := mirEntries()
-	mir.Register(mirE, entries...)  // Register handler to engine by mir
+	mirE.Register(engine, entries...)
 	
-	engine.Run()                    // Start gin engine serve
+	 // Start gin engine serve
+	engine.Run()                   
 }
 
 // get all entries to register

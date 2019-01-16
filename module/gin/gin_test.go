@@ -38,8 +38,16 @@ func (h *site) GetArticles(context *gin.Context) {
 
 func TestMir(t *testing.T) {
 	engine := gin.Default()
-	mir.SetDefault(Mir(engine))
-	if err := mir.RegisterDefault(&site{}); err != nil {
+	mirE := Mir(engine)
+	if err := mir.Register(mirE, &site{}); err != nil {
+		t.Error(err)
+	}
+	// TODO: add httptest assert
+}
+
+func TestRegister(t *testing.T) {
+	engine := gin.Default()
+	if err := Register(engine, &site{}); err != nil {
 		t.Error(err)
 	}
 	// TODO: add httptest assert
