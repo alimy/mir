@@ -1,7 +1,6 @@
 GO ?= go
-GOFMT ?= gofmt "-s"
+GOFMT ?= gofmt -s
 PACKAGES ?= $(shell GO111MODULE=on $(GO) list ./...)
-VETPACKAGES ?= $(shell GO111MODULE=on $(GO) list ./...)
 GOFILES := $(shell find . -name "*.go" -type f)
 
 .PHONY: default
@@ -16,7 +15,7 @@ build: fmt bindata
 
 .PHONY: test
 test:
-	GO111MODULE=on go test -race ./...
+	hack/test.sh ./ module/echo module/example module/httprouter module/iris module/mux
 
 .PHONY: fmt
 fmt:
@@ -33,7 +32,7 @@ fmt-check:
 
 .PHONY: vet
 vet:
-	$(GO) vet $(VETPACKAGES)
+	hack/vet.sh ./ module/echo module/example module/httprouter module/iris module/mux
 
 .PHONY: lint
 lint:
