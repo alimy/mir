@@ -31,7 +31,7 @@ func (h *site) GetArticles(c gin.Context) {
 	c.String(http.StatusOK, "get articles data")
 }
 
-Then register entry such use gin engine:
+Then register entry such use mux router:
 
 import (
 	"github.com/alimy/mir"
@@ -39,7 +39,7 @@ import (
 	"net/http"
 	"log"
 
-	muxE "github.com/alimy/mir/module/mux"
+	mirE "github.com/alimy/mir/module/mux"
 )
 
 func main() {
@@ -47,8 +47,7 @@ func main() {
 	r := mux.NewRouter()
 
 	// Register handler to engine by mir
-	mir.SetDefault(muxE.Mir(r))
-	mir.Register(&site{})
+	mirE.Register(r, &site{})
 
 	// Bind to a port and pass our router in
 	log.Fatal(http.ListenAndServe(":8000", r))

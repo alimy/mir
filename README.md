@@ -2,16 +2,24 @@
 Mir is a tookit for register handler to http engine router(eg: [Gin](https://github.com/gin-gonic/gin),[echo](https://github.com/labstack/echo),[Iris](https://github.com/kataras/iris), [mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter))
  use struct tag info.
 
-### Usage 
+### Usage (eg: gin backend)
+* Get Mir.Gin module
+
+```bash
+go get github.com/alimy/mir/module/gin@master
+```
+
+Then...
+
 ```go
 package main
 
 import(
-	"github.com/gin-gonic/gin"
 	"github.com/alimy/mir"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	
-	ginE "github.com/alimy/mir/module/gin"
+	mirE "github.com/alimy/mir/module/gin"
 )
 
 type site struct {
@@ -41,8 +49,7 @@ func main() {
 	engine := gin.New()
 	
 	// Register handler to engine by mir
-	mirE := ginE.Mir(engine)
-	mir.Register(mirE, &site{Chain: gin.HandlersChain{gin.Logger()}})
+	mirE.Register(engine, &site{Chain: gin.HandlersChain{gin.Logger()}})
 	
 	// Start gin engine serve
 	engine.Run()
