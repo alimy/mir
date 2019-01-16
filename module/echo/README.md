@@ -12,7 +12,7 @@ import(
 	"net/http"
 
 	
-	echoE "github.com/alimy/mir/module/echo"
+	mirE "github.com/alimy/mir/module/echo"
 )
 
 type site struct {
@@ -52,9 +52,8 @@ func main() {
 	e := echo.New()             
 	
 	// Register handler to engine by mir
-	mirE := echoE.Mir(e)
 	entries := mirEntries()
-	mir.Register(mirE, entries...)
+	mirE.Register(e, entries...)
 	
 	// Start echo engine serve
 	e.Start(":8013")

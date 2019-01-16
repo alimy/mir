@@ -44,3 +44,11 @@ func TestMir(t *testing.T) {
 	}
 	// TODO: add httptest assert
 }
+
+func TestRegister(t *testing.T) {
+	e := echo.New()
+	if err := Register(e, &site{}); err != nil {
+		t.Error(err)
+	}
+	// TODO: add httptest assert
+}

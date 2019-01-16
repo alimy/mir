@@ -14,3 +14,9 @@ import (
 func Mir(e *echo.Echo) mir.Engine {
 	return &mirEngine{engine: e}
 }
+
+// Register use entries's info to register handler to echo engine.
+func Register(e *echo.Echo, entries ...interface{}) error {
+	mirE := Mir(e)
+	return mir.Register(mirE, entries...)
+}
