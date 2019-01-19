@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 
-	ginE "github.com/alimy/mir/module/gin"
+	mirE "github.com/alimy/mir/module/gin"
 )
 
 type site struct {
@@ -31,14 +31,14 @@ func (h *site) GetArticles(context *gin.Context) {
 }
 
 func main() {
-	engine := gin.New()
+	e := gin.New()
 
 	// Register handler to engine by mir
-	e := ginE.Mir(engine)
-	if err := mir.Register(e, &site{Chain: gin.HandlersChain{gin.Logger(), gin.Recovery()}}); err != nil {
+	handlersChain := gin.HandlersChain{gin.Logger(), gin.Recovery()}
+	if err := mirE.Register(e, &site{Chain: handlersChain}); err != nil {
 		panic(err)
 	}
 
 	// Start gin engine serve
-	engine.Run()
+	e.Run()
 }
