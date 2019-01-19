@@ -177,9 +177,9 @@ var _ = Describe("Fields", func() {
 	Context("tagMirs from 3 entries", func() {
 		BeforeEach(func() {
 			entries := []interface{}{
-				&entry{Group: "v2", Chain: mirChains()},
+				&entry{Group: "v2"},
 				&ginEntry{Chain: mirChains()},
-				&irisEntry{Chain: mirChains()},
+				&irisEntry{},
 			}
 			if mirs, e := TagMirFrom(entries...); e == nil {
 				tagMirs = mirs

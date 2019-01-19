@@ -155,8 +155,10 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 			// chain field so just parse chain info only have one field
 			if tagInfo.chainName != "" {
 				if !chainSetuped {
-					chainSetuped = true
-					tagMir.Chain = entryValue.FieldByName(tagInfo.chainName).Elem().Interface()
+					if value := entryValue.FieldByName(tagInfo.chainName); !value.IsNil() {
+						tagMir.Chain = entryValue.FieldByName(tagInfo.chainName).Elem().Interface()
+						chainSetuped = true
+					}
 					break
 				} else {
 					return nil, tagMultChainInfo
