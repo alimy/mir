@@ -2,71 +2,274 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package mir
+package mir_test
 
-type site struct {
-	group    Group `mir:"v1"`
-	index    Get   `mir:"/index/"`
-	articles Get   `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
+import (
+	. "github.com/alimy/mir"
+)
+
+// entry mux style URN entry
+type entry struct {
+	Chain   Chain   `mir:"-"`
+	Group   Group   `mir:"v1"`
+	get     Get     `mir:"/get/"`
+	put     Put     `mir:"/put/"`
+	post    Post    `mir:"/post/"`
+	delete  Delete  `mir:"/delete/"`
+	head    Head    `mir:"/head/"`
+	patch   Patch   `mir:"/patch/"`
+	trace   Trace   `mir:"/trace/"`
+	connect Connect `mir:"/connect/"`
+	options Options `mir:"/options/"`
+	any     Any     `mir:"/any/"`
+	alias   Get     `mir:"/alias/#GetAlias"`
+	query   Get     `mir:"/query/?filter={filter}"`
+	full    Get     `mir:"//{subdomain}.domain.com:8013/full/{other}/{id:[0-9]+}?filter={filter}&foo=bar&index={index:[0-9]+}#GetFull"`
 }
 
-func (h *site) Index() string {
-	return "Index"
+// ginEntry gin,echo,httrouter style URN entry
+type ginEntry struct {
+	Chain   Chain   `mir:"-"`
+	group   Group   `mir:"v1"`
+	get     Get     `mir:"/get/"`
+	put     Put     `mir:"/put/"`
+	post    Post    `mir:"/post/"`
+	delete  Delete  `mir:"/delete/"`
+	head    Head    `mir:"/head/"`
+	patch   Patch   `mir:"/patch/"`
+	trace   Trace   `mir:"/trace/"`
+	connect Connect `mir:"/connect/"`
+	options Options `mir:"/options/"`
+	any     Any     `mir:"/any/"`
+	alias   Get     `mir:"/alias/#GetAlias"`
+	full    Get     `mir:"/full/:other/:name#GetFull"`
 }
 
-func (h *site) GetArticles() string {
-	return "GetArticles"
+// irisEntry iris style URN entry
+type irisEntry struct {
+	Chain   Chain   `mir:"-"`
+	group   Group   `mir:"v1"`
+	get     Get     `mir:"/get/"`
+	put     Put     `mir:"/put/"`
+	post    Post    `mir:"/post/"`
+	delete  Delete  `mir:"/delete/"`
+	head    Head    `mir:"/head/"`
+	patch   Patch   `mir:"/patch/"`
+	trace   Trace   `mir:"/trace/"`
+	connect Connect `mir:"/connect/"`
+	options Options `mir:"/options/"`
+	any     Any     `mir:"/any/"`
+	alias   Get     `mir:"/alias/#GetAlias"`
+	full    Get     `mir:"/full/{other:string}/{name:string range(1,200) else 400}#GetFull"`
 }
 
+// urbanEntry used to test custom mir tag name entry
+type urbanEntry struct {
+	group Group `urban:"v1"`
+	get   Get   `urban:"/get/"`
+}
+
+// errGroupEntry used to test direct assign group info to no exported group filed occurs error
+type errGroupEntry struct {
+	group Group `mir:"-"`
+	get   Get   `mir:"/get/"`
+}
+
+// errChainEntry used to test assign exported chain field occurs error
+type errChainEntry struct {
+	chain Chain `mir:"-"`
+	get   Get   `mir:"/get/"`
+}
+
+// errNoMethodEntry used to test no method define occurs error
+type errNoMethodEntry struct {
+	get Get `mir:"/get/"`
+}
+
+// handlerFunc fake handler function
 type handlerFunc func() string
 
-type simpleEngine struct {
-	pathHandler map[string]handlerFunc
+// chains fake chain of middleware
+type chains []func() string
+
+func (*entry) Get() string {
+	return "/get/"
 }
 
-func (e *simpleEngine) Register(entries []*TagMir) error {
-	for _, entry := range entries {
-		for _, field := range entry.Fields {
-			e.pathHandler[field.Path] = field.Handler.(func() string)
-		}
-	}
-	return nil
+func (*entry) Put() string {
+	return "/put/"
 }
 
-type blog struct {
-	Chain    Chain `mir:"-"`
-	Group    Group `mir:"v1"`
-	index    Get   `mir:"/index/"`
-	articles Get   `mir:"//{subdomain}.domain.com/articles/{category}/{id:[0-9]+}?{filter}&{pages}#GetArticles"`
+func (*entry) Post() string {
+	return "/post/"
 }
 
-func (b *blog) Index() string {
-	return "Index"
+func (*entry) Delete() string {
+	return "/delete/"
 }
 
-func (b *blog) GetArticles() string {
-	return "GetArticles"
+func (*entry) Head() string {
+	return "/head/"
 }
 
-type comment struct {
-	group Group `urban:"v1"`
-	index Get   `urban:"/index/"`
+func (*entry) Patch() string {
+	return "/patch/"
 }
 
-func (c *comment) Index() string {
-	return "Index"
+func (*entry) Trace() string {
+	return "/trace/"
+}
+
+func (*entry) Connect() string {
+	return "/connect/"
+}
+
+func (*entry) Options() string {
+	return "/options/"
+}
+
+func (*entry) Any() string {
+	return "/any/"
+}
+
+func (*entry) GetAlias() string {
+	return "/alias/"
+}
+
+func (*entry) Query() string {
+	return "/query/"
+}
+
+func (*entry) GetFull() string {
+	return "/full/{other}/{id:[0-9]+}"
+}
+
+func (*ginEntry) Get() string {
+	return "/get/"
+}
+
+func (*ginEntry) Put() string {
+	return "/put/"
+}
+
+func (*ginEntry) Post() string {
+	return "/post/"
+}
+
+func (*ginEntry) Delete() string {
+	return "/delete/"
+}
+
+func (*ginEntry) Head() string {
+	return "/head/"
+}
+
+func (*ginEntry) Patch() string {
+	return "/patch/"
+}
+
+func (*ginEntry) Trace() string {
+	return "/trace/"
+}
+
+func (*ginEntry) Connect() string {
+	return "/connect/"
+}
+
+func (*ginEntry) Options() string {
+	return "/options/"
+}
+
+func (*ginEntry) Any() string {
+	return "/any/"
+}
+
+func (*ginEntry) GetAlias() string {
+	return "/alias/"
+}
+
+func (*ginEntry) Query() string {
+	return "/query"
+}
+
+func (*ginEntry) GetFull() string {
+	return "/full/:other/:name"
+}
+
+func (*irisEntry) Get() string {
+	return "/get/"
+}
+
+func (*irisEntry) Put() string {
+	return "/put/"
+}
+
+func (*irisEntry) Post() string {
+	return "/post/"
+}
+
+func (*irisEntry) Delete() string {
+	return "/delete/"
+}
+
+func (*irisEntry) Head() string {
+	return "/head/"
+}
+
+func (*irisEntry) Patch() string {
+	return "/patch/"
+}
+
+func (*irisEntry) Trace() string {
+	return "/trace/"
+}
+
+func (*irisEntry) Connect() string {
+	return "/connect/"
+}
+
+func (*irisEntry) Options() string {
+	return "/options/"
+}
+
+func (*irisEntry) Any() string {
+	return "/any/"
+}
+
+func (*irisEntry) GetAlias() string {
+	return "/alias/"
+}
+
+func (*irisEntry) Query() string {
+	return "/query"
+}
+
+func (*irisEntry) GetFull() string {
+	return "/full/{other:string}/{name:string range(1,200) else 400}"
+}
+
+func (*urbanEntry) Get() string {
+	return "/get/"
+}
+
+func (*errChainEntry) Get() string {
+	return "/get/"
+}
+
+func (*errGroupEntry) Get() string {
+	return "/get/"
 }
 
 func pingChain() string {
-	return "simpleChain"
+	return "pingChain"
 }
 
 func pongChain() string {
 	return "pongChain"
 }
 
-func mirChains() []func() string {
-	return []func() string{
+func mirChains() chains {
+	return chains{
 		pingChain,
 		pongChain,
 	}

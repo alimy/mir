@@ -2,113 +2,58 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package mir
+package mir_test
 
-import "testing"
+import (
+	. "github.com/alimy/mir"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+)
 
-func TestRegisterDefault(t *testing.T) {
-	e := &simpleEngine{pathHandler: make(map[string]handlerFunc)}
-	SetDefault(e)
-	if err := RegisterDefault(&site{}); err != nil {
-		t.Error(err)
-		return
-	}
-	assertSimpleEngine(t, e)
-}
+var _ = Describe("Fields", func() {
+	var (
+		tagMirs []*TagMir
+		tagMir  *TagMir
+		err     error
+	)
 
-func TestRegister(t *testing.T) {
-	e := &simpleEngine{pathHandler: make(map[string]handlerFunc)}
-	if err := Register(e, &site{}); err != nil {
-		t.Error(err)
-		return
-	}
-	assertSimpleEngine(t, e)
-}
+	Context("check mir custom tag name", func() {
+		BeforeEach(func() {
+			SetTag("urban")
+			if mirs, e := TagMirFrom(&urbanEntry{}); e == nil {
+				tagMirs = mirs
+				if len(mirs) > 0 {
+					tagMir = tagMirs[0]
+				}
+				err = nil
+			} else {
+				err = e
+			}
+			SetTag(DefaultTag)
+		})
 
-func TestTagMirFrom(t *testing.T) {
-	tagMirs, err := TagMirFrom(&site{}, &blog{Group: "v2", Chain: mirChains()})
-	if err != nil {
-		t.Error(err)
-	}
-	if len(tagMirs) != 2 {
-		t.Errorf("want two item but not")
-	}
-	assertTagMir(t, tagMirs)
-}
+		It("only one item", func() {
+			Expect(tagMirs).Should(HaveLen(1))
+		})
 
-func TestSetTag(t *testing.T) {
-	// set custom tag name
-	SetTag("urban")
+		It("tagMir not null", func() {
+			Expect(tagMir).ShouldNot(BeNil())
+		})
 
-	tagMirs, err := TagMirFrom(&comment{})
-	if err != nil {
-		t.Error(err)
-	}
-	if len(tagMirs) != 1 {
-		t.Errorf("want one TagMir but have %d", len(tagMirs))
-	}
-	tagMir := tagMirs[0]
-	if len(tagMir.Fields) != 1 {
-		t.Errorf("want one TagFields but hava %d", len(tagMir.Fields))
-	}
-	if tagMir.Group != "v1" {
-		t.Errorf("want group v1 but is %s", tagMir.Group)
-	}
+		It("not error", func() {
+			Expect(err).Should(BeNil())
+		})
 
-	// Reset tag name to default
-	SetTag(DefaultTag)
-}
+		It("had 1 fields", func() {
+			Expect(tagMir.Fields).Should(HaveLen(1))
+		})
 
-func assertTagMir(t *testing.T, tagMirs []*TagMir) {
-	isCheckedGroupV2 := false
-	for _, mir := range tagMirs {
-		switch mir.Group {
-		case "v1":
-			checkGroupV1(t, mir)
-		case "v2":
-			isCheckedGroupV2 = true
-			checkGroupV2(t, mir)
-		}
-	}
+		It("check group", func() {
+			Expect(tagMir.Group).To(Equal("v1"))
+		})
 
-	if !isCheckedGroupV2 {
-		t.Errorf("want a v2 group TagMir instance but not")
-	}
-}
-
-func checkGroupV1(t *testing.T, mir *TagMir) {
-	if mir.Chain != nil {
-		t.Errorf("want nil chain but not")
-	}
-	if len(mir.Fields) != 2 {
-		t.Errorf("want 2 TagFields but hava %d", len(mir.Fields))
-	}
-}
-
-func checkGroupV2(t *testing.T, mir *TagMir) {
-	if mir.Chain == nil {
-		t.Errorf("want a non nil chain but not")
-	}
-	if chains, ok := mir.Chain.([]func() string); ok {
-		if len(chains) != 2 {
-			t.Errorf("want 2 handler in chain but have %d", len(chains))
-		}
-	} else {
-		t.Errorf("want chain in type []func()string but is %t", mir.Chain)
-	}
-	if len(mir.Fields) != 2 {
-		t.Errorf("want 2 TagFields but have %d", len(mir.Fields))
-	}
-}
-
-func assertSimpleEngine(t *testing.T, e *simpleEngine) {
-	handler := e.pathHandler["/index/"]
-	if handler != nil {
-		ret := handler()
-		if ret != "Index" {
-			t.Errorf("want Index but actual is %s", ret)
-		}
-	} else {
-		t.Errorf("not register success")
-	}
-}
+		It("check fields", func() {
+			assertTagFields(tagMir.Fields)
+		})
+	})
+})
