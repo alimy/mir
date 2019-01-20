@@ -20,14 +20,9 @@ var _ = Describe("Fields", func() {
 	Context("check mir custom tag name", func() {
 		BeforeEach(func() {
 			SetTag("urban")
-			if mirs, e := TagMirFrom(&urbanEntry{}); e == nil {
-				tagMirs = mirs
-				if len(mirs) > 0 {
-					tagMir = tagMirs[0]
-				}
-				err = nil
-			} else {
-				err = e
+			tagMirs, err = TagMirFrom(&urbanEntry{})
+			if err == nil && len(tagMirs) > 0 {
+				tagMir = tagMirs[0]
 			}
 			SetTag(DefaultTag)
 		})

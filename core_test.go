@@ -9,7 +9,7 @@ import (
 )
 
 // entry mux style URN entry
-type entry struct {
+type muxEntry struct {
 	Chain   Chain   `mir:"-"`
 	Group   Group   `mir:"v1"`
 	get     Get     `mir:"/get/"`
@@ -92,55 +92,55 @@ type handlerFunc func() string
 // chains fake chain of middleware
 type chains []func() string
 
-func (*entry) Get() string {
+func (*muxEntry) Get() string {
 	return "/get/"
 }
 
-func (*entry) Put() string {
+func (*muxEntry) Put() string {
 	return "/put/"
 }
 
-func (*entry) Post() string {
+func (*muxEntry) Post() string {
 	return "/post/"
 }
 
-func (*entry) Delete() string {
+func (*muxEntry) Delete() string {
 	return "/delete/"
 }
 
-func (*entry) Head() string {
+func (*muxEntry) Head() string {
 	return "/head/"
 }
 
-func (*entry) Patch() string {
+func (*muxEntry) Patch() string {
 	return "/patch/"
 }
 
-func (*entry) Trace() string {
+func (*muxEntry) Trace() string {
 	return "/trace/"
 }
 
-func (*entry) Connect() string {
+func (*muxEntry) Connect() string {
 	return "/connect/"
 }
 
-func (*entry) Options() string {
+func (*muxEntry) Options() string {
 	return "/options/"
 }
 
-func (*entry) Any() string {
+func (*muxEntry) Any() string {
 	return "/any/"
 }
 
-func (*entry) GetAlias() string {
+func (*muxEntry) GetAlias() string {
 	return "/alias/"
 }
 
-func (*entry) Query() string {
+func (*muxEntry) Query() string {
 	return "/query/"
 }
 
-func (*entry) GetFull() string {
+func (*muxEntry) GetFull() string {
 	return "/full/{other}/{id:[0-9]+}"
 }
 

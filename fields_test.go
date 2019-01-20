@@ -32,14 +32,9 @@ var _ = Describe("Fields", func() {
 
 	Context("mux style URN tag string", func() {
 		BeforeEach(func() {
-			if mirs, e := TagMirFrom(&entry{Chain: mirChains()}); e == nil {
-				tagMirs = mirs
-				if len(mirs) > 0 {
-					tagMir = tagMirs[0]
-				}
-				err = nil
-			} else {
-				err = e
+			tagMirs, err = TagMirFrom(&muxEntry{Chain: mirChains()})
+			if err == nil && len(tagMirs) > 0 {
+				tagMir = tagMirs[0]
 			}
 			commonPaths = append(commonPaths, "/query/", "/full/{other}/{id:[0-9]+}")
 		})
@@ -80,14 +75,9 @@ var _ = Describe("Fields", func() {
 
 	Context("gin style URN tag string", func() {
 		BeforeEach(func() {
-			if mirs, e := TagMirFrom(&ginEntry{Chain: mirChains()}); e == nil {
-				tagMirs = mirs
-				if len(mirs) > 0 {
-					tagMir = tagMirs[0]
-				}
-				err = nil
-			} else {
-				err = e
+			tagMirs, err = TagMirFrom(&ginEntry{Chain: mirChains()})
+			if err == nil && len(tagMirs) > 0 {
+				tagMir = tagMirs[0]
 			}
 			commonPaths = append(commonPaths, "/full/:other/:name")
 		})
@@ -128,14 +118,9 @@ var _ = Describe("Fields", func() {
 
 	Context("iris style URN tag string", func() {
 		BeforeEach(func() {
-			if mirs, e := TagMirFrom(&irisEntry{Chain: mirChains()}); e == nil {
-				tagMirs = mirs
-				if len(mirs) > 0 {
-					tagMir = tagMirs[0]
-				}
-				err = nil
-			} else {
-				err = e
+			tagMirs, err = TagMirFrom(&irisEntry{Chain: mirChains()})
+			if err == nil && len(tagMirs) > 0 {
+				tagMir = tagMirs[0]
 			}
 			commonPaths = append(commonPaths, "/full/{other:string}/{name:string range(1,200) else 400}")
 		})
@@ -177,16 +162,11 @@ var _ = Describe("Fields", func() {
 	Context("tagMirs from 3 entries", func() {
 		BeforeEach(func() {
 			entries := []interface{}{
-				&entry{Group: "v2"},
+				&muxEntry{Group: "v2"},
 				&ginEntry{Chain: mirChains()},
 				&irisEntry{},
 			}
-			if mirs, e := TagMirFrom(entries...); e == nil {
-				tagMirs = mirs
-				err = nil
-			} else {
-				err = e
-			}
+			tagMirs, err = TagMirFrom(entries...)
 		})
 
 		It("not error", func() {
