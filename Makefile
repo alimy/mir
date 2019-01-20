@@ -15,7 +15,7 @@ build: fmt bindata
 
 .PHONY: test
 test:
-	hack/test.sh ./ module/echo module/example module/httprouter module/iris module/mux
+	hack/test.sh ./ module/echo module/gin module/httprouter module/iris module/mux
 
 .PHONY: fmt
 fmt:
@@ -32,7 +32,7 @@ fmt-check:
 
 .PHONY: vet
 vet:
-	hack/vet.sh ./ module/echo module/example module/httprouter module/iris module/mux
+	hack/vet.sh ./ module/echo module/gin module/httprouter module/iris module/mux module/example
 
 .PHONY: lint
 lint:
