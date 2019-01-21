@@ -2,53 +2,100 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package echo
+package echo_test
 
 import (
+	"bytes"
 	"github.com/alimy/mir"
 	"github.com/labstack/echo"
-	"net/http"
-	"testing"
+	"net/http/httptest"
+
+	. "github.com/alimy/mir/module/echo"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-type site struct {
-	count    uint64
-	v1       mir.Group `mir:"v1"`
-	add      mir.Post  `mir:"/add/:id"`
-	index    mir.Get   `mir:"/index/"`
-	articles mir.Get   `mir:"/articles/:category/#GetArticles"`
-}
+var _ = Describe("Core", func() {
+	var (
+		e   *echo.Echo
+		w   *httptest.ResponseRecorder
+		err error
+	)
 
-// Add handler of "/add/:id"
-func (h *site) Add(c echo.Context) error {
-	return c.String(http.StatusOK, "add")
-}
+	JustBeforeEach(func() {
+		w = httptest.NewRecorder()
+	})
 
-// Index handler of the index field that in site struct, the struct tag indicate
-// this handler will register to path "/index/" and method is http.MethodGet.
-func (h *site) Index(c echo.Context) error {
-	h.count++
-	return c.String(http.StatusOK, "Index")
-}
+	Context("check Mir function", func() {
+		BeforeEach(func() {
+			e = echo.New()
+			mirE := Mir(e)
+			err = mir.Register(mirE, &entry{Chain: mirChain()})
+		})
 
-// GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
-func (h *site) GetArticles(c echo.Context) error {
-	return c.String(http.StatusOK, "GetArticles")
-}
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
 
-func TestMir(t *testing.T) {
-	e := echo.New()
-	mirE := Mir(e)
-	if err := mir.Register(mirE, &site{}); err != nil {
-		t.Error(err)
-	}
-	// TODO: add httptest assert
-}
+		It("handle add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/v1/add/10086/", body)
+			e.ServeHTTP(w, r)
 
-func TestRegister(t *testing.T) {
-	e := echo.New()
-	if err := Register(e, &site{}); err != nil {
-		t.Error(err)
-	}
-	// TODO: add httptest assert
-}
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/index/", nil)
+			e.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/articles/golang/", nil)
+			e.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetArticles:golang"))
+		})
+	})
+
+	Context("check Register function", func() {
+		BeforeEach(func() {
+			e = echo.New()
+			err = Register(e, &entry{Group: "v2", Chain: mirChain()})
+		})
+
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
+
+		It("handle add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/v2/add/10086/", body)
+			e.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/index/", nil)
+			e.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/articles/golang/", nil)
+			e.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetArticles:golang"))
+		})
+	})
+})

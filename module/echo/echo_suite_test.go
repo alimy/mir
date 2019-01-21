@@ -2,7 +2,7 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package gin_test
+package echo_test
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestGin(t *testing.T) {
+func TestEcho(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Gin Suite")
+	RunSpecs(t, "Echo Suite")
 }

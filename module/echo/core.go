@@ -39,7 +39,7 @@ func registerWith(g *echo.Group, fields []*mir.TagField) error {
 			if field.Method == mir.MethodAny {
 				g.Any(field.Path, handlerFunc)
 			} else {
-				g.Add(field.Method, field.Method, handlerFunc)
+				g.Add(field.Method, field.Path, handlerFunc)
 			}
 		} else {
 			return fmt.Errorf("handler not function of func(echo.Context) error")

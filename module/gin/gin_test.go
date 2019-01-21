@@ -30,7 +30,7 @@ var _ = Describe("Core", func() {
 		BeforeEach(func() {
 			engine = gin.New()
 			mirE := Mir(engine)
-			err = mir.Register(mirE, &entry{})
+			err = mir.Register(mirE, &entry{Chain: mirChain()})
 		})
 
 		It("no error", func() {
@@ -66,7 +66,7 @@ var _ = Describe("Core", func() {
 	Context("check Register function", func() {
 		BeforeEach(func() {
 			engine = gin.New()
-			err = Register(engine, &entry{Group: "v2"})
+			err = Register(engine, &entry{Group: "v2", Chain: mirChain()})
 		})
 
 		It("no error", func() {

@@ -2,11 +2,12 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package gin_test
+package echo_test
 
 import (
 	"github.com/alimy/mir"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"io"
 	"net/http"
 	"strings"
@@ -23,29 +24,29 @@ type entry struct {
 }
 
 // Add handler of "/add/:id"
-func (h *entry) Add(c *gin.Context) {
-	body, err := h.bytesFromBody(c.Request)
+func (h *entry) Add(c echo.Context) error {
+	body, err := h.bytesFromBody(c.Request())
 	if err != nil {
 		body = []byte("")
 	}
 	result := strings.Join([]string{
 		"Add",
-		c.Params.ByName("id"),
+		c.Param("id"),
 		string(body),
 	}, ":")
-	c.String(http.StatusOK, result)
+	return c.String(http.StatusOK, result)
 }
 
 // Index handler of the index field that in site struct, the struct tag indicate
 // this handler will register to path "/index/" and method is http.MethodGet.
-func (h *entry) Index(c *gin.Context) {
+func (h *entry) Index(c echo.Context) error {
 	h.count++
-	c.String(http.StatusOK, "Index")
+	return c.String(http.StatusOK, "Index")
 }
 
 // GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
-func (h *entry) GetArticles(c *gin.Context) {
-	c.String(http.StatusOK, "GetArticles:"+c.Params.ByName("category"))
+func (h *entry) GetArticles(c echo.Context) error {
+	return c.String(http.StatusOK, "GetArticles:"+c.Param("category"))
 }
 
 // bytesFromBody get contents from request's body
@@ -63,9 +64,9 @@ func (h *entry) bytesFromBody(r *http.Request) ([]byte, error) {
 }
 
 // mirChain chain used to register to engine
-func mirChain() gin.HandlersChain {
-	return gin.HandlersChain{
-		gin.Logger(),
-		gin.Recovery(),
+func mirChain() []echo.MiddlewareFunc {
+	return []echo.MiddlewareFunc{
+		middleware.Logger(),
+		middleware.Recover(),
 	}
 }
