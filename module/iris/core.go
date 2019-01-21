@@ -45,7 +45,7 @@ func registerWith(party iris.Party, fields []*mir.TagField) error {
 			if field.Method == mir.MethodAny {
 				party.Any(field.Path, handlerFunc)
 			} else {
-				party.Handle(field.Method, field.Method, handlerFunc)
+				party.Handle(field.Method, field.Path, handlerFunc)
 			}
 		} else {
 			return fmt.Errorf("handler not function of func(context.Context)")

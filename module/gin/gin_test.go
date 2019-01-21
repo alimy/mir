@@ -24,6 +24,7 @@ var _ = Describe("Core", func() {
 
 	JustBeforeEach(func() {
 		w = httptest.NewRecorder()
+
 	})
 
 	Context("check Mir function", func() {
