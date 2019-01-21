@@ -1,7 +1,7 @@
-github.com/alimy/mir v0.5.1-0.20190119172507-476d88190b52 h1:RnFUqAvzDsWRW8pJ2FJiI4mkh9+RtPofUswYam2cUXI=
-github.com/alimy/mir v0.5.1-0.20190119172507-476d88190b52/go.mod h1:JIZY+q16FJKFNm2/a9KgUmYpa6SpsT9i7hafdg7xBhQ=
-github.com/alimy/mir/module/gin v0.0.0-20190119173040-ab7801c02a7b h1:5bw+J8gNeX3R32Mj+/6dr+g60pb4zsmnZl2cyLwMIH4=
-github.com/alimy/mir/module/gin v0.0.0-20190119173040-ab7801c02a7b/go.mod h1:Ca00fJk4piLwAxA04EzRJtVGi+9qMvvSoSTgBj/O/Ig=
+github.com/alimy/mir v0.5.2-0.20190121081835-6a12746c47e2 h1:GfHwqnMYxajPONV29l9j2Fak9AbOHRNP4v6njDwIKVE=
+github.com/alimy/mir v0.5.2-0.20190121081835-6a12746c47e2/go.mod h1:JIZY+q16FJKFNm2/a9KgUmYpa6SpsT9i7hafdg7xBhQ=
+github.com/alimy/mir/module/gin v0.0.0-20190121083822-23fc6ffddb60 h1:XUIfx9alxyyEogC7StQysbRL2QGfyOQSOFX0zcMDcL4=
+github.com/alimy/mir/module/gin v0.0.0-20190121083822-23fc6ffddb60/go.mod h1:i13gk7/TNTi8g1iZXDftfCjT1Gl74nSwQe36LT0aoXg=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 h1:AzN37oI0cOS+cougNAV9szl6CVoj2RYwzS3DpUQNtlY=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
