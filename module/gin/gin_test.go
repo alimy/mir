@@ -38,6 +38,10 @@ var _ = Describe("Core", func() {
 			Expect(err).Should(BeNil())
 		})
 
+		It("no nil", func() {
+			Expect(engine).ShouldNot(BeNil())
+		})
+
 		It("handle add", func() {
 			body := bytes.NewReader([]byte("hello"))
 			r := httptest.NewRequest(mir.MethodPost, "/v1/add/10086/", body)
@@ -74,6 +78,10 @@ var _ = Describe("Core", func() {
 			Expect(err).Should(BeNil())
 		})
 
+		It("no nil", func() {
+			Expect(engine).ShouldNot(BeNil())
+		})
+
 		It("handle add", func() {
 			body := bytes.NewReader([]byte("hello"))
 			r := httptest.NewRequest(mir.MethodPost, "/v2/add/10086/", body)
@@ -92,6 +100,71 @@ var _ = Describe("Core", func() {
 		})
 
 		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/articles/golang/", nil)
+			engine.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetArticles:golang"))
+		})
+	})
+
+	Context("check Register entries", func() {
+		BeforeEach(func() {
+			engine = gin.New()
+			err = Register(engine, &entry{}, &entry{Group: "v2", Chain: mirChain()})
+		})
+
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
+
+		It("no nil", func() {
+			Expect(engine).ShouldNot(BeNil())
+		})
+
+		It("handle v1 add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/v1/add/10086/", body)
+			engine.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler v1 index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/index/", nil)
+			engine.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle v1 articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/articles/golang/", nil)
+			engine.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetArticles:golang"))
+		})
+
+		It("handle v2 add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/v2/add/10086/", body)
+			engine.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler v2 index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/index/", nil)
+			engine.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle v2 articles", func() {
 			r := httptest.NewRequest(mir.MethodGet, "/v2/articles/golang/", nil)
 			engine.ServeHTTP(w, r)
 

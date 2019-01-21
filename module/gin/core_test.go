@@ -18,7 +18,7 @@ type entry struct {
 	Chain    mir.Chain `mir:"-"`
 	Group    mir.Group `mir:"v1"`
 	add      mir.Post  `mir:"/add/:id/"`
-	index    mir.Get   `mir:"/index/"`
+	index    mir.Any   `mir:"/index/"`
 	articles mir.Get   `mir:"/articles/:category/#GetArticles"`
 }
 
