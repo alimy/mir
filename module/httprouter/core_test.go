@@ -17,7 +17,7 @@ type entry struct {
 	count uint64
 
 	add      mir.Post `mir:"/add/:id/"`
-	index    mir.Get  `mir:"/index/"`
+	index    mir.Any  `mir:"/index/"`
 	articles mir.Get  `mir:"/articles/:category/#GetArticles"`
 }
 
