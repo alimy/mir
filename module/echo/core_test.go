@@ -24,8 +24,8 @@ type entry struct {
 }
 
 // Add handler of "/add/:id"
-func (h *entry) Add(c echo.Context) error {
-	body, err := h.bytesFromBody(c.Request())
+func (e *entry) Add(c echo.Context) error {
+	body, err := e.bytesFromBody(c.Request())
 	if err != nil {
 		body = []byte("")
 	}
@@ -39,18 +39,18 @@ func (h *entry) Add(c echo.Context) error {
 
 // Index handler of the index field that in site struct, the struct tag indicate
 // this handler will register to path "/index/" and method is http.MethodGet.
-func (h *entry) Index(c echo.Context) error {
-	h.count++
+func (e *entry) Index(c echo.Context) error {
+	e.count++
 	return c.String(http.StatusOK, "Index")
 }
 
 // GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
-func (h *entry) GetArticles(c echo.Context) error {
+func (e *entry) GetArticles(c echo.Context) error {
 	return c.String(http.StatusOK, "GetArticles:"+c.Param("category"))
 }
 
 // bytesFromBody get contents from request's body
-func (h *entry) bytesFromBody(r *http.Request) ([]byte, error) {
+func (e *entry) bytesFromBody(r *http.Request) ([]byte, error) {
 	defer r.Body.Close()
 
 	buf := [256]byte{}

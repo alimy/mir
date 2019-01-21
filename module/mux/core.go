@@ -26,7 +26,11 @@ func (e *mirEngine) Register(entries []*mir.TagMir) error {
 		if entry.Group == "" || entry.Group == "/" {
 			router = e.engine
 		} else {
-			router = e.engine.Path(entry.Group).Subrouter()
+			pathPrefix := entry.Group
+			if !strings.HasPrefix(entry.Group, "/") {
+				pathPrefix = "/" + entry.Group
+			}
+			router = e.engine.PathPrefix(pathPrefix).Subrouter()
 		}
 		if err := handlerChainTo(router, entry.Chain); err != nil {
 			return err
@@ -62,8 +66,11 @@ func registerWith(router *mux.Router, fields []*mir.TagField) error {
 			if err := inflateQueries(route, field.Queries); err != nil {
 				return err
 			}
+			if field.Host != "" {
+				route.Host(field.Host)
+			}
 		} else {
-			return fmt.Errorf("handler not func(*gin.Context) function")
+			return fmt.Errorf("handler not func(http.ResponseWriter, *http.Request) function")
 		}
 	}
 	return nil

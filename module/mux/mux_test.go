@@ -2,53 +2,102 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package mux
+package mux_test
 
 import (
+	"bytes"
 	"github.com/alimy/mir"
 	"github.com/gorilla/mux"
-	"net/http"
-	"testing"
+	"net/http/httptest"
+
+	. "github.com/alimy/mir/module/mux"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-type site struct {
-	count    uint32
-	v1       mir.Group `mir:"v1"`
-	add      mir.Post  `mir:"/add/{id}"`
-	index    mir.Get   `mir:"/index/"`
-	articles mir.Get   `mir:"//localhost:8013/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}#GetArticles"`
-}
+var _ = Describe("Core", func() {
+	var (
+		router *mux.Router
+		w      *httptest.ResponseRecorder
+		err    error
+	)
 
-// Add handler of "/add/:id"
-func (h *site) Add(rw http.ResponseWriter, r *http.Request) {
-	rw.Write([]byte("Add"))
-}
+	JustBeforeEach(func() {
+		w = httptest.NewRecorder()
+	})
 
-// Index handler of the index field that in site struct, the struct tag indicate
-// this handler will register to path "/index/" and method is http.MethodGet.
-func (h *site) Index(rw http.ResponseWriter, r *http.Request) {
-	h.count++
-	rw.Write([]byte("Index"))
-}
+	Context("check Mir function", func() {
+		BeforeEach(func() {
+			router = mux.NewRouter()
+			mirE := Mir(router)
+			err = mir.Register(mirE, &entry{Chain: mirChain()})
+		})
 
-// GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
-func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request) {
-	rw.Write([]byte("GetArticles"))
-}
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
 
-func TestMir(t *testing.T) {
-	r := mux.NewRouter()
-	mirE := Mir(r)
-	if err := mir.Register(mirE, &site{}); err != nil {
-		t.Error(err)
-	}
-	// TODO: add httptest assert
-}
+		It("handle add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/v1/add/10086/", body)
+			router.ServeHTTP(w, r)
 
-func TestRegister(t *testing.T) {
-	r := mux.NewRouter()
-	if err := Register(r, &site{}); err != nil {
-		t.Error(err)
-	}
-	// TODO: add httptest assert
-}
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/index/", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/articles/golang/10086?filter=module&foo=bar&num=5", nil)
+			r.Host = "alimy.example.com"
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetArticles:alimy:golang:10086:module:5"))
+		})
+	})
+
+	Context("check Register function", func() {
+		BeforeEach(func() {
+			router = mux.NewRouter()
+			err = Register(router, &entry{Group: "/v2", Chain: mirChain()})
+		})
+
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
+
+		It("handle add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/v2/add/10086/", body)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/index/", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/articles/golang/10086?filter=module&foo=bar&num=5", nil)
+			r.Host = "alimy.example.com"
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetArticles:alimy:golang:10086:module:5"))
+		})
+	})
+})

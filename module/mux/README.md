@@ -16,9 +16,10 @@ import(
 
 type site struct {
 	count    uint32
+	
 	Group mir.Group     `mir:"v1"`
 	index mir.Get       `mir:"/index/"`
-	articles mir.Get    `mir:"//localhost:8013/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}#GetArticles"`
+	articles mir.Get    `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}#GetArticles"`
 }
 
 // Index handler of the index field that in site struct, the struct tag indicate
@@ -47,7 +48,7 @@ func main() {
 	mirE.Register(r, &site{}) 
 	
 	// Bind to a port and pass our router in
-	log.Fatal(http.ListenAndServe(":8000", r)) 
+	log.Fatal(http.ListenAndServe(":8013", r)) 
 }
 
 ```
