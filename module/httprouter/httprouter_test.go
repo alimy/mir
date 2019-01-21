@@ -2,51 +2,110 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package httprouter
+package httprouter_test
 
 import (
+	"bytes"
 	"github.com/alimy/mir"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"testing"
+	"net/http/httptest"
+
+	. "github.com/alimy/mir/module/httprouter"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-type site struct {
-	count    uint64
-	add      mir.Post `mir:"/add/:id"`
-	index    mir.Get  `mir:"/index/"`
-	articles mir.Get  `mir:"/articles/:category/#GetArticles"`
-}
+var _ = Describe("Core", func() {
+	var (
+		router *httprouter.Router
+		w      *httptest.ResponseRecorder
+		err    error
+	)
 
-// Add handler of "/add/:id"
-func (h *site) Add(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	rw.Write([]byte("add"))
-}
+	JustBeforeEach(func() {
+		w = httptest.NewRecorder()
 
-// Index handler of the index field that in site struct, the struct tag indicate
-// this handler will register to path "/index/" and method is http.MethodGet.
-func (h *site) Index(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	rw.Write([]byte("Index"))
-}
+	})
 
-// GetArticles handler of articles indicator that contains Host/Path/Queries/Handler info.
-func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	rw.Write([]byte("GetArticles"))
-}
+	Context("check Mir function", func() {
+		BeforeEach(func() {
+			router = httprouter.New()
+			mirE := Mir(router)
+			err = mir.Register(mirE, &entry{})
+		})
 
-func TestMir(t *testing.T) {
-	r := httprouter.New()
-	mirE := Mir(r)
-	if err := mir.Register(mirE, &site{}); err != nil {
-		t.Error(err)
-	}
-	// TODO: add httptest assert
-}
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
 
-func TestRegister(t *testing.T) {
-	r := httprouter.New()
-	if err := Register(r, &site{}); err != nil {
-		t.Error(err)
-	}
-	// TODO: add httptest assert
-}
+		It("no nil", func() {
+			Expect(router).ShouldNot(BeNil())
+		})
+
+		It("handle add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/add/10086/", body)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/index/", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/articles/golang/", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(Equal("GetArticles:golang"))
+		})
+	})
+
+	Context("check Register function", func() {
+		BeforeEach(func() {
+			router = httprouter.New()
+			err = Register(router, &entry{})
+		})
+
+		It("no error", func() {
+			Expect(err).Should(BeNil())
+		})
+
+		It("no nil", func() {
+			Expect(router).ShouldNot(BeNil())
+		})
+
+		It("handle add", func() {
+			body := bytes.NewReader([]byte("hello"))
+			r := httptest.NewRequest(mir.MethodPost, "/add/10086/", body)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(Equal("Add:10086:hello"))
+		})
+
+		It("handler index", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/index/", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(Equal("Index"))
+		})
+
+		It("handle articles", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/articles/golang/", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(http.StatusOK))
+			Expect(w.Body.String()).To(Equal("GetArticles:golang"))
+		})
+	})
+})

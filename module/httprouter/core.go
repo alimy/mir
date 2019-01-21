@@ -24,15 +24,15 @@ func (e *mirEngine) Register(entries []*mir.TagMir) error {
 		for _, field := range entry.Fields {
 			if handlerFunc, ok := field.Handler.(func(http.ResponseWriter, *http.Request, httprouter.Params)); ok {
 				if field.Method == mir.MethodAny {
-					e.engine.Handle(mir.MethodGet, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodPut, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodPost, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodDelete, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodHead, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodPatch, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodOptions, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodConnect, field.Method, handlerFunc)
-					e.engine.Handle(mir.MethodTrace, field.Method, handlerFunc)
+					e.engine.Handle(mir.MethodGet, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodPut, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodPost, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodDelete, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodHead, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodPatch, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodOptions, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodConnect, field.Path, handlerFunc)
+					e.engine.Handle(mir.MethodTrace, field.Path, handlerFunc)
 
 				} else {
 					e.engine.Handle(field.Method, field.Path, handlerFunc)

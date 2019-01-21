@@ -22,7 +22,9 @@ type site struct {
 // Index handler of the index field that in site struct, the struct tag indicate
 // this handler will register to path "/index/" and method is http.MethodGet.
 func (h *site) Index(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	rw.Write([]byte("get index data"))
+	rw.WriteHeader(http.StatusOK)
+	rw.Header().Add("Content-Type", "text/plain; charset=utf-8")
+	rw.Write([]byte("Index"))
 }
 
 // GetArticles handler of articles indicator that contains Host/Path/Handler info.
@@ -31,7 +33,9 @@ func (h *site) Index(rw http.ResponseWriter, r *http.Request, p httprouter.Param
 // use field name capital first char as default handler name(eg: if articles had no #GetArticles then the handler name will
 // is Articles) 
 func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-    rw.Write([]byte("get articles data"))
+	rw.WriteHeader(http.StatusOK)
+	rw.Header().Add("Content-Type", "text/plain; charset=utf-8")
+    rw.Write([]byte("GetArticles"))
 }
 
 func main() {
