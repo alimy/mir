@@ -18,7 +18,7 @@ type entry struct {
 	Chain    mir.Chain `mir:"-"`
 	Group    mir.Group `mir:"v1"`
 	add      mir.Post  `mir:"/add/{id}/"`
-	index    mir.Get   `mir:"/index/"`
+	index    mir.Any   `mir:"/index/"`
 	articles mir.Get   `mir:"//{subdomain:[a-z]+}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&num={num:[0-9]+}#GetArticles"`
 }
 
