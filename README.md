@@ -1,15 +1,15 @@
 # Mir [![Build Status](https://api.travis-ci.com/alimy/mir.svg?branch=master)](https://travis-ci.com/alimy/mir)
-Mir is a tookit for register handler to http engine router(eg: [Gin](https://github.com/gin-gonic/gin), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter))
- use struct tag info.
+Mir is used for register handler to http router(eg: [Gin](https://github.com/gin-gonic/gin), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter))
+ depends on struct tag string info that defined in logic object's struct type field.
 
 ### Usage (eg: gin backend)
-* Get Mir.Gin module
+* Get Mir.Gin module first
 
 ```bash
 go get github.com/alimy/mir/module/gin@master
 ```
 
-Then...
+* Then happy in codding enjoy your heart...
 
 ```go
 package main
