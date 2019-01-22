@@ -1,5 +1,5 @@
 # Mir.Macaron
-Mir.Macaron module provider mir.Engine implement backend by [Macaron](https://github.com/go-macaron/macaron).
+Mir.Macaron module provide mir.Engine implement backend by [Macaron](https://github.com/go-macaron/macaron).
 
 ### Usage 
 * Get module first

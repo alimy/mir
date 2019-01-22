@@ -1,5 +1,5 @@
 # Mir.Gin
-Mir.Gin module provider mir.Engine implement backend [Gin](https://github.com/gin-gonic/gin).
+Mir.Gin module provide mir.Engine implement backend [Gin](https://github.com/gin-gonic/gin).
 
 ### Usage 
 ```go

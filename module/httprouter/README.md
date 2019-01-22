@@ -1,5 +1,5 @@
 # Mir.httprouter
-Mir.httprouter module provider mir.Engine implement backend [httprouter](github.com/julienschmidt/httprouter).
+Mir.httprouter module provide mir.Engine implement backend [httprouter](github.com/julienschmidt/httprouter).
 
 ### Usage 
 ```go
