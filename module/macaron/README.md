@@ -1,5 +1,5 @@
 # Mir.Macaron
-Mir.Macaron module provider mir.Engine implement backend by [Macaron](https://https://github.com/go-macaron/macaron).
+Mir.Macaron module provider mir.Engine implement backend by [Macaron](https://github.com/go-macaron/macaron).
 
 ### Usage 
 * Get module first
@@ -78,8 +78,9 @@ func mirEntries()[]interface{} {
 			Group: "v2", // direct custom group to v2 override default v1 in mir tag defined
 			Chain: []macaron.Handler {
 				macaron.Logger(),
-	            macaron.Recovery(),
-			}},
+	            		macaron.Recovery(),
+			},
+		},
 	}
 }
 ```
