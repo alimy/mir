@@ -5,6 +5,12 @@
 *.so
 *.dylib
 
+coverage.out
+count.out
+test
+profile.out
+tmp.out
+
 # Test binary, build with `go test -c`
 *.test
 
