@@ -188,11 +188,11 @@ func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, e
 	if t.handler == "." {
 		firstRune, _ := utf8.DecodeRuneInString(t.fieldName)
 		if unicode.IsLower(firstRune) {
-			handler = ptrV
+			handler = ptrV.Interface()
 		} else if fieldValue := valueByName(v, t.fieldName); fieldValue != nil {
 			handler = fieldValue
 		} else {
-			handler = ptrV
+			handler = ptrV.Interface()
 		}
 	} else {
 		handler, err = methodByName(v, ptrV, t.handler)
