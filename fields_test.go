@@ -36,11 +36,54 @@ var _ = Describe("Fields", func() {
 
 	Context("mux style URN tag string", func() {
 		BeforeEach(func() {
-			tagMirs, err = TagMirFrom(&muxEntry{Chain: mirChains()})
+			tagMirs, err = TagMirFrom(&muxEntry{Chain: mirChains(), DotHandler: DotHandler})
 			if err == nil && len(tagMirs) > 0 {
 				tagMir = tagMirs[0]
 			}
 			commonPaths = append(commonPaths, "/query/", "/full/{other}/{id:[0-9]+}")
+		})
+
+		It("only one item", func() {
+			Expect(tagMirs).Should(HaveLen(1))
+		})
+
+		It("tagMir not null", func() {
+			Expect(tagMir).ShouldNot(BeNil())
+		})
+
+		It("not error", func() {
+			Expect(err).Should(BeNil())
+		})
+
+		It("had 14 fields", func() {
+			Expect(tagMir.Fields).Should(HaveLen(14))
+		})
+
+		It("check group", func() {
+			Expect(tagMir.Group).To(Equal("v1"))
+		})
+
+		It("check chain", func() {
+			chains, ok := tagMir.Chain.(chains)
+			Expect(ok).Should(BeTrue())
+			Expect(chains).Should(HaveLen(2))
+		})
+
+		It("check fields", func() {
+			fields := assertTagFields(tagMir.Fields)
+			for _, path := range commonPaths {
+				Expect(fields).Should(HaveKey(path))
+			}
+		})
+	})
+
+	Context("gin style URN tag string", func() {
+		BeforeEach(func() {
+			tagMirs, err = TagMirFrom(&ginEntry{Chain: mirChains(), DotHandler: DotHandler})
+			if err == nil && len(tagMirs) > 0 {
+				tagMir = tagMirs[0]
+			}
+			commonPaths = append(commonPaths, "/full/:other/:name")
 		})
 
 		It("only one item", func() {
@@ -77,52 +120,9 @@ var _ = Describe("Fields", func() {
 		})
 	})
 
-	Context("gin style URN tag string", func() {
-		BeforeEach(func() {
-			tagMirs, err = TagMirFrom(&ginEntry{Chain: mirChains()})
-			if err == nil && len(tagMirs) > 0 {
-				tagMir = tagMirs[0]
-			}
-			commonPaths = append(commonPaths, "/full/:other/:name")
-		})
-
-		It("only one item", func() {
-			Expect(tagMirs).Should(HaveLen(1))
-		})
-
-		It("tagMir not null", func() {
-			Expect(tagMir).ShouldNot(BeNil())
-		})
-
-		It("not error", func() {
-			Expect(err).Should(BeNil())
-		})
-
-		It("had 12 fields", func() {
-			Expect(tagMir.Fields).Should(HaveLen(12))
-		})
-
-		It("check group", func() {
-			Expect(tagMir.Group).To(Equal("v1"))
-		})
-
-		It("check chain", func() {
-			chains, ok := tagMir.Chain.(chains)
-			Expect(ok).Should(BeTrue())
-			Expect(chains).Should(HaveLen(2))
-		})
-
-		It("check fields", func() {
-			fields := assertTagFields(tagMir.Fields)
-			for _, path := range commonPaths {
-				Expect(fields).Should(HaveKey(path))
-			}
-		})
-	})
-
 	Context("iris style URN tag string", func() {
 		BeforeEach(func() {
-			tagMirs, err = TagMirFrom(&irisEntry{Chain: mirChains()})
+			tagMirs, err = TagMirFrom(&irisEntry{Chain: mirChains(), DotHandler: DotHandler})
 			if err == nil && len(tagMirs) > 0 {
 				tagMir = tagMirs[0]
 			}
@@ -141,8 +141,8 @@ var _ = Describe("Fields", func() {
 			Expect(err).Should(BeNil())
 		})
 
-		It("had 12 fields", func() {
-			Expect(tagMir.Fields).Should(HaveLen(12))
+		It("had 13 fields", func() {
+			Expect(tagMir.Fields).Should(HaveLen(13))
 		})
 
 		It("check group", func() {
@@ -186,9 +186,9 @@ var _ = Describe("Fields", func() {
 			for _, item := range tagMirs {
 				if item.Group == "v2" {
 					haveV2Group = true
-					Expect(item.Fields).Should(HaveLen(13))
+					Expect(item.Fields).Should(HaveLen(14))
 				} else if item.Group == "v1" {
-					Expect(item.Fields).Should(HaveLen(24))
+					Expect(item.Fields).Should(HaveLen(26))
 				}
 			}
 			Expect(haveV2Group).Should(BeTrue())

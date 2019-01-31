@@ -49,10 +49,10 @@ type tagBase struct {
 type tagInfo struct {
 	tagBase
 	isGroup   bool   // indicate whether a group field
+	isChain   bool   // indicate whether a chain field
 	group     string // indicate group information in struct tag string
-	groupName string // indicate group field name
-	chainName string // indicate chain field name
 	handler   string // indicate handler information in struct tag string
+	fieldName string // indicate field name
 }
 
 // TagField indicate mir tag info used to register route info to engine
@@ -153,10 +153,10 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 				}
 			}
 			// chain field so just parse chain info only have one field
-			if tagInfo.chainName != "" {
+			if tagInfo.isChain {
 				if !chainSetuped {
-					if value := entryValue.FieldByName(tagInfo.chainName); !value.IsNil() {
-						tagMir.Chain = entryValue.FieldByName(tagInfo.chainName).Elem().Interface()
+					if value := valueByName(entryValue, tagInfo.fieldName); value != nil {
+						tagMir.Chain = value
 						chainSetuped = true
 					}
 					break
@@ -181,8 +181,24 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 
 // tagFieldFrom build tagField from entry and tagInfo
 func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, error) {
-	if m, err := methodByName(v, ptrV, t.handler); err == nil {
-		return &TagField{tagBase: t.tagBase, Handler: m}, nil
+	var (
+		err     error
+		handler interface{}
+	)
+	if t.handler == "." {
+		firstRune, _ := utf8.DecodeRuneInString(t.fieldName)
+		if unicode.IsLower(firstRune) {
+			handler = ptrV
+		} else if fieldValue := valueByName(v, t.fieldName); fieldValue != nil {
+			handler = fieldValue
+		} else {
+			handler = ptrV
+		}
+	} else {
+		handler, err = methodByName(v, ptrV, t.handler)
+	}
+	if handler != nil {
+		return &TagField{tagBase: t.tagBase, Handler: handler}, nil
 	} else {
 		return nil, err
 	}
@@ -206,14 +222,14 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	tag = tag[i:]
 
 	// group info or method info or chain info
+	info.fieldName = field.Name
 	switch field.Type.Name() {
 	case "Chain":
-		info.chainName = field.Name
+		info.isChain = true
 		return info, nil
 	case "Group":
 		info.isGroup = true
 		info.group = tag
-		info.groupName = field.Name
 		return info, nil
 	case "Get":
 		info.Method = MethodGet
@@ -302,7 +318,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 // inflateGroupInfo setup tag group info to TagMir instance
 func inflateGroupInfo(m *TagMir, v reflect.Value, t *tagInfo) {
 	// group field value assign to m.group first or tag group string info assigned
-	if group := v.FieldByName(t.groupName).String(); group != "" {
+	if group := v.FieldByName(t.fieldName).String(); group != "" {
 		m.Group = group
 	} else {
 		m.Group = t.group
@@ -320,4 +336,12 @@ func methodByName(value reflect.Value, ptrValue reflect.Value, name string) (m i
 		err = fmt.Errorf("not found method %s in struct type %s or *%s", name, typeName, typeName)
 	}
 	return
+}
+
+// valueByName return field value by field name
+func valueByName(value reflect.Value, name string) interface{} {
+	if fieldValue := value.FieldByName(name); !fieldValue.IsNil() {
+		return fieldValue.Elem().Interface()
+	}
+	return nil
 }

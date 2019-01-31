@@ -10,57 +10,60 @@ import (
 
 // entry mux style URN entry
 type muxEntry struct {
-	Chain   Chain   `mir:"-"`
-	Group   Group   `mir:"v1"`
-	get     Get     `mir:"/get/"`
-	put     Put     `mir:"/put/"`
-	post    Post    `mir:"/post/"`
-	delete  Delete  `mir:"/delete/"`
-	head    Head    `mir:"/head/"`
-	patch   Patch   `mir:"/patch/"`
-	trace   Trace   `mir:"/trace/"`
-	connect Connect `mir:"/connect/"`
-	options Options `mir:"/options/"`
-	any     Any     `mir:"/any/"`
-	alias   Get     `mir:"/alias/#GetAlias"`
-	query   Get     `mir:"/query/?filter={filter}"`
-	full    Get     `mir:"//{subdomain}.domain.com:8013/full/{other}/{id:[0-9]+}?filter={filter}&foo=bar&index={index:[0-9]+}#GetFull"`
+	Chain      Chain   `mir:"-"`
+	Group      Group   `mir:"v1"`
+	DotHandler Any     `mir:"/dot/handler/#."`
+	get        Get     `mir:"/get/"`
+	put        Put     `mir:"/put/"`
+	post       Post    `mir:"/post/"`
+	delete     Delete  `mir:"/delete/"`
+	head       Head    `mir:"/head/"`
+	patch      Patch   `mir:"/patch/"`
+	trace      Trace   `mir:"/trace/"`
+	connect    Connect `mir:"/connect/"`
+	options    Options `mir:"/options/"`
+	any        Any     `mir:"/any/"`
+	alias      Get     `mir:"/alias/#GetAlias"`
+	query      Get     `mir:"/query/?filter={filter}"`
+	full       Get     `mir:"//{subdomain}.domain.com:8013/full/{other}/{id:[0-9]+}?filter={filter}&foo=bar&index={index:[0-9]+}#GetFull"`
 }
 
 // ginEntry gin,echo,httrouter style URN entry
 type ginEntry struct {
-	Chain   Chain   `mir:"-"`
-	group   Group   `mir:"v1"`
-	get     Get     `mir:"/get/"`
-	put     Put     `mir:"/put/"`
-	post    Post    `mir:"/post/"`
-	delete  Delete  `mir:"/delete/"`
-	head    Head    `mir:"/head/"`
-	patch   Patch   `mir:"/patch/"`
-	trace   Trace   `mir:"/trace/"`
-	connect Connect `mir:"/connect/"`
-	options Options `mir:"/options/"`
-	any     Any     `mir:"/any/"`
-	alias   Get     `mir:"/alias/#GetAlias"`
-	full    Get     `mir:"/full/:other/:name#GetFull"`
+	Chain      Chain   `mir:"-"`
+	DotHandler Any     `mir:"/dot/handler/#."`
+	group      Group   `mir:"v1"`
+	get        Get     `mir:"/get/"`
+	put        Put     `mir:"/put/"`
+	post       Post    `mir:"/post/"`
+	delete     Delete  `mir:"/delete/"`
+	head       Head    `mir:"/head/"`
+	patch      Patch   `mir:"/patch/"`
+	trace      Trace   `mir:"/trace/"`
+	connect    Connect `mir:"/connect/"`
+	options    Options `mir:"/options/"`
+	any        Any     `mir:"/any/"`
+	alias      Get     `mir:"/alias/#GetAlias"`
+	full       Get     `mir:"/full/:other/:name#GetFull"`
 }
 
 // irisEntry iris style URN entry
 type irisEntry struct {
-	Chain   Chain   `mir:"-"`
-	group   Group   `mir:"v1"`
-	get     Get     `mir:"/get/"`
-	put     Put     `mir:"/put/"`
-	post    Post    `mir:"/post/"`
-	delete  Delete  `mir:"/delete/"`
-	head    Head    `mir:"/head/"`
-	patch   Patch   `mir:"/patch/"`
-	trace   Trace   `mir:"/trace/"`
-	connect Connect `mir:"/connect/"`
-	options Options `mir:"/options/"`
-	any     Any     `mir:"/any/"`
-	alias   Get     `mir:"/alias/#GetAlias"`
-	full    Get     `mir:"/full/{other:string}/{name:string range(1,200) else 400}#GetFull"`
+	Chain      Chain   `mir:"-"`
+	DotHandler Any     `mir:"/dot/handler/#."`
+	group      Group   `mir:"v1"`
+	get        Get     `mir:"/get/"`
+	put        Put     `mir:"/put/"`
+	post       Post    `mir:"/post/"`
+	delete     Delete  `mir:"/delete/"`
+	head       Head    `mir:"/head/"`
+	patch      Patch   `mir:"/patch/"`
+	trace      Trace   `mir:"/trace/"`
+	connect    Connect `mir:"/connect/"`
+	options    Options `mir:"/options/"`
+	any        Any     `mir:"/any/"`
+	alias      Get     `mir:"/alias/#GetAlias"`
+	full       Get     `mir:"/full/{other:string}/{name:string range(1,200) else 400}#GetFull"`
 }
 
 // urbanEntry used to test custom mir tag name entry
@@ -258,6 +261,10 @@ func (*errChainEntry) Get() string {
 
 func (*errGroupEntry) Get() string {
 	return "/get/"
+}
+
+func DotHandler() string {
+	return "/dot/handler/"
 }
 
 func pingChain() string {
