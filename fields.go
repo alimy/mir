@@ -51,6 +51,7 @@ type tagInfo struct {
 	isGroup   bool   // indicate whether a group field
 	isChain   bool   // indicate whether a chain field
 	group     string // indicate group information in struct tag string
+	chainFunc string // indicate chain function information in struct tag string
 	handler   string // indicate handler information in struct tag string
 	fieldName string // indicate field name
 }
@@ -58,7 +59,8 @@ type tagInfo struct {
 // TagField indicate mir tag info used to register route info to engine
 type TagField struct {
 	tagBase
-	Handler interface{} // Handler indicate handler method
+	ChainFunc interface{} // ChainFunc indicate field inline chain function
+	Handler   interface{} // Handler indicate handler method
 }
 
 // TagMir contains TagFields by group
@@ -182,8 +184,8 @@ func tagMirFrom(entry interface{}) (*TagMir, error) {
 // tagFieldFrom build tagField from entry and tagInfo
 func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, error) {
 	var (
-		err     error
-		handler interface{}
+		errHandler, errChainFunc error
+		chainFunc, handler       interface{}
 	)
 	if t.handler == "." {
 		firstRune, _ := utf8.DecodeRuneInString(t.fieldName)
@@ -195,11 +197,22 @@ func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, e
 			handler = ptrV.Interface()
 		}
 	} else {
-		handler, err = methodByName(v, ptrV, t.handler)
+		handler, errHandler = methodByName(v, ptrV, t.handler)
 	}
-	if handler != nil {
-		return &TagField{tagBase: t.tagBase, Handler: handler}, nil
+	if t.chainFunc != "" {
+		chainFunc, errChainFunc = methodByName(v, ptrV, t.chainFunc)
+	}
+	if errHandler == nil && errChainFunc == nil {
+		return &TagField{tagBase: t.tagBase, ChainFunc: chainFunc, Handler: handler}, nil
 	} else {
+		errStr := make([]string, 0, 2)
+		if errHandler != nil {
+			errStr = append(errStr, errHandler.Error())
+		}
+		if errChainFunc != nil {
+			errStr = append(errStr, errChainFunc.Error())
+		}
+		err := fmt.Errorf("%s", strings.Join(errStr, " | "))
 		return nil, err
 	}
 }
@@ -282,8 +295,19 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 			for i < len(tag) && tag[i] != '?' {
 				i++
 			}
-			info.handler = tag[1:i]
+			handlerStr := tag[1:i]
 			tag = tag[i:]
+			if handlerStr != "" {
+				if handlerStr[0] == '-' { // just contain chain func info
+					info.chainFunc = handlerStr[1:]
+				} else { // contain handler and inline chain info like #Handler&ChainFunc
+					handlerChains := strings.Split(handlerStr, "&")
+					info.handler = handlerChains[0]
+					if len(handlerChains) > 1 { // extract chain func
+						info.chainFunc = handlerChains[1]
+					}
+				}
+			}
 		case '?':
 			i := 1
 			for i < len(tag) && tag[i] != '#' {
