@@ -15,11 +15,13 @@ import (
 type entry struct {
 	count uint32
 
-	Chain    mir.Chain `mir:"-"`
-	Group    mir.Group `mir:"v1"`
-	add      mir.Post  `mir:"/add/{id}/"`
-	index    mir.Any   `mir:"/index/"`
-	articles mir.Get   `mir:"/articles/{category}/{id:[0-9]+}#GetArticles"`
+	Chain      mir.Chain `mir:"-"`
+	Group      mir.Group `mir:"v1"`
+	add        mir.Post  `mir:"/add/{id}/"`
+	index      mir.Any   `mir:"/index/"`
+	articles   mir.Get   `mir:"/articles/{category}/{id:[0-9]+}#GetArticles"`
+	chainFunc1 mir.Get   `mir:"/chainfunc1#-ChainFunc"`
+	chainFunc2 mir.Get   `mir:"/chainfunc2#GetChainFunc2&ChainFunc"`
 }
 
 // Add handler of "/add/{id}"
@@ -54,6 +56,26 @@ func (e *entry) GetArticles(rw http.ResponseWriter, r *http.Request) {
 	}, ":")
 	rw.WriteHeader(200)
 	rw.Write([]byte(result))
+}
+
+// ChainFunc1 handler with chain func info.
+func (e *entry) ChainFunc1(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(200)
+	rw.Write([]byte("ChainFunc1"))
+}
+
+// GetChainFunc2 handler with chain func info.
+func (e *entry) GetChainFunc2(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(200)
+	rw.Write([]byte("GetChainFunc2"))
+}
+
+// ChainFunc return field's online middleware
+func (e *entry) ChainFunc() chi.Middlewares {
+	return chi.Middlewares{
+		simpleMiddleware,
+		simpleMiddleware,
+	}
 }
 
 // bytesFromBody get contents from request's body

@@ -65,6 +65,22 @@ var _ = Describe("Core", func() {
 			Expect(w.Code).To(Equal(200))
 			Expect(w.Body.String()).To(Equal("GetArticles:golang:10086"))
 		})
+
+		It("handle chain func1", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/chainfunc1", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("ChainFunc1"))
+		})
+
+		It("handle chain func2", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/chainfunc2", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetChainFunc2"))
+		})
 	})
 
 	Context("check Register function", func() {
@@ -104,6 +120,22 @@ var _ = Describe("Core", func() {
 
 			Expect(w.Code).To(Equal(200))
 			Expect(w.Body.String()).To(Equal("GetArticles:golang:10086"))
+		})
+
+		It("handle chain func1", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/chainfunc1", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("ChainFunc1"))
+		})
+
+		It("handle chain func2", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/chainfunc2", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetChainFunc2"))
 		})
 	})
 
@@ -146,6 +178,22 @@ var _ = Describe("Core", func() {
 			Expect(w.Body.String()).To(Equal("GetArticles:golang:10086"))
 		})
 
+		It("handle v1 chain func1", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/chainfunc1", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("ChainFunc1"))
+		})
+
+		It("handle v1 chain func2", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v1/chainfunc2", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetChainFunc2"))
+		})
+
 		It("handle v2 add", func() {
 			body := bytes.NewReader([]byte("hello"))
 			r := httptest.NewRequest(mir.MethodPost, "/v2/add/10086/", body)
@@ -169,6 +217,22 @@ var _ = Describe("Core", func() {
 
 			Expect(w.Code).To(Equal(200))
 			Expect(w.Body.String()).To(Equal("GetArticles:golang:10086"))
+		})
+
+		It("handle v2 chain func1", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/chainfunc1", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("ChainFunc1"))
+		})
+
+		It("handle v2 chain func2", func() {
+			r := httptest.NewRequest(mir.MethodGet, "/v2/chainfunc2", nil)
+			router.ServeHTTP(w, r)
+
+			Expect(w.Code).To(Equal(200))
+			Expect(w.Body.String()).To(Equal("GetChainFunc2"))
 		})
 	})
 })

@@ -47,19 +47,29 @@ func (e *mirEngine) Register(entries []*mir.TagMir) error {
 // registerWith register fields to give router
 func registerWith(router chi.Router, fields []*mir.TagField) error {
 	for _, field := range fields {
+		fixedRouter := router
+		if field.ChainFunc != nil {
+			if chainFunc, ok := field.ChainFunc.(func() chi.Middlewares); ok {
+				if middlewares := chainFunc(); len(middlewares) > 0 {
+					fixedRouter = router.With(middlewares...)
+				}
+			} else {
+				return fmt.Errorf("chainFunc not func() chi.Middlewares function")
+			}
+		}
 		if handlerFunc, ok := field.Handler.(func(http.ResponseWriter, *http.Request)); ok {
 			if field.Method == mir.MethodAny {
-				router.Connect(field.Path, handlerFunc)
-				router.Delete(field.Path, handlerFunc)
-				router.Get(field.Path, handlerFunc)
-				router.Head(field.Path, handlerFunc)
-				router.Options(field.Path, handlerFunc)
-				router.Patch(field.Path, handlerFunc)
-				router.Post(field.Path, handlerFunc)
-				router.Put(field.Path, handlerFunc)
-				router.Trace(field.Path, handlerFunc)
+				fixedRouter.Connect(field.Path, handlerFunc)
+				fixedRouter.Delete(field.Path, handlerFunc)
+				fixedRouter.Get(field.Path, handlerFunc)
+				fixedRouter.Head(field.Path, handlerFunc)
+				fixedRouter.Options(field.Path, handlerFunc)
+				fixedRouter.Patch(field.Path, handlerFunc)
+				fixedRouter.Post(field.Path, handlerFunc)
+				fixedRouter.Put(field.Path, handlerFunc)
+				fixedRouter.Trace(field.Path, handlerFunc)
 			} else {
-				router.MethodFunc(field.Method, field.Path, handlerFunc)
+				fixedRouter.MethodFunc(field.Method, field.Path, handlerFunc)
 			}
 		} else {
 			return fmt.Errorf("handler not func(http.ResponseWriter, *http.Request) function")
