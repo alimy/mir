@@ -12,6 +12,8 @@ type site struct {
 	Group mir.Group     `mir:"v1"`
 	index mir.Get       `mir:"/index/"`
 	articles mir.Get    `mir:"//localhost:8013/articles/{category}/{id:[0-9]+}#GetArticles"`
+	chainFunc1 mir.Get   `mir:"/chainfunc1#-ChainFunc"`
+	chainFunc2 mir.Get   `mir:"/chainfunc2#GetChainFunc2&ChainFunc"`
 }
 
 // Index handler of the index field that in site struct, the struct tag indicate
@@ -30,6 +32,28 @@ func (h *site) GetArticles(rw http.ResponseWriter, r *http.Request) {
 	rw.Write([]byte("GetArticles"))
 }
 
+// ChainFunc1 handler with chain func info.
+// Field online middleware info defined in field's tag string (eg: /chainfunc1#-ChainFunc)
+func (e *entry) ChainFunc1(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(200)
+	rw.Write([]byte("ChainFunc1"))
+}
+
+// GetChainFunc2 handler with chain func info.
+// Field online middleware info defined in field's tag string (eg: /chainfunc2#GetChainFunc2&ChainFunc)
+func (e *entry) GetChainFunc2(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(200)
+	rw.Write([]byte("GetChainFunc2"))
+}
+
+// ChainFunc return field's online middleware
+func (e *entry) ChainFunc() chi.Middlewares {
+	return chi.Middlewares{
+		simpleMiddleware,
+		simpleMiddleware,
+	}
+}
+
 Then register entry such use gin engine:
 
 func main() {
@@ -42,7 +66,6 @@ func main() {
 	// Bind to a port and pass our router in
 	log.Fatal(http.ListenAndServe(":8013", r))
 }
-
 */
 
 package chi
