@@ -55,8 +55,8 @@ var _ = Describe("Fields", func() {
 			Expect(err).Should(BeNil())
 		})
 
-		It("had 14 fields", func() {
-			Expect(tagMir.Fields).Should(HaveLen(14))
+		It("had 16 fields", func() {
+			Expect(tagMir.Fields).Should(HaveLen(16))
 		})
 
 		It("check group", func() {
@@ -98,8 +98,8 @@ var _ = Describe("Fields", func() {
 			Expect(err).Should(BeNil())
 		})
 
-		It("had 13 fields", func() {
-			Expect(tagMir.Fields).Should(HaveLen(13))
+		It("had 15 fields", func() {
+			Expect(tagMir.Fields).Should(HaveLen(15))
 		})
 
 		It("check group", func() {
@@ -141,8 +141,8 @@ var _ = Describe("Fields", func() {
 			Expect(err).Should(BeNil())
 		})
 
-		It("had 13 fields", func() {
-			Expect(tagMir.Fields).Should(HaveLen(13))
+		It("had 15 fields", func() {
+			Expect(tagMir.Fields).Should(HaveLen(15))
 		})
 
 		It("check group", func() {
@@ -186,9 +186,9 @@ var _ = Describe("Fields", func() {
 			for _, item := range tagMirs {
 				if item.Group == "v2" {
 					haveV2Group = true
-					Expect(item.Fields).Should(HaveLen(14))
+					Expect(item.Fields).Should(HaveLen(16))
 				} else if item.Group == "v1" {
-					Expect(item.Fields).Should(HaveLen(26))
+					Expect(item.Fields).Should(HaveLen(30))
 				}
 			}
 			Expect(haveV2Group).Should(BeTrue())
@@ -228,9 +228,14 @@ func assertTagFields(fields []*TagField) map[string]*TagField {
 		pathFields[field.Path] = field
 		handler, ok := field.Handler.(func() string)
 		Expect(ok).Should(BeTrue())
-		reuslt := handler()
-		Expect(reuslt).To(Equal(field.Path))
-
+		result := handler()
+		Expect(result).To(Equal(field.Path))
+		if field.ChainFunc != nil {
+			chainFunc, ok := field.ChainFunc.(func() string)
+			Expect(ok).Should(BeTrue())
+			res := chainFunc()
+			Expect(res).To(Equal("chainFunc"))
+		}
 		switch field.Path {
 		case "/query/":
 			Expect(field.Queries).Should(HaveLen(1))

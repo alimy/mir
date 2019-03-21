@@ -24,6 +24,8 @@ type muxEntry struct {
 	options    Options `mir:"/options/"`
 	any        Any     `mir:"/any/"`
 	alias      Get     `mir:"/alias/#GetAlias"`
+	chainFunc1 Get     `mir:"/chainfunc1/#-ChainFunc"`
+	chainFunc2 Get     `mir:"/chainfunc2/#GetChainFunc2&ChainFunc"`
 	query      Get     `mir:"/query/?filter={filter}"`
 	full       Get     `mir:"//{subdomain}.domain.com:8013/full/{other}/{id:[0-9]+}?filter={filter}&foo=bar&index={index:[0-9]+}#GetFull"`
 }
@@ -44,6 +46,8 @@ type ginEntry struct {
 	options    Options `mir:"/options/"`
 	any        Any     `mir:"/any/"`
 	alias      Get     `mir:"/alias/#GetAlias"`
+	chainFunc1 Get     `mir:"/chainfunc1/#-ChainFunc"`
+	chainFunc2 Get     `mir:"/chainfunc2/#GetChainFunc2&ChainFunc"`
 	full       Get     `mir:"/full/:other/:name#GetFull"`
 }
 
@@ -63,6 +67,8 @@ type irisEntry struct {
 	options    Options `mir:"/options/"`
 	any        Any     `mir:"/any/"`
 	alias      Get     `mir:"/alias/#GetAlias"`
+	chainFunc1 Get     `mir:"/chainfunc1/#-ChainFunc"`
+	chainFunc2 Get     `mir:"/chainfunc2/#GetChainFunc2&ChainFunc"`
 	full       Get     `mir:"/full/{other:string}/{name:string range(1,200) else 400}#GetFull"`
 }
 
@@ -139,6 +145,18 @@ func (*muxEntry) GetAlias() string {
 	return "/alias/"
 }
 
+func (*muxEntry) ChainFunc1() string {
+	return "/chainfunc1/"
+}
+
+func (*muxEntry) GetChainFunc2() string {
+	return "/chainfunc2/"
+}
+
+func (*muxEntry) ChainFunc() string {
+	return "chainFunc"
+}
+
 func (*muxEntry) Query() string {
 	return "/query/"
 }
@@ -191,6 +209,18 @@ func (*ginEntry) GetAlias() string {
 	return "/alias/"
 }
 
+func (*ginEntry) ChainFunc1() string {
+	return "/chainfunc1/"
+}
+
+func (*ginEntry) GetChainFunc2() string {
+	return "/chainfunc2/"
+}
+
+func (*ginEntry) ChainFunc() string {
+	return "chainFunc"
+}
+
 func (*ginEntry) Query() string {
 	return "/query"
 }
@@ -241,6 +271,18 @@ func (*irisEntry) Any() string {
 
 func (*irisEntry) GetAlias() string {
 	return "/alias/"
+}
+
+func (*irisEntry) ChainFunc1() string {
+	return "/chainfunc1/"
+}
+
+func (*irisEntry) GetChainFunc2() string {
+	return "/chainfunc2/"
+}
+
+func (*irisEntry) ChainFunc() string {
+	return "chainFunc"
 }
 
 func (*irisEntry) Query() string {
