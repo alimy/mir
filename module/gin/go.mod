@@ -1,7 +1,9 @@
 module github.com/alimy/mir/module/gin
 
+go 1.11
+
 require (
-	github.com/alimy/mir v0.7.1-0.20190131170907-cc17eb310d29
+	github.com/alimy/mir v1.0.0
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/mattn/go-isatty v0.0.4 // indirect

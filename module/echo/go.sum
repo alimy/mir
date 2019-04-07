@@ -1,5 +1,5 @@
-github.com/alimy/mir v0.7.1-0.20190131170907-cc17eb310d29 h1:6ZyxhKP+iAMF31bii4wNy5aCpKnoy5uSKyV+6EWL60c=
-github.com/alimy/mir v0.7.1-0.20190131170907-cc17eb310d29/go.mod h1:JIZY+q16FJKFNm2/a9KgUmYpa6SpsT9i7hafdg7xBhQ=
+github.com/alimy/mir v1.0.0 h1:u0BAaBSE2pfdFg8RIigKhUgeIY0c5AEVvHVAdgFQpzA=
+github.com/alimy/mir v1.0.0/go.mod h1:JIZY+q16FJKFNm2/a9KgUmYpa6SpsT9i7hafdg7xBhQ=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=

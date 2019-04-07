@@ -1,6 +1,6 @@
 module github.com/alimy/mir/module/chi
 
-go 1.12
+go 1.11
 
 require (
 	github.com/alimy/mir v1.0.0
