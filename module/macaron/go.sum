@@ -1,5 +1,5 @@
 github.com/Unknwon/com v0.0.0-20181010210213-41959bdd855f/go.mod h1:KYCjqMOeHpNuTOiFQU6WEcTG7poCJrUs0YgyHNtn1no=
-github.com/alimy/mir v1.0.0/go.mod h1:JIZY+q16FJKFNm2/a9KgUmYpa6SpsT9i7hafdg7xBhQ=
+github.com/alimy/mir v1.0.1/go.mod h1:FwCzRdePweEwe1vb5FLYGy5YYokGlEnJJMkqCml9+qk=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191/go.mod h1:VFI2o2q9kYsC4o7VP1HrEVosiZZTd+MVT3YZx4gqvJw=
 github.com/go-macaron/macaron v1.3.2/go.mod h1:uDVC25/IzIX76755aUzDNqV4g6BwkAaDivT2Mq38/Gw=

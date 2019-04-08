@@ -3,7 +3,7 @@ module github.com/alimy/mir/module/httprouter
 go 1.11
 
 require (
-	github.com/alimy/mir v1.0.0
+	github.com/alimy/mir v1.0.1
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0 // indirect
 	github.com/julienschmidt/httprouter v1.2.0

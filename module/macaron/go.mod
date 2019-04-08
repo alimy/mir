@@ -4,7 +4,7 @@ go 1.11
 
 require (
 	github.com/Unknwon/com v0.0.0-20181010210213-41959bdd855f // indirect
-	github.com/alimy/mir v1.0.0
+	github.com/alimy/mir v1.0.1
 	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/go-macaron/macaron v1.3.2
 	github.com/onsi/ginkgo v1.7.0
