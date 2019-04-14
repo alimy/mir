@@ -202,9 +202,7 @@ func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, e
 	if t.chainFunc != "" {
 		chainFunc, errChainFunc = methodByName(v, ptrV, t.chainFunc)
 	}
-	if errHandler == nil && errChainFunc == nil {
-		return &TagField{tagBase: t.tagBase, ChainFunc: chainFunc, Handler: handler}, nil
-	} else {
+	if errHandler != nil || errChainFunc != nil {
 		errStr := make([]string, 0, 2)
 		if errHandler != nil {
 			errStr = append(errStr, errHandler.Error())
@@ -215,6 +213,7 @@ func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, e
 		err := fmt.Errorf("%s", strings.Join(errStr, " | "))
 		return nil, err
 	}
+	return &TagField{tagBase: t.tagBase, ChainFunc: chainFunc, Handler: handler}, nil
 }
 
 // tagInfoFrom build tagInfo from field

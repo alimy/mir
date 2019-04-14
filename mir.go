@@ -39,9 +39,9 @@ func Register(e Engine, entries ...interface{}) error {
 	if e == nil {
 		return fmt.Errorf("register entiries to a nil engine")
 	}
-	if tagMirs, err := TagMirFrom(entries...); err == nil {
-		return e.Register(tagMirs)
-	} else {
+	tagMirs, err := TagMirFrom(entries...)
+	if err != nil {
 		return err
 	}
+	return e.Register(tagMirs)
 }
