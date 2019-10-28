@@ -4,7 +4,7 @@ go 1.11
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
-	github.com/alimy/mir v1.0.1
+	github.com/alimy/mir v1.0.2
 	github.com/gavv/httpexpect v2.0.0+incompatible
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
