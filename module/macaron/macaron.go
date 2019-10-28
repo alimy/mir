@@ -6,7 +6,7 @@ package macaron
 
 import (
 	"github.com/alimy/mir"
-	"github.com/go-macaron/macaron"
+	"gopkg.in/macaron.v1"
 )
 
 // Mir return mir.Engine interface implements instance.Used to register routes

@@ -6,10 +6,11 @@ package mux
 
 import (
 	"fmt"
-	"github.com/alimy/mir"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/gorilla/mux"
 )
 
 var _ mir.Engine = &mirEngine{}

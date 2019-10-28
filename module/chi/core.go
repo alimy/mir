@@ -6,10 +6,11 @@ package chi
 
 import (
 	"fmt"
-	"github.com/alimy/mir"
-	"github.com/go-chi/chi"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/go-chi/chi"
 )
 
 var _ mir.Engine = &mirEngine{}

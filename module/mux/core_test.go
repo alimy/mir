@@ -5,11 +5,12 @@
 package mux_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/gorilla/mux"
 )
 
 type entry struct {

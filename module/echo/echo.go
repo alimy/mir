@@ -6,7 +6,7 @@ package echo
 
 import (
 	"github.com/alimy/mir"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // Mir return mir.Engine interface implements instance.Used to register routes

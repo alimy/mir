@@ -6,8 +6,9 @@ package macaron_test
 
 import (
 	"bytes"
+
 	"github.com/alimy/mir"
-	"github.com/go-macaron/macaron"
+	"gopkg.in/macaron.v1"
 	"net/http/httptest"
 
 	. "github.com/alimy/mir/module/macaron"

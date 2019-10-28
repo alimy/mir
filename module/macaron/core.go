@@ -6,8 +6,9 @@ package macaron
 
 import (
 	"fmt"
+
 	"github.com/alimy/mir"
-	"github.com/go-macaron/macaron"
+	"gopkg.in/macaron.v1"
 )
 
 var _ mir.Engine = &mirEngine{}

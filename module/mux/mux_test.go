@@ -6,9 +6,10 @@ package mux_test
 
 import (
 	"bytes"
+	"net/http/httptest"
+
 	"github.com/alimy/mir"
 	"github.com/gorilla/mux"
-	"net/http/httptest"
 
 	. "github.com/alimy/mir/module/mux"
 	. "github.com/onsi/ginkgo"

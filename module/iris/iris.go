@@ -6,7 +6,7 @@ package iris
 
 import (
 	"github.com/alimy/mir"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 )
 
 // Mir return mir.Engine interface implements instance.Used to register routes

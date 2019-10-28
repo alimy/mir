@@ -5,12 +5,13 @@
 package echo_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type entry struct {

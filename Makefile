@@ -9,12 +9,8 @@ default: ci
 .PHONY: ci
 ci: misspell vet test
 
-.PHONY: build
-build: fmt bindata
-	go build -ldflags '$(LDFLAGS)' -tags '$(TAGS)'
-
 .PHONY: test
-test:
+test: fmt
 	hack/test.sh ./ module/echo module/gin module/chi module/httprouter module/iris module/mux
 
 .PHONY: fmt

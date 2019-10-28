@@ -5,11 +5,12 @@
 package iris_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/iris-contrib/httpexpect"
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/httptest"
 	"testing"
+
+	"github.com/alimy/mir"
+	"github.com/gavv/httpexpect"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/httptest"
 
 	. "github.com/alimy/mir/module/iris"
 )

@@ -5,11 +5,12 @@
 package chi_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/go-chi/chi"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/go-chi/chi"
 )
 
 type entry struct {

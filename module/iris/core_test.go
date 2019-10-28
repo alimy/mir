@@ -5,13 +5,14 @@
 package iris_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/kataras/iris/context"
-	"github.com/kataras/iris/middleware/logger"
-	"github.com/kataras/iris/middleware/recover"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/middleware/logger"
+	"github.com/kataras/iris/v12/middleware/recover"
 )
 
 type entry struct {

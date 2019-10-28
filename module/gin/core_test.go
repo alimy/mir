@@ -5,11 +5,12 @@
 package gin_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"github.com/gin-gonic/gin"
 )
 
 type entry struct {

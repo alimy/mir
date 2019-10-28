@@ -6,10 +6,11 @@ package httprouter_test
 
 import (
 	"bytes"
-	"github.com/alimy/mir"
-	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/alimy/mir"
+	"github.com/julienschmidt/httprouter"
 
 	. "github.com/alimy/mir/module/httprouter"
 	. "github.com/onsi/ginkgo"

@@ -6,9 +6,10 @@ package httprouter
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/alimy/mir"
 	"github.com/julienschmidt/httprouter"
-	"net/http"
 )
 
 var _ mir.Engine = &mirEngine{}

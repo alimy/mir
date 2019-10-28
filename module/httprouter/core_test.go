@@ -5,12 +5,12 @@
 package httprouter_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/julienschmidt/httprouter"
 	"io"
+	"net/http"
 	"strings"
 
-	"net/http"
+	"github.com/alimy/mir"
+	"github.com/julienschmidt/httprouter"
 )
 
 type entry struct {

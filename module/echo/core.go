@@ -6,8 +6,9 @@ package echo
 
 import (
 	"fmt"
+
 	"github.com/alimy/mir"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 var _ mir.Engine = &mirEngine{}

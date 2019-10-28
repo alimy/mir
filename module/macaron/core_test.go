@@ -5,10 +5,11 @@
 package macaron_test
 
 import (
-	"github.com/alimy/mir"
-	"github.com/go-macaron/macaron"
 	"net/http"
 	"strings"
+
+	"github.com/alimy/mir"
+	"gopkg.in/macaron.v1"
 )
 
 type entry struct {

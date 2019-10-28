@@ -1,5 +1,6 @@
-github.com/alimy/mir v0.7.1-0.20190131170907-cc17eb310d29 h1:6ZyxhKP+iAMF31bii4wNy5aCpKnoy5uSKyV+6EWL60c=
 github.com/alimy/mir v0.7.1-0.20190131170907-cc17eb310d29/go.mod h1:JIZY+q16FJKFNm2/a9KgUmYpa6SpsT9i7hafdg7xBhQ=
+github.com/alimy/mir v1.0.1 h1:hZrwACEjeT9W5zI6kErPAxMvqMjODHaSlDl422kyK/w=
+github.com/alimy/mir v1.0.1/go.mod h1:FwCzRdePweEwe1vb5FLYGy5YYokGlEnJJMkqCml9+qk=
 github.com/alimy/mir/module/gin v0.0.0-20190131180031-30f89d0d500c h1:whD5Jj/1Mym81hZWdsJ7tJKzqgyQsLNWhb2+6MCrqT0=
 github.com/alimy/mir/module/gin v0.0.0-20190131180031-30f89d0d500c/go.mod h1:dcBwULe+yzWG9zHcrwHpLU6X89WfZ7W9di/ENegp4eQ=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=

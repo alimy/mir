@@ -6,6 +6,7 @@ package gin_test
 
 import (
 	"bytes"
+
 	"github.com/alimy/mir"
 	"github.com/gin-gonic/gin"
 	"net/http/httptest"

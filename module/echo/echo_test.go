@@ -6,8 +6,9 @@ package echo_test
 
 import (
 	"bytes"
+
 	"github.com/alimy/mir"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"net/http/httptest"
 
 	. "github.com/alimy/mir/module/echo"

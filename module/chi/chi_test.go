@@ -6,6 +6,7 @@ package chi_test
 
 import (
 	"bytes"
+
 	"github.com/alimy/mir"
 	"github.com/go-chi/chi"
 	"net/http/httptest"
