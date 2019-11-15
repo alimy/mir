@@ -2,22 +2,22 @@ package mir
 
 // Generator list
 var (
-	GeneratorGin = "gin"
-	GeneratorChi = "chi"
-	GeneratorMux = "mux"
+	GeneratorGin        = "gin"
+	GeneratorChi        = "chi"
+	GeneratorMux        = "mux"
 	GeneratorHttpRouter = "httprouter"
 )
 
 // GenOpts generator options
 type GenOpts struct {
-	Name string
+	Name    string
 	OutPath string
 }
 
 // Parser parse entries
 type Parser interface {
 	Name() string
-	Parse(entries []interface{}) []*TagMir
+	Parse(entries []interface{}) ([]*TagMir, error)
 }
 
 // Generator generate interface code for engine

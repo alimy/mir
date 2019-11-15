@@ -14,7 +14,7 @@ build: fmt bindata
 	go build -ldflags '$(LDFLAGS)' -tags '$(TAGS)'
 
 .PHONY: test
-test:
+test: fmt
 	hack/test.sh .
 
 .PHONY: fmt
