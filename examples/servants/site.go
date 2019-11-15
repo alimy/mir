@@ -7,20 +7,19 @@ package servants
 import (
 	"net/http"
 
+	"github.com/alimy/mir/v2/examples/mirc/gen/api"
 	"github.com/gin-gonic/gin"
-
-	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
 )
 
-var _ api.Site = EmptySiteV1{}
+var _ api.Site = EmptySiteWithNoGroup{}
 
-// EmptySiteV1 implement api.Site interface
-type EmptySiteV1 struct{}
+// EmptySiteWithNoGroup implement api.Site interface
+type EmptySiteWithNoGroup struct{}
 
-func (EmptySiteV1) Index(c *gin.Context) {
+func (EmptySiteWithNoGroup) Index(c *gin.Context) {
 	c.String(http.StatusOK, "get index data (v1)")
 }
 
-func (EmptySiteV1) Articles(c *gin.Context) {
+func (EmptySiteWithNoGroup) Articles(c *gin.Context) {
 	c.String(http.StatusOK, "get articles data (v1)")
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/engine"
+	"github.com/alimy/mir/v2/examples/mirc/routers"
 	"github.com/alimy/mir/v2/examples/mirc/routers/v1"
 	"github.com/alimy/mir/v2/examples/mirc/routers/v2"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,7 @@ func main() {
 
 func mirEntries() []interface{} {
 	return []interface{}{
+		&routers.Site{Chain: gin.HandlersChain{gin.Logger()}},
 		&v1.Site{Chain: gin.HandlersChain{gin.Logger()}},
 		&v2.Site{Chain: gin.HandlersChain{gin.Logger()}},
 	}

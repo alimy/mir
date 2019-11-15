@@ -7,8 +7,9 @@ package servants
 import (
 	"net/http"
 
-	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
 	"github.com/gin-gonic/gin"
+
+	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
 )
 
 var _ api.Site = EmptySiteV2{}

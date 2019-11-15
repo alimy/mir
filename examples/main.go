@@ -7,6 +7,7 @@ package main
 import (
 	"log"
 
+	"github.com/alimy/mir/v2/examples/mirc/gen/api"
 	"github.com/alimy/mir/v2/examples/servants"
 	"github.com/gin-gonic/gin"
 
@@ -17,6 +18,7 @@ import (
 func main() {
 	e := gin.New()
 	// register servant to engine
+	api.RegisterSiteServant(e, servants.EmptySiteWithNoGroup{})
 	apiV1.RegisterSiteServant(e, servants.EmptySiteV1{})
 	apiV2.RegisterSiteServant(e, servants.EmptySiteV2{})
 	// start servant service
