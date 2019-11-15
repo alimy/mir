@@ -2,16 +2,15 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package mir_test
+package generator
 
 import (
-	"testing"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/alimy/mir/v2/core"
 )
 
-func TestMir(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Mir Suite")
+func init() {
+	core.Register(generatorGin{},
+		generatorChi{},
+		generatorMux{},
+		generatorHttpRouter{})
 }

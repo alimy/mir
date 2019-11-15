@@ -2,7 +2,7 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package mir
+package parser
 
 import (
 	"fmt"
@@ -10,6 +10,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/alimy/mir/v2"
 )
 
 const (
@@ -66,7 +68,7 @@ type TagField struct {
 // TagMir contains TagFields by group
 type TagMir struct {
 	Group  string
-	Chain  Chain
+	Chain  mir.Chain
 	Fields []*TagField
 }
 
@@ -244,23 +246,23 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		info.group = tag
 		return info, nil
 	case "Get":
-		info.Method = MethodGet
+		info.Method = mir.MethodGet
 	case "Put":
-		info.Method = MethodPut
+		info.Method = mir.MethodPut
 	case "Post":
-		info.Method = MethodPost
+		info.Method = mir.MethodPost
 	case "Delete":
-		info.Method = MethodDelete
+		info.Method = mir.MethodDelete
 	case "Head":
-		info.Method = MethodHead
+		info.Method = mir.MethodHead
 	case "Options":
-		info.Method = MethodOptions
+		info.Method = mir.MethodOptions
 	case "Patch":
-		info.Method = MethodPatch
+		info.Method = mir.MethodPatch
 	case "Trace":
-		info.Method = MethodTrace
+		info.Method = mir.MethodTrace
 	case "Connect":
-		info.Method = MethodConnect
+		info.Method = mir.MethodConnect
 	case "Any":
 		info.Method = "ANY"
 	}
