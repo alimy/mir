@@ -5,7 +5,7 @@
 package mir_test
 
 import (
-	. "github.com/alimy/mir"
+	. "github.com/alimy/mir/v2"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

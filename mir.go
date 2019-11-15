@@ -4,10 +4,10 @@
 
 package mir
 
-import "fmt"
+import "errors"
 
 var (
-	engine Engine
+	generators = make(map[string]Generator)
 )
 
 // SetTag set custom mir's struct tag name(eg: mir)
@@ -17,31 +17,15 @@ func SetTag(name string) {
 	}
 }
 
-// SetDefault set default engine for register handler.
-func SetDefault(e Engine) {
-	if engine != nil {
-		panic("mir: Setup called twice for engine")
+// Register generator
+func Register(g Generator) {
+	if g != nil {
+		generators[g.Name()] = g
 	}
-	engine = e
 }
 
-// RegisterDefault use entries's info to register handler to default engine.
-// You must call SetDefault(...)  setup a default engine first or return error.
-func RegisterDefault(entries ...interface{}) error {
-	if engine == nil {
-		return fmt.Errorf("setup a default engine instance first then call this function")
-	}
-	return Register(engine, entries...)
-}
-
-// Register use entries's info to register handler to give engine.
-func Register(e Engine, entries ...interface{}) error {
-	if e == nil {
-		return fmt.Errorf("register entiries to a nil engine")
-	}
-	tagMirs, err := TagMirFrom(entries...)
-	if err != nil {
-		return err
-	}
-	return e.Register(tagMirs)
+// Generate generate interface code
+func Generate(entries []interface{}, opts *GenOpts) error {
+	// TODO
+	return errors.New("not ready")
 }

@@ -41,10 +41,3 @@ type Options interface{}
 // This is mean register handler that all http.Method* include(GET, PUT, POST, DELETE,
 // HEAD, PATCH, OPTIONS)
 type Any interface{}
-
-// Engine register mir tag info's handler to engine.
-// Other http engine router can implement this interface then use mir to register
-// handler engine(eg: gin,echo,mux,httprouter)
-type Engine interface {
-	Register([]*TagMir) error
-}
