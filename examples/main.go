@@ -1,16 +1,24 @@
+// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Use of this source code is governed by Apache License 2.0 that
+// can be found in the LICENSE file.
+
 package main
 
 import (
-	"github.com/alimy/mir/v2/examples/mirc/gen/mir"
+	"log"
+
 	"github.com/alimy/mir/v2/examples/servants"
 	"github.com/gin-gonic/gin"
-	"log"
+
+	apiV1 "github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
+	apiV2 "github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
 )
 
 func main() {
 	e := gin.New()
-	// register site servant
-	mir.RegisterSiteServant(e, servants.EmptySite{})
+	// register servant to engine
+	apiV1.RegisterSiteServant(e, servants.EmptySiteV1{})
+	apiV2.RegisterSiteServant(e, servants.EmptySiteV2{})
 	// start servant service
 	if err := e.Run(); err != nil {
 		log.Fatal(err)
