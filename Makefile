@@ -13,9 +13,18 @@ ci: misspell vet test
 build: fmt bindata
 	go build -ldflags '$(LDFLAGS)' -tags '$(TAGS)'
 
+.PHONY: generate
+generate:
+	-rm -f generator/templates_gen.go
+	-rm -f cmd/new/templates_gen.go
+	go generate generator/templates.go
+	go generate cmd/new/templates.go
+	$(GOFMT) -w generator/templates.go
+	$(GOFMT) -w cmd/new/templates.go
+
 .PHONY: test
 test: fmt
-	hack/test.sh .
+	go test .
 
 .PHONY: fmt
 fmt:
@@ -32,7 +41,7 @@ fmt-check:
 
 .PHONY: vet
 vet:
-	hack/vet.sh .
+	go vet .
 
 .PHONY: lint
 lint:
