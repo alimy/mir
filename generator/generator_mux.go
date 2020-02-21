@@ -18,7 +18,7 @@ type generatorMux struct{}
 
 // Name name of generator
 func (generatorMux) Name() string {
-	return core.GeneratorMux
+	return core.EngineMux
 }
 
 // Generate generate interface code

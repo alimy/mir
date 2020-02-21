@@ -15,7 +15,7 @@ type generatorGin struct{}
 
 // Name name of generator
 func (generatorGin) Name() string {
-	return core.GeneratorGin
+	return core.EngineGin
 }
 
 // Generate generate interface code

@@ -18,7 +18,7 @@ type generatorChi struct{}
 
 // Name name of generator
 func (generatorChi) Name() string {
-	return core.GeneratorChi
+	return core.EngineChi
 }
 
 // Generate generate interface code

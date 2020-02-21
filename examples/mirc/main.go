@@ -16,6 +16,7 @@ import (
 )
 
 //go:generate go run main.go
+
 func main() {
 	log.Println("generate code start")
 	entries := mirEntries()

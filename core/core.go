@@ -14,10 +14,10 @@ var (
 
 // Generator list
 var (
-	GeneratorGin        = "gin"
-	GeneratorChi        = "chi"
-	GeneratorMux        = "mux"
-	GeneratorHttpRouter = "httprouter"
+	EngineGin        = "gin"
+	EngineChi        = "chi"
+	EngineMux        = "mux"
+	EngineHttpRouter = "httprouter"
 )
 
 // GenOpts generator options

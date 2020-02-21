@@ -18,7 +18,7 @@ type generatorHttpRouter struct{}
 
 // Name name of generator
 func (generatorHttpRouter) Name() string {
-	return core.GeneratorHttpRouter
+	return core.EngineHttpRouter
 }
 
 // Generate generate interface code
