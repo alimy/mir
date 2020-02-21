@@ -2,7 +2,7 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package routers
+package routes
 
 import "github.com/alimy/mir/v2"
 

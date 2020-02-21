@@ -1,15 +1,15 @@
 // Code generated for package new by go-bindata DO NOT EDIT. (@generated)
 // sources:
-// template/go_mod.tmpl
-// template/main.tmpl
-// template/mirc_main.tmpl
-// template/mirc_routers_site.tmpl
-// template/mirc_routers_site_v1.tmpl
-// template/mirc_routers_site_v2.tmpl
-// template/readme_md.tmpl
-// template/servants_site.tmpl
-// template/servants_site_v1.tmpl
-// template/servants_site_v2.tmpl
+// templates/go_mod.tmpl
+// templates/main.tmpl
+// templates/mirc_main.tmpl
+// templates/mirc_routes_site.tmpl
+// templates/mirc_routes_site_v1.tmpl
+// templates/mirc_routes_site_v2.tmpl
+// templates/readme_md.tmpl
+// templates/servants_site.tmpl
+// templates/servants_site_v1.tmpl
+// templates/servants_site_v2.tmpl
 package new
 
 import (
@@ -101,7 +101,7 @@ func go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "go_mod.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296466, 0)}
+	info := bindataFileInfo{name: "go_mod.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -121,7 +121,7 @@ func mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "main.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296400, 0)}
+	info := bindataFileInfo{name: "main.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -141,67 +141,67 @@ func mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mirc_main.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296104, 0)}
+	info := bindataFileInfo{name: "mirc_main.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _mirc_routers_siteTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x01\x00\x00\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00"
+var _mirc_routes_siteTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x01\x00\x00\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00"
 
-func mirc_routers_siteTmplBytes() ([]byte, error) {
+func mirc_routes_siteTmplBytes() ([]byte, error) {
 	return bindataRead(
-		_mirc_routers_siteTmpl,
-		"mirc_routers_site.tmpl",
+		_mirc_routes_siteTmpl,
+		"mirc_routes_site.tmpl",
 	)
 }
 
-func mirc_routers_siteTmpl() (*asset, error) {
-	bytes, err := mirc_routers_siteTmplBytes()
+func mirc_routes_siteTmpl() (*asset, error) {
+	bytes, err := mirc_routes_siteTmplBytes()
 	if err != nil {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mirc_routers_site.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296070, 0)}
+	info := bindataFileInfo{name: "mirc_routes_site.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _mirc_routers_site_v1Tmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x01\x00\x00\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00"
+var _mirc_routes_site_v1Tmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x01\x00\x00\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00"
 
-func mirc_routers_site_v1TmplBytes() ([]byte, error) {
+func mirc_routes_site_v1TmplBytes() ([]byte, error) {
 	return bindataRead(
-		_mirc_routers_site_v1Tmpl,
-		"mirc_routers_site_v1.tmpl",
+		_mirc_routes_site_v1Tmpl,
+		"mirc_routes_site_v1.tmpl",
 	)
 }
 
-func mirc_routers_site_v1Tmpl() (*asset, error) {
-	bytes, err := mirc_routers_site_v1TmplBytes()
+func mirc_routes_site_v1Tmpl() (*asset, error) {
+	bytes, err := mirc_routes_site_v1TmplBytes()
 	if err != nil {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mirc_routers_site_v1.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296038, 0)}
+	info := bindataFileInfo{name: "mirc_routes_site_v1.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _mirc_routers_site_v2Tmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x01\x00\x00\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00"
+var _mirc_routes_site_v2Tmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x01\x00\x00\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00"
 
-func mirc_routers_site_v2TmplBytes() ([]byte, error) {
+func mirc_routes_site_v2TmplBytes() ([]byte, error) {
 	return bindataRead(
-		_mirc_routers_site_v2Tmpl,
-		"mirc_routers_site_v2.tmpl",
+		_mirc_routes_site_v2Tmpl,
+		"mirc_routes_site_v2.tmpl",
 	)
 }
 
-func mirc_routers_site_v2Tmpl() (*asset, error) {
-	bytes, err := mirc_routers_site_v2TmplBytes()
+func mirc_routes_site_v2Tmpl() (*asset, error) {
+	bytes, err := mirc_routes_site_v2TmplBytes()
 	if err != nil {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mirc_routers_site_v2.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296055, 0)}
+	info := bindataFileInfo{name: "mirc_routes_site_v2.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -221,7 +221,7 @@ func readme_mdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "readme_md.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296441, 0)}
+	info := bindataFileInfo{name: "readme_md.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -241,7 +241,7 @@ func servants_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "servants_site.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296142, 0)}
+	info := bindataFileInfo{name: "servants_site.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -261,7 +261,7 @@ func servants_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "servants_site_v1.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296142, 0)}
+	info := bindataFileInfo{name: "servants_site_v1.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -281,7 +281,7 @@ func servants_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "servants_site_v2.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581296142, 0)}
+	info := bindataFileInfo{name: "servants_site_v2.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -338,16 +338,16 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"go_mod.tmpl":               go_modTmpl,
-	"main.tmpl":                 mainTmpl,
-	"mirc_main.tmpl":            mirc_mainTmpl,
-	"mirc_routers_site.tmpl":    mirc_routers_siteTmpl,
-	"mirc_routers_site_v1.tmpl": mirc_routers_site_v1Tmpl,
-	"mirc_routers_site_v2.tmpl": mirc_routers_site_v2Tmpl,
-	"readme_md.tmpl":            readme_mdTmpl,
-	"servants_site.tmpl":        servants_siteTmpl,
-	"servants_site_v1.tmpl":     servants_site_v1Tmpl,
-	"servants_site_v2.tmpl":     servants_site_v2Tmpl,
+	"go_mod.tmpl":              go_modTmpl,
+	"main.tmpl":                mainTmpl,
+	"mirc_main.tmpl":           mirc_mainTmpl,
+	"mirc_routes_site.tmpl":    mirc_routes_siteTmpl,
+	"mirc_routes_site_v1.tmpl": mirc_routes_site_v1Tmpl,
+	"mirc_routes_site_v2.tmpl": mirc_routes_site_v2Tmpl,
+	"readme_md.tmpl":           readme_mdTmpl,
+	"servants_site.tmpl":       servants_siteTmpl,
+	"servants_site_v1.tmpl":    servants_site_v1Tmpl,
+	"servants_site_v2.tmpl":    servants_site_v2Tmpl,
 }
 
 // AssetDir returns the file names below a certain
@@ -391,16 +391,16 @@ type bintree struct {
 }
 
 var _bintree = &bintree{nil, map[string]*bintree{
-	"go_mod.tmpl":               &bintree{go_modTmpl, map[string]*bintree{}},
-	"main.tmpl":                 &bintree{mainTmpl, map[string]*bintree{}},
-	"mirc_main.tmpl":            &bintree{mirc_mainTmpl, map[string]*bintree{}},
-	"mirc_routers_site.tmpl":    &bintree{mirc_routers_siteTmpl, map[string]*bintree{}},
-	"mirc_routers_site_v1.tmpl": &bintree{mirc_routers_site_v1Tmpl, map[string]*bintree{}},
-	"mirc_routers_site_v2.tmpl": &bintree{mirc_routers_site_v2Tmpl, map[string]*bintree{}},
-	"readme_md.tmpl":            &bintree{readme_mdTmpl, map[string]*bintree{}},
-	"servants_site.tmpl":        &bintree{servants_siteTmpl, map[string]*bintree{}},
-	"servants_site_v1.tmpl":     &bintree{servants_site_v1Tmpl, map[string]*bintree{}},
-	"servants_site_v2.tmpl":     &bintree{servants_site_v2Tmpl, map[string]*bintree{}},
+	"go_mod.tmpl":              &bintree{go_modTmpl, map[string]*bintree{}},
+	"main.tmpl":                &bintree{mainTmpl, map[string]*bintree{}},
+	"mirc_main.tmpl":           &bintree{mirc_mainTmpl, map[string]*bintree{}},
+	"mirc_routes_site.tmpl":    &bintree{mirc_routes_siteTmpl, map[string]*bintree{}},
+	"mirc_routes_site_v1.tmpl": &bintree{mirc_routes_site_v1Tmpl, map[string]*bintree{}},
+	"mirc_routes_site_v2.tmpl": &bintree{mirc_routes_site_v2Tmpl, map[string]*bintree{}},
+	"readme_md.tmpl":           &bintree{readme_mdTmpl, map[string]*bintree{}},
+	"servants_site.tmpl":       &bintree{servants_siteTmpl, map[string]*bintree{}},
+	"servants_site_v1.tmpl":    &bintree{servants_site_v1Tmpl, map[string]*bintree{}},
+	"servants_site_v2.tmpl":    &bintree{servants_site_v2Tmpl, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory

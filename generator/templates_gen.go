@@ -1,7 +1,7 @@
 // Code generated for package generator by go-bindata DO NOT EDIT. (@generated)
 // sources:
-// template/gin_iface.tmpl
-// template/gin_mir.tmpl
+// templates/gin_iface.tmpl
+// templates/gin_mir.tmpl
 package generator
 
 import (
@@ -93,7 +93,7 @@ func gin_ifaceTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_iface.tmpl", size: 0, mode: os.FileMode(420), modTime: time.Unix(1581294496, 0)}
+	info := bindataFileInfo{name: "gin_iface.tmpl", size: 0, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -113,7 +113,7 @@ func gin_mirTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_mir.tmpl", size: 17, mode: os.FileMode(420), modTime: time.Unix(1581294443, 0)}
+	info := bindataFileInfo{name: "gin_mir.tmpl", size: 17, mode: os.FileMode(436), modTime: time.Unix(1582260829, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
