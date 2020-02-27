@@ -1,4 +1,4 @@
-package new
+package create
 
 import "github.com/alimy/mir/v2/core"
 
