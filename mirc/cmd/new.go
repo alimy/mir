@@ -36,7 +36,7 @@ func newRun(_cmd *cobra.Command, _args []string) {
 		if os.IsNotExist(err) {
 			if !filepath.IsAbs(dstPath) {
 				cwd, err := os.Getwd()
-				if  err != nil {
+				if err != nil {
 					log.Fatal(err)
 				}
 				path = filepath.Join(cwd, dstPath)

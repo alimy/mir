@@ -3,7 +3,7 @@ GOFILES := $(shell find . -name "*.go" -type f)
 
 .PHONY: build
 build: fmt
-	go build .
+	go build -o mir-examples main.go
 
 .PHONY: generate
 generate:
