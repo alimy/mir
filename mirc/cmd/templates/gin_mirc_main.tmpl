@@ -7,9 +7,10 @@ import (
 
     "github.com/alimy/mir/v2/core"
     "github.com/alimy/mir/v2/engine"
-    "github.com/alimy/mir-examples/mirc/routes"
-    "github.com/alimy/mir-examples/mirc/routes/v1"
-    "github.com/alimy/mir-examples/mirc/routes/v2"
+
+    routes "{{ .PkgName }}/mirc/routes"
+    v1 "{{ .PkgName }}/mirc/routes/v1"
+    v2 "{{ .PkgName }}/mirc/routes/v2"
 )
 
 //go:generate go run main.go

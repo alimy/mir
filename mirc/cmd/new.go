@@ -4,12 +4,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"text/template"
 
 	"github.com/spf13/cobra"
 )
 
 var (
 	dstPath string
+	pkgName string
 	style   string
 )
 
@@ -23,6 +25,7 @@ func init() {
 
 	// parse flags for agentCmd
 	newCmd.Flags().StringVarP(&dstPath, "dst", "d", ".", "genereted destination target directory")
+	newCmd.Flags().StringVarP(&pkgName, "pkg", "p", "github.com/alimy/mir-example", "project's package name")
 	newCmd.Flags().StringVarP(&style, "type", "t", "gin", "generated engine type style(eg: gin,chi,mux,httprout)")
 
 	// register agentCmd as sub-command
@@ -53,19 +56,23 @@ func newRun(_cmd *cobra.Command, _args []string) {
 		log.Fatal("not exist style engine")
 	}
 
-	if err = genProject(path, tmpls); err != nil {
+	ctx := &tmplCtx{
+		PkgName: pkgName,
+	}
+	if err = genProject(ctx, path, tmpls); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func genProject(dstPath string, tmpls map[string]string) error {
+func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 	var (
 		err               error
 		filePath, dirPath string
 		file              *os.File
 	)
 
-	for fileName, assetName := range tmpls {
+	tmpl := template.New("mirc")
+	for fileName, assetInfo := range tmpls {
 		filePath = filepath.Join(dstPath, fileName)
 		dirPath = filepath.Dir(filePath)
 		if err = os.MkdirAll(dirPath, 0755); err != nil {
@@ -75,8 +82,18 @@ func genProject(dstPath string, tmpls map[string]string) error {
 		if err != nil {
 			break
 		}
-		if _, err = file.Write(MustAsset(assetName)); err != nil {
-			break
+		if assetInfo.isTmpl {
+			t, err := tmpl.Parse(MustAssetString(assetInfo.name))
+			if err != nil {
+				break
+			}
+			if err = t.Execute(file, ctx); err != nil {
+				break
+			}
+		} else {
+			if _, err = file.Write(MustAsset(assetInfo.name)); err != nil {
+				break
+			}
 		}
 	}
 	return err
