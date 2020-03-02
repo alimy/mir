@@ -1,11 +1,9 @@
-package create
-
-import "github.com/alimy/mir/v2/core"
+package cmd
 
 //go:generate go-bindata -nomemcopy -pkg=${GOPACKAGE} -ignore=README.md -prefix=templates -debug=false -o=templates_gen.go templates/...
 
 var tmplFiles = map[string]map[string]string{
-	core.EngineGin: {
+	"gin": {
 		"Makefile":               "makefile.tmpl",
 		"README.md":              "readme.tmpl",
 		"go.mod":                 "gin_go_mod.tmpl",

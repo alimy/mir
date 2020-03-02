@@ -9,7 +9,7 @@
 // templates/makefile.tmpl (218B)
 // templates/readme.tmpl (141B)
 
-package create
+package cmd
 
 import (
 	"bytes"

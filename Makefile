@@ -11,16 +11,13 @@ ci: misspell vet test
 
 .PHONY: build
 build: fmt
-	go build -o mir cmd/mir.go
+	go build -o mir mirc/main.go
 
 .PHONY: generate
 generate:
 	-rm -f generator/templates_gen.go
-	-rm -f cmd/create/templates_gen.go
 	go generate generator/templates.go
-	go generate cmd/create/templates.go
-	$(GOFMT) -w generator/templates.go
-	$(GOFMT) -w cmd/create/templates.go
+	$(GOFMT) -w generator/templates_gen.go
 
 .PHONY: test
 test: fmt
