@@ -47,6 +47,10 @@ example
             └── site.go
 
 4 directories, 8 files
+
+% cd example
+% make generate
+% make build
 ```
 
 ### Release
