@@ -9,10 +9,10 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/engine"
-	"github.com/alimy/mir/v2/examples/mirc/routes"
-	"github.com/alimy/mir/v2/examples/mirc/routes/v1"
-	"github.com/alimy/mir/v2/examples/mirc/routes/v2"
-	"github.com/gin-gonic/gin"
+
+	routes "github.com/alimy/mir/v2/examples/mirc/routes"
+	v1 "github.com/alimy/mir/v2/examples/mirc/routes/v1"
+	v2 "github.com/alimy/mir/v2/examples/mirc/routes/v2"
 )
 
 //go:generate go run main.go
@@ -20,14 +20,14 @@ import (
 func main() {
 	log.Println("generate code start")
 	entries := mirEntries()
-	_ = engine.Generate(entries, &core.GenOpts{Name: core.GeneratorGin, OutPath: "./gen"})
+	_ = engine.Generate(entries, &core.GenOpts{Name: core.EngineGin, OutPath: "./gen"})
 	log.Println("generate code finish")
 }
 
 func mirEntries() []interface{} {
 	return []interface{}{
-		&routes.Site{Chain: gin.HandlersChain{gin.Logger()}},
-		&v1.Site{Chain: gin.HandlersChain{gin.Logger()}},
-		&v2.Site{Chain: gin.HandlersChain{gin.Logger()}},
+		new(routes.Site),
+		new(v1.Site),
+		new(v2.Site),
 	}
 }

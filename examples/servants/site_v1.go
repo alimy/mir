@@ -17,6 +17,10 @@ var _ api.Site = EmptySiteV1{}
 // EmptySiteV1 implement api.Site interface
 type EmptySiteV1 struct{}
 
+func (EmptySiteV1) Chain() gin.HandlersChain {
+	return nil
+}
+
 func (EmptySiteV1) Index(c *gin.Context) {
 	c.String(http.StatusOK, "get index data (v1)")
 }

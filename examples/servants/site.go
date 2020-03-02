@@ -16,6 +16,10 @@ var _ api.Site = EmptySiteWithNoGroup{}
 // EmptySiteWithNoGroup implement api.Site interface
 type EmptySiteWithNoGroup struct{}
 
+func (EmptySiteWithNoGroup) Chain() gin.HandlersChain {
+	return gin.HandlersChain{gin.Logger()}
+}
+
 func (EmptySiteWithNoGroup) Index(c *gin.Context) {
 	c.String(http.StatusOK, "get index data (v1)")
 }

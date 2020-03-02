@@ -7,6 +7,7 @@ import (
 )
 
 type Site interface {
+	Chain() gin.HandlersChain
 	Index(c *gin.Context)
 	Articles(c *gin.Context)
 }

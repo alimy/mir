@@ -17,14 +17,14 @@ import (
 func main() {
     log.Println("generate code start")
     entries := mirEntries()
-    engine.Generate(entries, &core.GenOpts{Name: core.GeneratorGin, OutPath: "./gen"})
+    _ = engine.Generate(entries, &core.GenOpts{Name: core.EngineGin, OutPath: "./gen"})
     log.Println("generate code finish")
 }
 
 func mirEntries() []interface{} {
     return []interface{}{
-        &routes.Site{Chain: gin.HandlersChain{gin.Logger()}},
-        &v1.Site{Chain: gin.HandlersChain{gin.Logger()}},
-        &v2.Site{Chain: gin.HandlersChain{gin.Logger()}},
+        new(routes.Site),
+        new(v1.Site),
+        new(v2.Site),
     }
 }
