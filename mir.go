@@ -4,44 +4,40 @@
 
 package mir
 
-import "fmt"
+// Group indicator a default group for handler to register to server engine
+type Group string
 
-var (
-	engine Engine
-)
+// Chain indicator a Handler slice used register Middleware to router by group
+type Chain interface{}
 
-// SetTag set custom mir's struct tag name(eg: mir)
-func SetTag(name string) {
-	if name != "" {
-		tagName = name
-	}
-}
+// Get indicator a GET method handler used placeholder register info in struct tag
+type Get interface{}
 
-// SetDefault set default engine for register handler.
-func SetDefault(e Engine) {
-	if engine != nil {
-		panic("mir: Setup called twice for engine")
-	}
-	engine = e
-}
+// Put indicator a PUT method handler used placeholder register info in struct tag
+type Put interface{}
 
-// RegisterDefault use entries's info to register handler to default engine.
-// You must call SetDefault(...)  setup a default engine first or return error.
-func RegisterDefault(entries ...interface{}) error {
-	if engine == nil {
-		return fmt.Errorf("setup a default engine instance first then call this function")
-	}
-	return Register(engine, entries...)
-}
+// Post indicator a POST method handler used placeholder register info in struct tag
+type Post interface{}
 
-// Register use entries's info to register handler to give engine.
-func Register(e Engine, entries ...interface{}) error {
-	if e == nil {
-		return fmt.Errorf("register entiries to a nil engine")
-	}
-	tagMirs, err := TagMirFrom(entries...)
-	if err != nil {
-		return err
-	}
-	return e.Register(tagMirs)
-}
+// Delete indicator a DELETE method handler used placeholder register info in struct tag
+type Delete interface{}
+
+// Head indicator a HEAD method handler used placeholder register info in struct tag
+type Head interface{}
+
+// Patch indicator a PATCH method handler used placeholder register info in struct tag
+type Patch interface{}
+
+// Trace indicator a TRACE method handler used placeholder register info in struct tag
+type Trace interface{}
+
+// Connect indicator a CONNECT method handler used placeholder register info in struct tag
+type Connect interface{}
+
+// Options indicator a OPTIONS method handler used placeholder register info in struct tag
+type Options interface{}
+
+// Any indicator a Any method handler used placeholder register info in struct tag.
+// This is mean register handler that all http.Method* include(GET, PUT, POST, DELETE,
+// HEAD, PATCH, OPTIONS)
+type Any interface{}

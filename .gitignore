@@ -20,3 +20,5 @@ tmp.out
 # GoLand project files
 .idea/
 *.iml
+
+/mir

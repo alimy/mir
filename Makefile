@@ -1,6 +1,5 @@
-GO ?= go
 GOFMT ?= gofmt -s
-PACKAGES ?= $(shell GO111MODULE=on $(GO) list ./...)
+PACKAGES ?= $(shell go list ./...)
 GOFILES := $(shell find . -name "*.go" -type f)
 
 .PHONY: default
@@ -9,9 +8,19 @@ default: ci
 .PHONY: ci
 ci: misspell vet test
 
+.PHONY: build
+build: fmt
+	go build -o mir mirc/main.go
+
+.PHONY: generate
+generate:
+	-rm -f generator/templates_gen.go
+	go generate generator/templates.go
+	$(GOFMT) -w generator/templates_gen.go
+
 .PHONY: test
 test: fmt
-	hack/test.sh ./ module/echo module/gin module/chi module/httprouter module/iris module/mux
+	go test .
 
 .PHONY: fmt
 fmt:
@@ -28,7 +37,7 @@ fmt-check:
 
 .PHONY: vet
 vet:
-	hack/vet.sh ./ module/echo module/gin module/chi module/httprouter module/iris module/mux module/example
+	go vet .
 
 .PHONY: lint
 lint:
