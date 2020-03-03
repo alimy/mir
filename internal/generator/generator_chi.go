@@ -13,16 +13,16 @@ import (
 	"github.com/alimy/mir/v2/core"
 )
 
-// generatorMux generator for Mux
-type generatorMux struct{}
+// generatorChi generator for go-chi
+type generatorChi struct{}
 
 // Name name of generator
-func (generatorMux) Name() string {
-	return core.EngineMux
+func (generatorChi) Name() string {
+	return core.GeneratorChi
 }
 
 // Generate generate interface code
-func (generatorMux) Generate(entries []*core.TagMir, opts *core.GenOpts) error {
+func (generatorChi) Generate(entries []*core.TagMir, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

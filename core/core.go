@@ -5,25 +5,31 @@
 package core
 
 var (
-	// Generators generators list
-	Generators = make(map[string]Generator, 4)
+	// generators generator list
+	generators = make(map[string]Generator, 4)
 
-	// DefParser default parser
-	DefParser Parser
+	// parsers parser list
+	parsers = make(map[string]Parser, 1)
 )
 
-// Generator list
+// Generator Names
 var (
-	EngineGin        = "gin"
-	EngineChi        = "chi"
-	EngineMux        = "mux"
-	EngineHttpRouter = "httprouter"
+	GeneratorGin        = "gin"
+	GeneratorChi        = "chi"
+	GeneratorMux        = "mux"
+	GeneratorHttpRouter = "httprouter"
 )
 
-// GenOpts generator options
-type GenOpts struct {
-	Name    string
-	OutPath string
+// Parser Names
+var (
+	ParserStructTag = "structTag"
+)
+
+// Options generator options
+type Options struct {
+	GeneratorName string
+	ParserName    string
+	OutPath       string
 }
 
 // TagMir mir tag's info
@@ -40,19 +46,52 @@ type Parser interface {
 // Generator generate interface code for engine
 type Generator interface {
 	Name() string
-	Generate([]*TagMir, *GenOpts) error
+	Generate([]*TagMir, *Options) error
 }
 
-// Register generator
-func Register(gs ...Generator) {
+// RegisterGenerators register generators
+func RegisterGenerators(gs ...Generator) {
 	for _, g := range gs {
 		if g != nil && g.Name() != "" {
-			Generators[g.Name()] = g
+			generators[g.Name()] = g
 		}
 	}
 }
 
-// setDefParser set default parser
-func SetDefParser(p Parser) {
-	DefParser = p
+// RegisterParsers register parsers
+func RegisterParsers(ps ...Parser) {
+	for _, p := range ps {
+		if p != nil && p.Name() != "" {
+			parsers[p.Name()] = p
+		}
+	}
+}
+
+// DefaultOptions get a default options
+func DefaultOptions() *Options {
+	return &Options{
+		GeneratorName: GeneratorGin,
+		ParserName:    ParserStructTag,
+		OutPath:       "./gen",
+	}
+}
+
+// GeneratorByName get a generator by name
+func GeneratorByName(name string) Generator {
+	return generators[name]
+}
+
+// DefaultGenerator get a default generator
+func DefaultGenerator() Generator {
+	return generators[GeneratorGin]
+}
+
+// ParserByName get a parser by name
+func ParserByName(name string) Parser {
+	return parsers[name]
+}
+
+// DefaultParser get a default parser
+func DefaultParser() Parser {
+	return parsers[ParserStructTag]
 }

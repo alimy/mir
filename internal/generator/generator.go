@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	core.Register(generatorGin{},
+	core.RegisterGenerators(generatorGin{},
 		generatorChi{},
 		generatorMux{},
 		generatorHttpRouter{})

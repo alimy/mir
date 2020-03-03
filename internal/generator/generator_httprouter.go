@@ -18,11 +18,11 @@ type generatorHttpRouter struct{}
 
 // Name name of generator
 func (generatorHttpRouter) Name() string {
-	return core.EngineHttpRouter
+	return core.GeneratorHttpRouter
 }
 
 // Generate generate interface code
-func (generatorHttpRouter) Generate(entries []*core.TagMir, opts *core.GenOpts) error {
+func (generatorHttpRouter) Generate(entries []*core.TagMir, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

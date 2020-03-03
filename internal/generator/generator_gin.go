@@ -15,11 +15,11 @@ type generatorGin struct{}
 
 // Name name of generator
 func (generatorGin) Name() string {
-	return core.EngineGin
+	return core.GeneratorGin
 }
 
 // Generate generate interface code
-func (generatorGin) Generate(entries []*core.TagMir, opts *core.GenOpts) error {
+func (generatorGin) Generate(entries []*core.TagMir, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

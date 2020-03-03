@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	core.SetDefParser(parserStructTag{})
+	core.RegisterParsers(parserStructTag{})
 }
 
 // parserStructTag parse for struct tag
@@ -19,7 +19,7 @@ type parserStructTag struct{}
 
 // Name name of parser
 func (parserStructTag) Name() string {
-	return "parserStructTag"
+	return core.ParserStructTag
 }
 
 // Parse parse interface define object entries

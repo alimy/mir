@@ -2,7 +2,7 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package engine
+package mir
 
 import (
 	"errors"
@@ -10,23 +10,28 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 
-	_ "github.com/alimy/mir/v2/generator"
-	_ "github.com/alimy/mir/v2/parser"
+	_ "github.com/alimy/mir/v2/internal/generator"
+	_ "github.com/alimy/mir/v2/internal/parser"
 )
 
 // Generate generate interface code
-func Generate(entries []interface{}, opts *core.GenOpts) error {
+func Generate(entries []interface{}, opts *core.Options) error {
 	if opts == nil {
 		return errors.New("options is nil")
 	}
-	g, exist := core.Generators[opts.Name]
-	if !exist {
-		return fmt.Errorf("unknow generators that name %s", opts.Name)
-	}
-	if core.DefParser == nil {
+
+	// just use default parser now
+	p := core.DefaultParser()
+	if p == nil {
 		return errors.New("parser is nil")
 	}
-	mirTags, err := core.DefParser.Parse(entries)
+
+	g := core.GeneratorByName(opts.GeneratorName)
+	if g == nil {
+		return fmt.Errorf("unknow generators that name %s", opts.GeneratorName)
+	}
+
+	mirTags, err := p.Parse(entries)
 	if err != nil {
 		return g.Generate(mirTags, opts)
 	}
