@@ -17,7 +17,12 @@ import (
 func main() {
     log.Println("generate code start")
     entries := mirEntries()
-    _ = engine.Generate(entries, &core.GenOpts{Name: core.EngineGin, OutPath: "./gen"})
+    opts := &core.Options{
+        GeneratorName: core.GeneratorGin,
+        OutPath:       "./gen"}
+    if err := engine.Generate(entries, opts); err != nil {
+        log.Fatal(err)
+    }
     log.Println("generate code finish")
 }
 
