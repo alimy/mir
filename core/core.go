@@ -10,18 +10,14 @@ var (
 
 	// parsers parser list
 	parsers = make(map[string]Parser, 1)
-)
 
-// Generator Names
-var (
+	// Generator Names
 	GeneratorGin        = "gin"
 	GeneratorChi        = "chi"
 	GeneratorMux        = "mux"
 	GeneratorHttpRouter = "httprouter"
-)
 
-// Parser Names
-var (
+	// Parser Names
 	ParserStructTag = "structTag"
 )
 
