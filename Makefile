@@ -1,4 +1,4 @@
-GOFMT ?= gofmt -s
+GOFMT ?= gofmt -s -w
 PACKAGES ?= $(shell go list ./...)
 GOFILES := $(shell find . -name "*.go" -type f)
 
@@ -14,9 +14,9 @@ build: fmt
 
 .PHONY: generate
 generate:
-	-rm -f generator/templates_gen.go
-	go generate generator/templates.go
-	$(GOFMT) -w generator/templates_gen.go
+	-rm -f internal/generator/templates_gen.go
+	go generate internal/generator/templates.go
+	$(GOFMT) internal/generator/templates_gen.go
 
 .PHONY: test
 test: fmt
@@ -24,7 +24,7 @@ test: fmt
 
 .PHONY: fmt
 fmt:
-	$(GOFMT) -w $(GOFILES)
+	$(GOFMT) $(GOFILES)
 
 .PHONY: fmt-check
 fmt-check:

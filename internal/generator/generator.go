@@ -5,6 +5,7 @@
 package generator
 
 import (
+	"github.com/alimy/mir/v2"
 	"github.com/alimy/mir/v2/core"
 )
 
@@ -13,4 +14,14 @@ func init() {
 		generatorChi{},
 		generatorMux{},
 		generatorHttpRouter{})
+}
+
+// NotEmptyStr whether not empty method
+func NotEmptyStr(s string) bool {
+	return s != ""
+}
+
+// NotHttpAny whether not http any method
+func NotHttpAny(m string) bool {
+	return m != mir.MethodAny
 }
