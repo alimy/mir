@@ -22,7 +22,7 @@ func (generatorHttpRouter) Name() string {
 }
 
 // Generate generate interface code
-func (generatorHttpRouter) Generate(entries []*core.TagMir, opts *core.Options) error {
+func (generatorHttpRouter) Generate(ds core.Descriptors, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

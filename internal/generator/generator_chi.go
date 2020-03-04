@@ -22,7 +22,7 @@ func (generatorChi) Name() string {
 }
 
 // Generate generate interface code
-func (generatorChi) Generate(entries []*core.TagMir, opts *core.Options) error {
+func (generatorChi) Generate(ds core.Descriptors, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

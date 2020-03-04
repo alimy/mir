@@ -23,7 +23,7 @@ func (parserStructTag) Name() string {
 }
 
 // Parse parse interface define object entries
-func (parserStructTag) Parse(entries []interface{}) ([]*core.TagMir, error) {
+func (parserStructTag) Parse(entries []interface{}) (core.Descriptors, error) {
 	// TODO
 	return nil, errors.New("not ready")
 }

@@ -22,7 +22,7 @@ func (generatorMux) Name() string {
 }
 
 // Generate generate interface code
-func (generatorMux) Generate(entries []*core.TagMir, opts *core.Options) error {
+func (generatorMux) Generate(ds core.Descriptors, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

@@ -19,7 +19,7 @@ func (generatorGin) Name() string {
 }
 
 // Generate generate interface code
-func (generatorGin) Generate(entries []*core.TagMir, opts *core.Options) error {
+func (generatorGin) Generate(ds core.Descriptors, opts *core.Options) error {
 	// TODO
 	return errors.New("not ready")
 }

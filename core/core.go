@@ -28,21 +28,16 @@ type Options struct {
 	OutPath       string
 }
 
-// TagMir mir tag's info
-type TagMir struct {
-	// TODO
-}
-
 // Parser parse entries
 type Parser interface {
 	Name() string
-	Parse(entries []interface{}) ([]*TagMir, error)
+	Parse(entries []interface{}) (Descriptors, error)
 }
 
 // Generator generate interface code for engine
 type Generator interface {
 	Name() string
-	Generate([]*TagMir, *Options) error
+	Generate(Descriptors, *Options) error
 }
 
 // RegisterGenerators register generators
