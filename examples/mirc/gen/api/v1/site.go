@@ -6,8 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Site mir's struct tag define
 type Site interface {
 	Chain() gin.HandlersChain
 	Index(c *gin.Context)
 	Articles(c *gin.Context)
+}
+
+// RegisterSiteServant register site to gin
+func RegisterSiteServant(e *gin.Engine, s Site) {
+	router := e.Group("v1")
+
+	// use chain for router
+	handlersChain := s.Chain()
+	router.Use(handlersChain...)
+
+	// register route info to router
+	router.Handle("GET", "/index/", s.Index)
+	router.Handle("GET", "/articles/:category/", s.Articles)
 }
