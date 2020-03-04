@@ -1,3 +1,4 @@
+GOFMT ?= gofmt -s -w
 GOFILES := $(shell find . -name "*.go" -type f)
 
 LDFLAGS += -X "github.com/alimy/mir/mirc/v2/version.BuildTime=$(shell date -u '+%Y-%m-%d %I:%M:%S %Z')"
