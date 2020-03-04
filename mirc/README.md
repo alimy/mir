@@ -3,7 +3,8 @@ Mir's help toolkit
 
 ### Usage
 ```bash
-% mir new -d example
+% go get github.com/alimy/mir/mirc/v2@latest
+% mirc new -d example
 % tree example
 example
 ├── Makefile

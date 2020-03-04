@@ -11,7 +11,7 @@ import (
 func main() {
 	// setup root cli command of application
 	cmd.Setup(
-		"mir",              // command name
+		"mirc",             // command name
 		"mir help toolkit", // command short describe
 		"mir help tookit",  // command long describe
 	)

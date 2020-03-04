@@ -379,14 +379,14 @@ type bintree struct {
 }
 
 var _bintree = &bintree{nil, map[string]*bintree{
-	"gin_go_mod.tmpl":              &bintree{gin_go_modTmpl, map[string]*bintree{}},
-	"gin_main.tmpl":                &bintree{gin_mainTmpl, map[string]*bintree{}},
-	"gin_mirc_main.tmpl":           &bintree{gin_mirc_mainTmpl, map[string]*bintree{}},
-	"gin_mirc_routes_site.tmpl":    &bintree{gin_mirc_routes_siteTmpl, map[string]*bintree{}},
-	"gin_mirc_routes_site_v1.tmpl": &bintree{gin_mirc_routes_site_v1Tmpl, map[string]*bintree{}},
-	"gin_mirc_routes_site_v2.tmpl": &bintree{gin_mirc_routes_site_v2Tmpl, map[string]*bintree{}},
-	"makefile.tmpl":                &bintree{makefileTmpl, map[string]*bintree{}},
-	"readme.tmpl":                  &bintree{readmeTmpl, map[string]*bintree{}},
+	"gin_go_mod.tmpl":              {gin_go_modTmpl, map[string]*bintree{}},
+	"gin_main.tmpl":                {gin_mainTmpl, map[string]*bintree{}},
+	"gin_mirc_main.tmpl":           {gin_mirc_mainTmpl, map[string]*bintree{}},
+	"gin_mirc_routes_site.tmpl":    {gin_mirc_routes_siteTmpl, map[string]*bintree{}},
+	"gin_mirc_routes_site_v1.tmpl": {gin_mirc_routes_site_v1Tmpl, map[string]*bintree{}},
+	"gin_mirc_routes_site_v2.tmpl": {gin_mirc_routes_site_v2Tmpl, map[string]*bintree{}},
+	"makefile.tmpl":                {makefileTmpl, map[string]*bintree{}},
+	"readme.tmpl":                  {readmeTmpl, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory.

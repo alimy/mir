@@ -6,7 +6,7 @@ LDFLAGS += -X "github.com/alimy/mir/mirc/v2/version.GitHash=$(shell git rev-pars
 
 .PHONY: build
 build: fmt
-	go build  -ldflags '$(LDFLAGS)' -o mir main.go
+	go build  -ldflags '$(LDFLAGS)' -o mirc main.go
 
 .PHONY: generate
 generate:
