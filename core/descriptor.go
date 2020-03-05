@@ -7,7 +7,9 @@ import (
 
 // FieldDescriptor field Descriptor info
 type FieldDescriptor struct {
-	Uri        string
+	Host       string
+	Path       string
+	Queries    []string
 	HttpMethod string
 	Comment    string
 	MethodName string

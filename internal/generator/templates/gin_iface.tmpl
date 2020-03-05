@@ -11,32 +11,36 @@ import (
 {{end}}
 type {{.TypeName}} interface {
 {{if .IsNeedChain}}
-    // Chain provider handlers chain for gin
+    // Chain provide handlers chain for gin
     Chain() gin.HandlersChain
 {{end}}
 {{range .Fields}}
     {{if NotEmpty .Comment }}
     // {{.Comment}}
     {{end}}
-    {{.MethodName}}(c *gin.Context)
+    {{.MethodName}}(*gin.Context)
 {{end}}
 }
 
-// Register{{.TypeName}}Servant register site to gin
+// Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
 func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}) {
+{{if notEmptyStr .Group }}
     router := e.Group({{.Group}})
+{{else}}
+    router := e
+{{end}}
 {{if .IsNeedChain}}
     // use chain for router
-    handlersChain := s.Chain()
-    router.Use(handlersChain...)
+    middlewares := s.Chain()
+    router.Use(middlewares...)
 {{end}}
 
     // register routes info to router
 {{range .Fields}}
     {{if notHttpAny .HttpMethod }}
-    router.Handle({{.HttpMethod}}, {{.Uri}}, s.{{.MethodName}})
+    router.Handle({{.HttpMethod}}, {{.Path}}, s.{{.MethodName}})
     {{else}}
-    router.Any({{.Uri}}, s.{{.MethodName}})
+    router.Any({{.Path}}, s.{{.MethodName}})
     {{end}}
 {{end}}
 }

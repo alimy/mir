@@ -7,7 +7,9 @@ package generator
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/alimy/mir/v2"
@@ -29,6 +31,23 @@ func notHttpAny(m string) bool {
 	return m != mir.MethodAny
 }
 
+func valideQuery(qs []string) bool {
+	size := len(qs)
+	return size != 0 && size%2 == 0
+}
+
+func inflateQuery(qs []string) string {
+	var b strings.Builder
+	last := len(qs) - 1
+	b.Grow(last * 10)
+	for _, s := range qs {
+		b.WriteRune('"')
+		b.WriteString(s)
+		b.WriteString(`",`)
+	}
+	return strings.TrimRight(b.String(), ",")
+}
+
 func generate(ds core.Descriptors, opts *core.Options) error {
 	var (
 		err               error
@@ -37,8 +56,11 @@ func generate(ds core.Descriptors, opts *core.Options) error {
 
 	apiPath := filepath.Join(opts.SinkPath(), "api")
 	tmpl := template.New("mir").Funcs(template.FuncMap{
-		"notEmptyStr": notEmptyStr,
-		"notHttpAny":  notHttpAny,
+		"notEmptyStr":  notEmptyStr,
+		"notHttpAny":   notHttpAny,
+		"join":         path.Join,
+		"valideQuery":  valideQuery,
+		"inflateQuery": inflateQuery,
 	})
 	assetName, exist := tmplFiles[opts.GeneratorName]
 	if !exist {
