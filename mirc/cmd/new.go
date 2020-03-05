@@ -99,6 +99,9 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 				break
 			}
 		}
+		if err = file.Close(); err != nil {
+			break
+		}
 	}
 	return err
 }

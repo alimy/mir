@@ -35,7 +35,7 @@ func generate(ds core.Descriptors, opts *core.Options) error {
 		dirPath, filePath string
 	)
 
-	sinkPath := filepath.Join(opts.SinkPath(), "api")
+	apiPath := filepath.Join(opts.SinkPath(), "api")
 	tmpl := template.New("mir").Funcs(template.FuncMap{
 		"notEmptyStr": notEmptyStr,
 		"notHttpAny":  notHttpAny,
@@ -51,12 +51,12 @@ func generate(ds core.Descriptors, opts *core.Options) error {
 FuckErr:
 	for key, ifaces := range ds {
 		group := ds.GroupFrom(key)
-		dirPath = filepath.Join(sinkPath, group)
+		dirPath = filepath.Join(apiPath, group)
 		if err = os.MkdirAll(dirPath, 0755); err != nil {
 			break
 		}
 		for _, iface := range ifaces {
-			filePath = filepath.Join(sinkPath, iface.SnakeFileName())
+			filePath = filepath.Join(apiPath, iface.SnakeFileName())
 			file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 			if err != nil {
 				break FuckErr
