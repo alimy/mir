@@ -4,6 +4,12 @@
 
 package core
 
+import (
+	"log"
+	"os"
+	"path/filepath"
+)
+
 var (
 	// generators generator list
 	generators = make(map[string]Generator, 4)
@@ -38,6 +44,27 @@ type Parser interface {
 type Generator interface {
 	Name() string
 	Generate(Descriptors, *Options) error
+}
+
+// SinkPath return output path
+func (p *Options) SinkPath() string {
+	path, err := filepath.EvalSymlinks(p.OutPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			if !filepath.IsAbs(p.OutPath) {
+				cwd, err := os.Getwd()
+				if err != nil {
+					log.Fatal(err)
+				}
+				path = filepath.Join(cwd, p.OutPath)
+			} else {
+				path = p.OutPath
+			}
+		} else {
+			log.Fatal(err)
+		}
+	}
+	return path
 }
 
 // RegisterGenerators register generators

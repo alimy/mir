@@ -8,8 +8,6 @@
 package generator
 
 import (
-	"errors"
-
 	"github.com/alimy/mir/v2/core"
 )
 
@@ -23,6 +21,5 @@ func (generatorHttpRouter) Name() string {
 
 // Generate generate interface code
 func (generatorHttpRouter) Generate(ds core.Descriptors, opts *core.Options) error {
-	// TODO
-	return errors.New("not ready")
+	return generate(ds, opts)
 }
