@@ -1,12 +1,12 @@
 GOFMT ?= gofmt -s -w
-PACKAGES ?= $(shell go list ./...)
 GOFILES := $(shell find . -name "*.go" -type f)
 
 .PHONY: default
 default: ci
 
 .PHONY: ci
-ci: misspell vet test
+ci: misspell vet
+	go test .
 
 .PHONY: build
 build: fmt
@@ -19,12 +19,12 @@ generate:
 	$(GOFMT) internal/generator/templates_gen.go
 
 .PHONY: test
-test: fmt
+test: fmt misspell vet
 	go test .
 
-.PHONY: fmt
-fmt:
-	$(GOFMT) $(GOFILES)
+.PHONY: vet
+vet:
+	go vet ./...
 
 .PHONY: fmt-check
 fmt-check:
@@ -35,33 +35,32 @@ fmt-check:
 		exit 1; \
 	fi;
 
-.PHONY: vet
-vet:
-	go vet .
-
 .PHONY: lint
 lint:
 	@hash golint > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		$(GO) get -u golang.org/x/lint/golint; \
+		go get -u golang.org/x/lint/golint; \
 	fi
 	for PKG in $(PACKAGES); do golint -min_confidence 1.0 -set_exit_status $$PKG || exit 1; done;
 
 .PHONY: misspell-check
 misspell-check:
 	@hash misspell > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		GO111MODULE=off $(GO) get -u github.com/client9/misspell/cmd/misspell; \
+		GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell; \
 	fi
 	misspell -error $(GOFILES)
 
 .PHONY: misspell
 misspell:
 	@hash misspell > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		GO111MODULE=off $(GO) get -u github.com/client9/misspell/cmd/misspell; \
+		GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell; \
 	fi
 	misspell -w $(GOFILES)
 
+.PHONY: fmt
+fmt:
+	$(GOFMT) $(GOFILES)
+
 .PHONY: tools
 tools:
-	GO111MODULE=off $(GO) get golang.org/x/lint/golint
-	GO111MODULE=off $(GO) get github.com/client9/misspell/cmd/misspell
-	GO111MODULE=off $(GO) get github.com/onsi/ginkgo/ginkgo
+	GO111MODULE=off go get golang.org/x/lint/golint
+	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
