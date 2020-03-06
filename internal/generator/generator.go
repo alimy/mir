@@ -23,10 +23,10 @@ var (
 
 func init() {
 	core.RegisterGenerators(
-		mirGenerator{name: core.GeneratorGin},
-		mirGenerator{name: core.GeneratorChi},
-		mirGenerator{name: core.GeneratorMux},
-		mirGenerator{name: core.GeneratorHttpRouter},
+		&mirGenerator{name: core.GeneratorGin},
+		&mirGenerator{name: core.GeneratorChi},
+		&mirGenerator{name: core.GeneratorMux},
+		&mirGenerator{name: core.GeneratorHttpRouter},
 	)
 }
 
@@ -36,12 +36,12 @@ type mirGenerator struct {
 }
 
 // Name name of generator
-func (g mirGenerator) Name() string {
+func (g *mirGenerator) Name() string {
 	return g.name
 }
 
 // Init init generator
-func (g mirGenerator) Init(opts core.InitOpts) (err error) {
+func (g *mirGenerator) Init(opts core.InitOpts) (err error) {
 	if len(opts) != 0 {
 		if sp, exist := opts[core.OptSinkPath]; exist {
 			g.sinkPath, err = evalSinkPath(sp)
@@ -52,7 +52,7 @@ func (g mirGenerator) Init(opts core.InitOpts) (err error) {
 }
 
 // Generate generate interface code
-func (g mirGenerator) Generate(ds core.Descriptors) error {
+func (g *mirGenerator) Generate(ds core.Descriptors) error {
 	return generate(g.name, g.sinkPath, ds)
 }
 

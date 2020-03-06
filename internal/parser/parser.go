@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	core.RegisterParsers(mirParser{tagName: defaultTag})
+	core.RegisterParsers(&mirParser{tagName: defaultTag})
 }
 
 // mirParser parse for struct tag
@@ -20,12 +20,12 @@ type mirParser struct {
 }
 
 // Name name of parser
-func (p mirParser) Name() string {
+func (p *mirParser) Name() string {
 	return core.ParserStructTag
 }
 
 // Init init parser
-func (p mirParser) Init(opts core.InitOpts) error {
+func (p *mirParser) Init(opts core.InitOpts) error {
 	if len(opts) != 0 {
 		p.tagName = opts[core.OptDefaultTag]
 	}
@@ -36,7 +36,7 @@ func (p mirParser) Init(opts core.InitOpts) error {
 }
 
 // Parse parse interface define object entries
-func (p mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
+func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
