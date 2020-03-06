@@ -7,10 +7,11 @@ build: fmt
 
 .PHONY: generate
 generate:
-	cd mirc
-	-rm -rf gen
-	go run main.go
-	cd ..
+	@cd mirc
+	@-rm -rf gen
+	@go generate mirc/main.go
+	@cd ..
+	@$(GOFMT) ./
 
 .PHONY: fmt
 fmt:

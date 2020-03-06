@@ -15,6 +15,7 @@ import (
 	v2 "github.com/alimy/mir/v2/examples/mirc/routes/v2"
 )
 
+//go:generate go run main.go
 func main() {
 	log.Println("generate code start")
 	entries := mirEntries()
