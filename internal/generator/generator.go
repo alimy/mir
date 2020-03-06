@@ -106,12 +106,12 @@ func generate(generatorName string, sinkPath string, ds core.Descriptors) error 
 FuckErr:
 	for key, ifaces := range ds {
 		group := ds.GroupFrom(key)
-		dirPath = filepath.Join(apiPath, group)
+		dirPath = filepath.Join(apiPath, ds.SnakeStr(group))
 		if err = os.MkdirAll(dirPath, 0755); err != nil {
 			break
 		}
 		for _, iface := range ifaces {
-			filePath = filepath.Join(apiPath, iface.SnakeFileName())
+			filePath = filepath.Join(dirPath, iface.SnakeFileName())
 			file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 			if err != nil {
 				break FuckErr

@@ -9,7 +9,7 @@ build: fmt
 generate:
 	cd mirc
 	-rm -rf gen
-	go generate mirc/main.go
+	go run main.go
 	cd ..
 
 .PHONY: fmt

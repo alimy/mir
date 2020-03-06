@@ -79,6 +79,11 @@ func (d Descriptors) GroupFrom(key string) string {
 	return strings.TrimLeft(key, "_")
 }
 
+// SnakeStr return snake string
+func (d Descriptors) SnakeStr(s string) string {
+	return snakeName(s).String()
+}
+
 func (d Descriptors) keyFrom(s string) string {
 	return "_" + s
 }

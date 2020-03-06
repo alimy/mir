@@ -72,6 +72,7 @@ func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 				if !groupSetuped {
 					groupSetuped = true
 					inflateGroupInfo(iface, entryValue, tagInfo)
+					continue
 				} else {
 					return nil, errMultGroupInfo
 				}
@@ -81,6 +82,7 @@ func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 				if !chainSetuped {
 					iface.IsNeedChain = true
 					chainSetuped = true
+					continue
 				} else {
 					return nil, errMultChainInfo
 				}
@@ -103,6 +105,7 @@ func inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *tagInfo) {
 	} else {
 		d.Group = t.group
 	}
+	d.SetPkgName(d.Group)
 }
 
 // fieldFrom build tagField from entry and tagInfo
