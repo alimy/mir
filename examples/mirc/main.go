@@ -22,7 +22,10 @@ func main() {
 	entries := mirEntries()
 	opts := &core.Options{
 		GeneratorName: core.GeneratorGin,
-		OutPath:       "./gen"}
+		GeneratorOpts: core.InitOpts{
+			core.OptSinkPath: "./gen",
+		},
+	}
 	if err := engine.Generate(entries, opts); err != nil {
 		log.Fatal(err)
 	}
