@@ -8,33 +8,25 @@ import (
     "github.com/julienschmidt/httprouter"
 )
 
-{{if notEmptyStr .Comment }}
-// {{.Comment}}
-{{end}}
+{{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
-{{range .Fields}}
-    {{if notEmptyStr .Comment }}
-    // {{.Comment}}
-    {{end}}
+{{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params)
+    {{else}}    {{.MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params){{end}}
 {{end}}
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
 func Register{{.TypeName}}Servant(r *httprouter.Router, s {{.TypeName}}) {
 {{range .Fields}}
-    {{if notHttpAny .HttpMethod }}
-    r.Handle({{.HttpMethod}}, {{join .Group .Path}}, s.{{.MethodName}})
-    {{else}}
-    r.Handle(http.MethodGet, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodPut, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodPost, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodDelete, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodHead, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodPatch, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodOptions, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodConnect, {{join .Group .Path}}, s.{{.MethodName}})
-    r.Handle(http.MethodTrace, {{join .Group .Path}}, s.{{.MethodName}})
-    {{end}}
+    {{if notHttpAny .HttpMethod }}    r.Handle("{{.HttpMethod}}", "{{join .Group .Path}}", s.{{.MethodName}}){{else}}    r.Handle("http.MethodGet", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodPut", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodPost", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodDelete", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodHead", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodPatch", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodOptions", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodConnect", "{{join .Group .Path}}", s.{{.MethodName}})
+    r.Handle("http.MethodTrace", "{{join .Group .Path}}", s.{{.MethodName}}){{end}}
 {{end}}
 }

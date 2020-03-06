@@ -9,47 +9,32 @@ import (
     "github.com/gorilla/mux"
 )
 
-{{if notEmptyStr .Comment }}
-// {{.Comment}}
-{{end}}
+{{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
-{{if .IsNeedChain}}
-    // Chain provide middlewares for mux
+{{if .IsNeedChain}} // Chain provide middlewares for mux
     Chain() []mux.MiddlewareFunc
 {{end}}
-{{range .Fields}}
-    {{if notEmptyStr .Comment }}
-    // {{.Comment}}
-    {{end}}
-    {{.MethodName}}(http.ResponseWriter, *http.Request)
+{{range .Fields}}{{if notEmptyStr .Comment }}   // {{.Comment}}
+    {{.MethodName}}(http.ResponseWriter, *http.Request){{else}} {{.MethodName}}(http.ResponseWriter, *http.Request){{end}}
 {{end}}
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to mux
 func Register{{.TypeName}}Servant(r *mux.Router, s {{.TypeName}}) {
-{{if notEmptyStr .Group }}
-    router := r.PathPrefix({.Group}).Subrouter()
-{{else}}
-    router := r
+{{if notEmptyStr .Group }}    router := r.PathPrefix("{{.Group}}").Subrouter(){{else}}    router := r
 {{end}}
-{{if .IsNeedChain}}
-    // use chain for router
+{{if .IsNeedChain}}    // use chain for router
     middlewares := s.Chain()
     router.Use(middlewares...)
 {{end}}
 
     // register routes info to router
-{{range .Fields}}
-    {{if notHttpAny .HttpMethod }}
-    router.HandleFunc({{.Path}}, s.{{.MethodName}}).
-        Methods({{.HttpMethod}}){{if notEmptyStr .Host}}.
-        Host({{.Host}}){{end}}{{if valideQuery .Queries}}.
-        Queries({{inflateQuery .Queries}}){{end}}
-    {{else}}
-    router.HandleFunc({{.Path}}, s.{{.MethodName}}).
+{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
+        Methods("{{.HttpMethod}}"){{if notEmptyStr .Host}}.
+        Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
+        Queries({{inflateQuery .Queries}}){{end}}{{else}}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
         Methods(mir.HttpMethods...){{if notEmptyStr .Host}}.
-        Host({{.Host}}){{end}}{{if valideQuery .Queries}}.
-        Queries({{inflateQuery .Queries}}){{end}}
-    {{end}}
+        Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
+        Queries({{inflateQuery .Queries}}){{end}}{{end}}
 {{end}}
 }

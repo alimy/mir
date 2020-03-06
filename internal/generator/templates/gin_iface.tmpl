@@ -18,12 +18,12 @@ type {{.TypeName}} interface {
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
 func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}) {
-{{if notEmptyStr .Group }}    router := e.Group({{.Group}}){{else}}    router := e{{end}}
+{{if notEmptyStr .Group }}    router := e.Group("{{.Group}}"){{else}}    router := e{{end}}
 {{if .IsNeedChain}}    // use chain for router
     middlewares := s.Chain()
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.Handle({{.HttpMethod}}, "{{.Path}}", s.{{.MethodName}}){{else}}    router.Any("{{.Path}}", s.{{.MethodName}}){{end}}
+{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    router.Any("{{.Path}}", s.{{.MethodName}}){{end}}
 {{end}}
 }
