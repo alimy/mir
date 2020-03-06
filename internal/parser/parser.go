@@ -11,33 +11,34 @@ import (
 )
 
 func init() {
-	core.RegisterParsers(parserStructTag{})
+	core.RegisterParsers(mirParser{tagName: defaultTag})
 }
 
-// parserStructTag parse for struct tag
-type parserStructTag struct{}
+// mirParser parse for struct tag
+type mirParser struct {
+	tagName string
+}
 
 // Name name of parser
-func (parserStructTag) Name() string {
+func (p mirParser) Name() string {
 	return core.ParserStructTag
 }
 
+// Init init parser
+func (p mirParser) Init(opts core.InitOpts) error {
+	if len(opts) != 0 {
+		p.tagName = opts[core.OptDefaultTag]
+	}
+	if p.tagName == "" {
+		p.tagName = defaultTag
+	}
+	return nil
+}
+
 // Parse parse interface define object entries
-func (parserStructTag) Parse(entries []interface{}) (core.Descriptors, error) {
+func (p mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
-	return reflex(entries)
-}
-
-// SetDefaultTag set default tag name
-func SetDefaultTag(tag string) {
-	if len(tag) > 0 {
-		defaultTag = tag
-	}
-}
-
-// DefaultTag return default tag name
-func DefaultTag() string {
-	return defaultTag
+	return p.reflex(entries)
 }

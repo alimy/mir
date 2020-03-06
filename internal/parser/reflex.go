@@ -12,11 +12,11 @@ import (
 
 // reflex get Descriptors from parse entries
 // Notice: Descriptors may be an empty if no actual item
-func reflex(entries []interface{}) (core.Descriptors, error) {
+func (p mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
 	var err error
 	ds := make(core.Descriptors)
 	for _, entry := range entries {
-		iface, err := ifaceFrom(entry)
+		iface, err := p.ifaceFrom(entry)
 		if err != nil {
 			break
 		}
@@ -31,7 +31,7 @@ func reflex(entries []interface{}) (core.Descriptors, error) {
 	return ds, err
 }
 
-func ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
+func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
 	isPtr := false
@@ -65,7 +65,7 @@ func ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	var groupSetuped, chainSetuped bool
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
-		switch tagInfo, err := tagInfoFrom(field); err {
+		switch tagInfo, err := p.tagInfoFrom(field); err {
 		case nil:
 			// group field so just parse group info.group info only have one field
 			if tagInfo.isGroup {

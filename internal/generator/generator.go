@@ -5,6 +5,7 @@
 package generator
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -16,11 +17,43 @@ import (
 	"github.com/alimy/mir/v2/core"
 )
 
+var (
+	errNotExistSinkPath = errors.New("not exist output path")
+)
+
 func init() {
-	core.RegisterGenerators(generatorGin{},
-		generatorChi{},
-		generatorMux{},
-		generatorHttpRouter{})
+	core.RegisterGenerators(
+		mirGenerator{name: core.GeneratorGin},
+		mirGenerator{name: core.GeneratorChi},
+		mirGenerator{name: core.GeneratorMux},
+		mirGenerator{name: core.GeneratorHttpRouter},
+	)
+}
+
+type mirGenerator struct {
+	sinkPath string
+	name     string
+}
+
+// Name name of generator
+func (g mirGenerator) Name() string {
+	return g.name
+}
+
+// Init init generator
+func (g mirGenerator) Init(opts core.InitOpts) (err error) {
+	if len(opts) != 0 {
+		if sp, exist := opts[core.OptSinkPath]; exist {
+			g.sinkPath, err = evalSinkPath(sp)
+			return
+		}
+	}
+	return errNotExistSinkPath
+}
+
+// Generate generate interface code
+func (g mirGenerator) Generate(ds core.Descriptors) error {
+	return generate(g.name, g.sinkPath, ds)
 }
 
 func notEmptyStr(s string) bool {
@@ -48,13 +81,13 @@ func inflateQuery(qs []string) string {
 	return strings.TrimRight(b.String(), ",")
 }
 
-func generate(ds core.Descriptors, opts *core.Options) error {
+func generate(generatorName string, sinkPath string, ds core.Descriptors) error {
 	var (
 		err               error
 		dirPath, filePath string
 	)
 
-	apiPath := filepath.Join(opts.SinkPath(), "api")
+	apiPath := filepath.Join(sinkPath, "api")
 	tmpl := template.New("mir").Funcs(template.FuncMap{
 		"notEmptyStr":  notEmptyStr,
 		"notHttpAny":   notHttpAny,
@@ -62,9 +95,9 @@ func generate(ds core.Descriptors, opts *core.Options) error {
 		"valideQuery":  valideQuery,
 		"inflateQuery": inflateQuery,
 	})
-	assetName, exist := tmplFiles[opts.GeneratorName]
+	assetName, exist := tmplFiles[generatorName]
 	if !exist {
-		return fmt.Errorf("not exist templates for genererator:%s", opts.GeneratorName)
+		return fmt.Errorf("not exist templates for genererator:%s", generatorName)
 	}
 	if tmpl, err = tmpl.Parse(MustAssetString(assetName)); err != nil {
 		return err
@@ -93,4 +126,21 @@ FuckErr:
 	}
 
 	return err
+}
+
+func evalSinkPath(path string) (string, error) {
+	sp, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			if !filepath.IsAbs(path) {
+				if cwd, err := os.Getwd(); err == nil {
+					sp = filepath.Join(cwd, path)
+				}
+			} else {
+				sp = path
+				err = nil
+			}
+		}
+	}
+	return sp, err
 }

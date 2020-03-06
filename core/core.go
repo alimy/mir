@@ -4,10 +4,10 @@
 
 package core
 
-import (
-	"log"
-	"os"
-	"path/filepath"
+// options key list
+const (
+	OptSinkPath   = "sinkPath"
+	OptDefaultTag = "defaultTag"
 )
 
 var (
@@ -27,44 +27,29 @@ var (
 	ParserStructTag = "structTag"
 )
 
+// Opts use for generator or parser init
+type InitOpts = map[string]string
+
 // Options generator options
 type Options struct {
 	GeneratorName string
 	ParserName    string
-	OutPath       string
+	GeneratorOpts InitOpts
+	ParserOpts    InitOpts
 }
 
 // Parser parse entries
 type Parser interface {
 	Name() string
+	Init(opts InitOpts) error
 	Parse(entries []interface{}) (Descriptors, error)
 }
 
 // Generator generate interface code for engine
 type Generator interface {
 	Name() string
-	Generate(Descriptors, *Options) error
-}
-
-// SinkPath return output path
-func (p *Options) SinkPath() string {
-	path, err := filepath.EvalSymlinks(p.OutPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			if !filepath.IsAbs(p.OutPath) {
-				cwd, err := os.Getwd()
-				if err != nil {
-					log.Fatal(err)
-				}
-				path = filepath.Join(cwd, p.OutPath)
-			} else {
-				path = p.OutPath
-			}
-		} else {
-			log.Fatal(err)
-		}
-	}
-	return path
+	Init(opts InitOpts) error
+	Generate(Descriptors) error
 }
 
 // RegisterGenerators register generators
@@ -90,7 +75,9 @@ func DefaultOptions() *Options {
 	return &Options{
 		GeneratorName: GeneratorGin,
 		ParserName:    ParserStructTag,
-		OutPath:       "./gen",
+		GeneratorOpts: InitOpts{
+			OptSinkPath: "./gen",
+		},
 	}
 }
 

@@ -15,7 +15,7 @@ import (
 )
 
 // Generate generate interface code
-func Generate(entries []interface{}, opts *core.Options) error {
+func Generate(entries []interface{}, opts *core.Options) (err error) {
 	if opts == nil {
 		return errors.New("options is nil")
 	}
@@ -25,15 +25,20 @@ func Generate(entries []interface{}, opts *core.Options) error {
 	if p == nil {
 		return errors.New("parser is nil")
 	}
+	if err = p.Init(opts.ParserOpts); err != nil {
+		return
+	}
 
 	g := core.GeneratorByName(opts.GeneratorName)
 	if g == nil {
 		return fmt.Errorf("unknow generators that name %s", opts.GeneratorName)
 	}
+	if err = g.Init(opts.GeneratorOpts); err != nil {
+		return
+	}
 
-	mirTags, err := p.Parse(entries)
-	if err != nil {
-		return g.Generate(mirTags, opts)
+	if mirTags, err := p.Parse(entries); err == nil {
+		return g.Generate(mirTags)
 	}
 	return err
 }

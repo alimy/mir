@@ -49,11 +49,11 @@ type tagInfo struct {
 }
 
 // tagInfoFrom build tagInfo from field
-func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
+func (p mirParser) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	info := &tagInfo{}
 
 	// lookup mir tag info from struct field
-	tag, exist := field.Tag.Lookup(defaultTag)
+	tag, exist := field.Tag.Lookup(p.tagName)
 	if !exist {
 		return nil, errNotExist
 	}
