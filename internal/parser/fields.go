@@ -1,11 +1,10 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package parser
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"unicode"
@@ -14,208 +13,39 @@ import (
 	"github.com/alimy/mir/v2"
 )
 
-const (
-	// DefaultTag indicate default mir's struct tag name
-	DefaultTag = "mir"
-)
-
 var (
-	// tagName indicate mir's struct tag string name
-	tagName = DefaultTag
-)
+	// error list
+	errNotExist      tagError = "mir struct tag filed not exist"
+	errNoPathInfo    tagError = "mir struct tag not contains path info"
+	errNotValideType tagError = "not valide type, just struct and struct ptr is avalibale"
+	errMultGroupInfo tagError = "multiple group info in struct defined"
+	errMultChainInfo tagError = "multiple chain info in struct defined"
 
-var (
-	tagNotExist      tagError = "mir struct tag filed not exist"
-	tagNoPathInfo    tagError = "mir struct tag not contains path info"
-	tagNotValideType tagError = "not valide type, just struct and struct ptr is avalibale"
-	tagMultGroupInfo tagError = "multiple group info in struct defined"
-	tagMultChainInfo tagError = "multiple chain info in struct defined"
+	// defaultTag indicate default mir's struct tag name
+	defaultTag = "mir"
 )
 
 // tagError indicate error information
 type tagError string
 
+// Error error message string
 func (e tagError) Error() string {
 	return string(e)
 }
 
-// tagBase indicate mir tag common information in struct tag string exclude handler
-type tagBase struct {
-	Method  string   // Method indicate method information in struct tag string
-	Host    string   // Host indicate host information in struct tag string
-	Path    string   // Path indicate path information in struct tag string
-	Queries []string // Queries indicate path information in struct tag string
-}
-
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
-	tagBase
-	isGroup   bool   // indicate whether a group field
-	isChain   bool   // indicate whether a chain field
-	group     string // indicate group information in struct tag string
-	chainFunc string // indicate chain function information in struct tag string
-	handler   string // indicate handler information in struct tag string
-	fieldName string // indicate field name
-}
-
-// TagField indicate mir tag info used to register route info to engine
-type TagField struct {
-	tagBase
-	ChainFunc interface{} // ChainFunc indicate field inline chain function
-	Handler   interface{} // Handler indicate handler method
-}
-
-// TagMir contains TagFields by group
-type TagMir struct {
-	Group  string
-	Chain  mir.Chain
-	Fields []*TagField
-}
-
-// tagFieldsGroup indicate group-tagFields map
-type tagFieldsGroup map[string]*TagMir
-
-// TagMirFrom build TagMir items from entries slice
-func TagMirFrom(entries ...interface{}) ([]*TagMir, error) {
-	mergedTagMirs := make(tagFieldsGroup)
-	for _, entry := range entries {
-		if tagFields, err := tagMirFrom(entry); err == nil {
-			// no actual field so just continue
-			if len(tagFields.Fields) == 0 {
-				continue
-			}
-			// merge tagFields by group
-			tagMir, exist := mergedTagMirs[tagFields.Group]
-			if !exist {
-				tagMir = &TagMir{
-					Group:  tagFields.Group,
-					Fields: make([]*TagField, 0, len(tagFields.Fields)),
-				}
-				mergedTagMirs[tagFields.Group] = tagMir
-			}
-			// Notice: override tagMir.Chain if tagFields.Chain not nil
-			if tagFields.Chain != nil {
-				tagMir.Chain = tagFields.Chain
-			}
-			tagMir.Fields = append(tagMir.Fields, tagFields.Fields...)
-		} else {
-			return nil, err
-		}
-	}
-
-	// build result
-	tagMirSlice := make([]*TagMir, 0, len(mergedTagMirs))
-	for _, item := range mergedTagMirs {
-		tagMirSlice = append(tagMirSlice, item)
-	}
-	return tagMirSlice, nil
-}
-
-// tagMirFrom build tagMir items from a entry
-func tagMirFrom(entry interface{}) (*TagMir, error) {
-	// used to find tagInfo
-	entryType := reflect.TypeOf(entry)
-	isPtr := false
-
-	// get real entry type
-	if entryType.Kind() == reflect.Ptr {
-		isPtr = true
-		entryType = entryType.Elem()
-	}
-
-	// entry must struct type
-	if entryType.Kind() != reflect.Struct {
-		return nil, tagNotValideType
-	}
-
-	// used to find method from T and lookup struct tag string of mir tag information
-	var entryValue, entryPtrValue reflect.Value
-	if isPtr {
-		entryPtrValue = reflect.ValueOf(entry)
-		entryValue = entryPtrValue.Elem()
-	} else {
-		entryValue = reflect.ValueOf(entry)
-		entryPtrValue = entryValue.Addr()
-	}
-
-	// get tagMir from entryType and entryPtrType
-	tagMir := &TagMir{Fields: make([]*TagField, 0)}
-	groupSetuped := false
-	chainSetuped := false
-	for i := 0; i < entryType.NumField(); i++ {
-		field := entryType.Field(i)
-		switch tagInfo, err := tagInfoFrom(field); err {
-		case nil:
-			// group field so just parse group info.group info only have one field
-			if tagInfo.isGroup {
-				if !groupSetuped {
-					groupSetuped = true
-					inflateGroupInfo(tagMir, entryValue, tagInfo)
-					break
-				} else {
-					return nil, tagMultGroupInfo
-				}
-			}
-			// chain field so just parse chain info only have one field
-			if tagInfo.isChain {
-				if !chainSetuped {
-					if value := valueByName(entryValue, tagInfo.fieldName); value != nil {
-						tagMir.Chain = value
-						chainSetuped = true
-					}
-					break
-				} else {
-					return nil, tagMultChainInfo
-				}
-			}
-			// method field build tagField first
-			if tagField, err := tagFieldFrom(entryValue, entryPtrValue, tagInfo); err == nil {
-				tagMir.Fields = append(tagMir.Fields, tagField)
-			} else {
-				return nil, err
-			}
-		case tagNotExist:
-			// normal field but had no mir tag info so just break to continue process next field
-		default:
-			return nil, err
-		}
-	}
-	return tagMir, nil
-}
-
-// tagFieldFrom build tagField from entry and tagInfo
-func tagFieldFrom(v reflect.Value, ptrV reflect.Value, t *tagInfo) (*TagField, error) {
-	var (
-		errHandler, errChainFunc error
-		chainFunc, handler       interface{}
-	)
-	if t.handler == "." {
-		firstRune, _ := utf8.DecodeRuneInString(t.fieldName)
-		if unicode.IsLower(firstRune) {
-			handler = ptrV.Interface()
-		} else if fieldValue := valueByName(v, t.fieldName); fieldValue != nil {
-			handler = fieldValue
-		} else {
-			handler = ptrV.Interface()
-		}
-	} else {
-		handler, errHandler = methodByName(v, ptrV, t.handler)
-	}
-	if t.chainFunc != "" {
-		chainFunc, errChainFunc = methodByName(v, ptrV, t.chainFunc)
-	}
-	if errHandler != nil || errChainFunc != nil {
-		errStr := make([]string, 0, 2)
-		if errHandler != nil {
-			errStr = append(errStr, errHandler.Error())
-		}
-		if errChainFunc != nil {
-			errStr = append(errStr, errChainFunc.Error())
-		}
-		err := fmt.Errorf("%s", strings.Join(errStr, " | "))
-		return nil, err
-	}
-	return &TagField{tagBase: t.tagBase, ChainFunc: chainFunc, Handler: handler}, nil
+	Method    string   // Method indicate method information in struct tag string
+	Host      string   // Host indicate host information in struct tag string
+	Path      string   // Path indicate path information in struct tag string
+	Queries   []string // Queries indicate path information in struct tag string
+	isGroup   bool     // indicate whether a group field
+	isChain   bool     // indicate whether a chain field
+	group     string   // indicate group information in struct tag string
+	chainFunc string   // indicate chain function information in struct tag string
+	handler   string   // indicate handler information in struct tag string
+	fieldName string   // indicate field name
+	comment   string   // indicate comment info (not support now)
 }
 
 // tagInfoFrom build tagInfo from field
@@ -223,9 +53,9 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	info := &tagInfo{}
 
 	// lookup mir tag info from struct field
-	tag, exist := field.Tag.Lookup(tagName)
+	tag, exist := field.Tag.Lookup(defaultTag)
 	if !exist {
-		return nil, tagNotExist
+		return nil, errNotExist
 	}
 
 	// Skip leading space.
@@ -279,7 +109,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 
 	// path info. must have path info if not a group field
 	if len(tag) == 0 && !info.isGroup {
-		return nil, tagNoPathInfo
+		return nil, errNoPathInfo
 	}
 	i = 0
 	for i < len(tag) && tag[i] != '?' && tag[i] != '#' {
@@ -316,7 +146,7 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 			}
 			queryStr := tag[1:i]
 			if queryStr != "" {
-				info.Queries = strings.Split(queryStr, "&")
+				info.Queries = inflateQuery(queryStr)
 			}
 			tag = tag[i:]
 		}
@@ -340,27 +170,16 @@ func tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	return info, nil
 }
 
-// inflateGroupInfo setup tag group info to TagMir instance
-func inflateGroupInfo(m *TagMir, v reflect.Value, t *tagInfo) {
-	// group field value assign to m.group first or tag group string info assigned
-	if group := v.FieldByName(t.fieldName).String(); group != "" {
-		m.Group = group
-	} else {
-		m.Group = t.group
+func inflateQuery(qs string) []string {
+	items := strings.Split(qs, "&")
+	res := make([]string, 0, len(items)*2)
+	for _, q := range items {
+		kv := strings.Split(q, "=")
+		if len(kv) == 2 {
+			res = append(res, kv...)
+		}
 	}
-}
-
-// methodByName return a method interface from value and method name
-func methodByName(value reflect.Value, ptrValue reflect.Value, name string) (m interface{}, err error) {
-	if v := value.MethodByName(name); v.IsValid() {
-		m = v.Interface()
-	} else if v := ptrValue.MethodByName(name); v.IsValid() {
-		m = v.Interface()
-	} else {
-		typeName := value.Type().Name()
-		err = fmt.Errorf("not found method %s in struct type %s or *%s", name, typeName, typeName)
-	}
-	return
+	return res
 }
 
 // valueByName return field value by field name

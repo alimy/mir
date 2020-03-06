@@ -1,4 +1,4 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -24,6 +24,20 @@ func (parserStructTag) Name() string {
 
 // Parse parse interface define object entries
 func (parserStructTag) Parse(entries []interface{}) (core.Descriptors, error) {
-	// TODO
-	return nil, errors.New("not ready")
+	if len(entries) == 0 {
+		return nil, errors.New("entries is empty")
+	}
+	return reflex(entries)
+}
+
+// SetDefaultTag set default tag name
+func SetDefaultTag(tag string) {
+	if len(tag) > 0 {
+		defaultTag = tag
+	}
+}
+
+// DefaultTag return default tag name
+func DefaultTag() string {
+	return defaultTag
 }
