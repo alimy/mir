@@ -18,7 +18,7 @@ type {{.TypeName}} interface {
     Chain() []mux.MiddlewareFunc
 {{end}}
 {{range .Fields}}
-    {{if NotEmpty .Comment }}
+    {{if notEmptyStr .Comment }}
     // {{.Comment}}
     {{end}}
     {{.MethodName}}(http.ResponseWriter, *http.Request)

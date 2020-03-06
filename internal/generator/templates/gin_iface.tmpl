@@ -15,7 +15,7 @@ type {{.TypeName}} interface {
     Chain() gin.HandlersChain
 {{end}}
 {{range .Fields}}
-    {{if NotEmpty .Comment }}
+    {{if notEmptyStr .Comment }}
     // {{.Comment}}
     {{end}}
     {{.MethodName}}(*gin.Context)

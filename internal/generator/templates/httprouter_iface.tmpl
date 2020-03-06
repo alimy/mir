@@ -13,7 +13,7 @@ import (
 {{end}}
 type {{.TypeName}} interface {
 {{range .Fields}}
-    {{if NotEmpty .Comment }}
+    {{if notEmptyStr .Comment }}
     // {{.Comment}}
     {{end}}
     {{.MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params)
