@@ -24,6 +24,6 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}) {
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if notHttpAny .HttpMethod }}router.Handle({{.HttpMethod}}, "{{.Path}}", s.{{.MethodName}}){{else}}router.Any("{{.Path}}", s.{{.MethodName}}){{end}}
+{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.Handle({{.HttpMethod}}, "{{.Path}}", s.{{.MethodName}}){{else}}    router.Any("{{.Path}}", s.{{.MethodName}}){{end}}
 {{end}}
 }
