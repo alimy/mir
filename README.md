@@ -11,7 +11,7 @@ Mir is used for register handler to http router(eg: [Gin](https://github.com/gin
  * Generate a simple template project
  ```
 % go get github.com/alimy/mir/mirc/v2@latest
-% mir new -d mir-examples
+% mirc new -d mir-examples
 % tree mir-examples
 mir-examples
 ├── Makefile
