@@ -133,12 +133,11 @@ func evalSinkPath(path string) (string, error) {
 	if err != nil {
 		if os.IsNotExist(err) {
 			if !filepath.IsAbs(path) {
-				if cwd, err := os.Getwd(); err == nil {
-					sp = filepath.Join(cwd, path)
+				if sp, err = os.Getwd(); err == nil {
+					sp = filepath.Join(sp, path)
 				}
 			} else {
-				sp = path
-				err = nil
+				sp, err = path, nil
 			}
 		}
 	}

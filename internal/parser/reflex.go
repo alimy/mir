@@ -60,6 +60,7 @@ func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	// get IfaceDescriptor from entryType and entryPtrType
 	iface := &core.IfaceDescriptor{
 		TypeName: entryType.Name(),
+		PkgName:  "api", // set default pkg name
 		Fields:   make([]*core.FieldDescriptor, 0),
 	}
 	var groupSetuped, chainSetuped bool

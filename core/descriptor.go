@@ -97,11 +97,7 @@ func (d *IfaceDescriptor) SnakeFileName() string {
 
 // SetPkgName set package name
 func (d *IfaceDescriptor) SetPkgName(name string) {
-	if name == "" {
-		d.PkgName = "api"
-	} else {
-		d.PkgName = snakeName(name).String()
-	}
+	d.PkgName = snakeName(name).String()
 }
 
 func snakeName(name string) *strings.Builder {
