@@ -71,8 +71,8 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 	router := e
 
 	// use chain for router
-	handlersChain := s.Chain()
-	router.Use(handlersChain...)
+	middlewares := s.Chain()
+	router.Use(middlewares...)
 
 	// register route info to router
 	router.Handle("GET", "/index/", s.Index)
