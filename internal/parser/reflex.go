@@ -73,7 +73,7 @@ func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 				if !groupSetuped {
 					groupSetuped = true
 					inflateGroupInfo(iface, entryValue, tagInfo)
-					continue
+					break
 				} else {
 					return nil, errMultGroupInfo
 				}
@@ -81,9 +81,9 @@ func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 			// chain field so just parse chain info only have one field
 			if tagInfo.isChain {
 				if !chainSetuped {
-					iface.IsNeedChain = true
+					iface.Chain = tagInfo.fieldName
 					chainSetuped = true
-					continue
+					break
 				} else {
 					return nil, errMultChainInfo
 				}

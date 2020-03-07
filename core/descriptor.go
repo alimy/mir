@@ -13,18 +13,18 @@ type FieldDescriptor struct {
 	Path       string
 	Queries    []string
 	HttpMethod string
-	Comment    string // not support now so always empty
 	MethodName string
+	Comment    string // not support now so always empty
 }
 
 // IfaceDescriptor interface Descriptor info
 type IfaceDescriptor struct {
-	Group       string
-	PkgName     string
-	TypeName    string
-	Comment     string // not support now so always empty
-	IsNeedChain bool
-	Fields      []*FieldDescriptor
+	Group    string
+	Chain    string
+	PkgName  string
+	TypeName string
+	Comment  string // not support now so always empty
+	Fields   []*FieldDescriptor
 }
 
 // IfaceDescriptors interface Descriptor map {TypeName:*IfaceDescriptor}
