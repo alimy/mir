@@ -13,8 +13,8 @@ var (
 	BuildTime = "Not provided"
 )
 
-// MircVer version of Mirc
-var MircVer = semver.Version{
+// AppVer version of Mirc
+var AppVer = semver.Version{
 	Major:      2,
 	Minor:      0,
 	Patch:      0,

@@ -22,6 +22,10 @@ func init() {
 }
 
 func versionRun(_cmd *cobra.Command, _args []string) {
-	fmt.Printf("v%s\nBuildTime:%s\nBuildGitSHA:%s\n",
-		version.MircVer, version.BuildTime, version.GitHash)
+	if version.BuildTime == "" || version.GitHash == "" {
+		fmt.Printf("v%s\n", version.AppVer)
+	} else {
+		fmt.Printf("v%s\nBuildTime: %s\nGitSHA: %s\n",
+			version.AppVer, version.BuildTime, version.GitHash)
+	}
 }
