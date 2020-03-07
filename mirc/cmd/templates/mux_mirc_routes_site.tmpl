@@ -8,5 +8,5 @@ import (
 type Site struct {
     Chain    mir.Chain `mir:"-"`
     Index    mir.Get   `mir:"/index/"`
-    Articles mir.Get   `mir:"/articles/:category/"`
+    Articles mir.Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
 }

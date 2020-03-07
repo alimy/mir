@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -64,6 +63,22 @@ func notHttpAny(m string) bool {
 	return m != mir.MethodAny
 }
 
+func joinPath(group, subpath string) string {
+	if group == "" {
+		return subpath
+	}
+	b := &strings.Builder{}
+	if !strings.HasPrefix(group, "/") {
+		b.WriteByte('/')
+	}
+	b.WriteString(group)
+	if !strings.HasSuffix(group, "/") && !strings.HasPrefix(subpath, "/") {
+		b.WriteByte('/')
+	}
+	b.WriteString(subpath)
+	return b.String()
+}
+
 func valideQuery(qs []string) bool {
 	size := len(qs)
 	return size != 0 && size%2 == 0
@@ -84,6 +99,7 @@ func inflateQuery(qs []string) string {
 func generate(generatorName string, sinkPath string, ds core.Descriptors) error {
 	var (
 		err               error
+		file              *os.File
 		dirPath, filePath string
 	)
 
@@ -91,7 +107,7 @@ func generate(generatorName string, sinkPath string, ds core.Descriptors) error 
 	tmpl := template.New("mir").Funcs(template.FuncMap{
 		"notEmptyStr":  notEmptyStr,
 		"notHttpAny":   notHttpAny,
-		"join":         path.Join,
+		"joinPath":     joinPath,
 		"valideQuery":  valideQuery,
 		"inflateQuery": inflateQuery,
 	})
@@ -112,7 +128,7 @@ FuckErr:
 		}
 		for _, iface := range ifaces {
 			filePath = filepath.Join(dirPath, iface.SnakeFileName())
-			file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+			file, err = os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 			if err != nil {
 				break FuckErr
 			}

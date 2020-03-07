@@ -8,7 +8,7 @@ import (
 type Site struct {
     Group    mir.Group `mir:"v2"`
     Index    mir.Get   `mir:"/index/"`
-    Articles mir.Get   `mir:"/articles/:category/"`
+    Articles mir.Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
     Category mir.Get   `mir:"/category/"`
 }
 
