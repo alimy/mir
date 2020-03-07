@@ -20,5 +20,4 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 	router.Handle("GET", "/index/", s.Index)
 	router.Handle("GET", "/articles/:category/", s.Articles)
 	router.Handle("GET", "/category/", s.Category)
-
 }
