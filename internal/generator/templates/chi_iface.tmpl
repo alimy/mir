@@ -37,5 +37,4 @@ func Register{{.TypeName}}Servant(r chi.Router, s {{.TypeName}}) {
     router.Options("{{.Path}}", s.{{.MethodName}})
     router.Connect("{{.Path}}", s.{{.MethodName}})
     router.Trace("{{.Path}}", s.{{.MethodName}}){{end}}
-{{end}}
-}
+{{end}}}

@@ -27,5 +27,4 @@ func Register{{.TypeName}}Servant(r *httprouter.Router, s {{.TypeName}}) {
     r.Handle(http.MethodOptions, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodConnect, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodTrace, "{{joinPath $.Group .Path}}", s.{{.MethodName}}){{end}}
-{{end}}
-}
+{{end}}}
