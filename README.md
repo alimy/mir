@@ -163,7 +163,6 @@ func registerServants(e *gin.Engine) {
 * Build application and run
 
 ```shell
-% make build
-% ./mir-examples
+% make run
 ```
 **Please look at [examples](examples) project for more detail.Have an enjoy in your heart.**
