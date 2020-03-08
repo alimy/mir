@@ -47,7 +47,7 @@ type Site struct {
 }
 ```
 
-* Invoke genrator to generate interface. eg:
+* Invoke mir's generator to generate interface. eg:
 ```
 % cat mirc/main.go
 package main
