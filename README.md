@@ -47,7 +47,48 @@ type Site struct {
 }
 ```
 
-* Then generate interface from routes info defile above
+* Invoke genrator to generate interface. eg:
+```
+% cat mirc/main.go
+package main
+
+import (
+	"log"
+
+	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v2/engine"
+
+	routes "github.com/alimy/mir/v2/examples/mirc/routes"
+	v1 "github.com/alimy/mir/v2/examples/mirc/routes/v1"
+	v2 "github.com/alimy/mir/v2/examples/mirc/routes/v2"
+)
+
+//go:generate go run main.go
+func main() {
+	log.Println("generate code start")
+	entries := mirEntries()
+	opts := &core.Options{
+		GeneratorName: core.GeneratorGin,
+		GeneratorOpts: core.InitOpts{
+			core.OptSinkPath: "./gen",
+		},
+	}
+	if err := engine.Generate(entries, opts); err != nil {
+		log.Fatal(err)
+	}
+	log.Println("generate code finish")
+}
+
+func mirEntries() []interface{} {
+	return []interface{}{
+		new(routes.Site),
+		new(v1.Site),
+		new(v2.Site),
+	}
+}
+```
+
+* Then generate interface from routes info defined above
 ```go
 % make generate
 % cat mirc/gen/api/site.go
@@ -125,4 +166,4 @@ func registerServants(e *gin.Engine) {
 % make build
 % ./mir-examples
 ```
-**Please look at [examples](examples) project for more detail.**
+**Please look at [examples](examples) project for more detail.Have an enjoy in your heart.**
