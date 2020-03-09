@@ -10,8 +10,7 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 
-	_ "github.com/alimy/mir/v2/internal/generator"
-	_ "github.com/alimy/mir/v2/internal/parser"
+	_ "github.com/alimy/mir/v2/internal"
 )
 
 // Generate generate interface code
