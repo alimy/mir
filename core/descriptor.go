@@ -54,7 +54,7 @@ func (d Descriptors) Put(iface *IfaceDescriptor) error {
 
 // Get get a IfaceDescriptors if exists
 func (d Descriptors) Get(group string) (IfaceDescriptors, bool) {
-	ifaces, exist := d[d.keyFrom(group)], false
+	ifaces, exist := d[d.keyFrom(group)]
 	return ifaces, exist
 }
 
