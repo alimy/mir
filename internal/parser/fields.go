@@ -49,7 +49,7 @@ type tagInfo struct {
 }
 
 // tagInfoFrom build tagInfo from field
-func (p mirParser) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
+func (p *mirParser) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	info := &tagInfo{}
 
 	// lookup mir tag info from struct field

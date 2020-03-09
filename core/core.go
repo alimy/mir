@@ -43,6 +43,7 @@ type Parser interface {
 	Name() string
 	Init(opts InitOpts) error
 	Parse(entries []interface{}) (Descriptors, error)
+	Clone() Parser
 }
 
 // Generator generate interface code for engine
@@ -50,6 +51,7 @@ type Generator interface {
 	Name() string
 	Init(opts InitOpts) error
 	Generate(Descriptors) error
+	Clone() Generator
 }
 
 // RegisterGenerators register generators

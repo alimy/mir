@@ -12,7 +12,7 @@ import (
 
 // reflex get Descriptors from parse entries
 // Notice: Descriptors may be an empty if no actual item
-func (p mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
+func (p *mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
 	var err error
 	ds := make(core.Descriptors)
 	for _, entry := range entries {
@@ -31,7 +31,7 @@ func (p mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
 	return ds, err
 }
 
-func (p mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
+func (p *mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
 	isPtr := false

@@ -42,3 +42,10 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	}
 	return p.reflex(entries)
 }
+
+// Clone return a copy of Parser
+func (p *mirParser) Clone() core.Parser {
+	return &mirParser{
+		tagName: p.tagName,
+	}
+}

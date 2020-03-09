@@ -19,10 +19,10 @@ func Generate(entries []interface{}, opts *core.Options) (err error) {
 		return errors.New("options is nil")
 	}
 
-	// just use default parser now
-	p := core.DefaultParser()
+	p := core.ParserByName(opts.ParserName)
+	// use default parser when not set parser name from options
 	if p == nil {
-		return errors.New("parser is nil")
+		p = core.DefaultParser()
 	}
 	if err = p.Init(opts.ParserOpts); err != nil {
 		return

@@ -55,6 +55,14 @@ func (g *mirGenerator) Generate(ds core.Descriptors) error {
 	return generate(g.name, g.sinkPath, ds)
 }
 
+// Clone return a copy of Generator
+func (g *mirGenerator) Clone() core.Generator {
+	return &mirGenerator{
+		name:     g.name,
+		sinkPath: g.sinkPath,
+	}
+}
+
 func notEmptyStr(s string) bool {
 	return s != ""
 }
