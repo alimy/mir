@@ -63,10 +63,15 @@ type MirCtx struct {
 	err        error
 }
 
-// Parser parse entries
-type Parser interface {
+// Crate component common info
+type Crate interface {
 	Name() string
 	Init(opts InitOpts) error
+}
+
+// Parser parse entries
+type Parser interface {
+	Crate
 	Parse(entries []interface{}) (Descriptors, error)
 	GoParse(ctx *MirCtx, entries []interface{})
 	Clone() Parser
@@ -74,8 +79,7 @@ type Parser interface {
 
 // Generator generate interface code for engine
 type Generator interface {
-	Name() string
-	Init(opts InitOpts) error
+	Crate
 	Generate(Descriptors) error
 	GoGenerate(ctx *MirCtx)
 	Clone() Generator
