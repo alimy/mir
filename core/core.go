@@ -4,6 +4,12 @@
 
 package core
 
+import (
+	"context"
+	"errors"
+	"sync"
+)
+
 // options key list
 const (
 	OptSinkPath   = "sinkPath"
@@ -17,25 +23,44 @@ var (
 	// parsers parser list
 	parsers = make(map[string]Parser, 1)
 
-	// Generator Names
+	// generator Names
 	GeneratorGin        = "gin"
 	GeneratorChi        = "chi"
 	GeneratorMux        = "mux"
 	GeneratorHttpRouter = "httprouter"
 
-	// Parser Names
+	// parser Names
 	ParserStructTag = "structTag"
+
+	// run mode list
+	InSerialMode     = false
+	InConcurrentMode = true
 )
+
+// RunMode indicate process mode (InSerialMode Or InConcurrentMode)
+type RunMode = bool
 
 // Opts use for generator or parser init
 type InitOpts = map[string]string
 
 // Options generator options
 type Options struct {
+	// RunMode set run mode (InSerialMode Or InConcurrentMode).
+	// Default is InSerialMode if not set explicit.
+	RunMode       RunMode
 	GeneratorName string
 	ParserName    string
 	GeneratorOpts InitOpts
 	ParserOpts    InitOpts
+}
+
+// MirCtx mir's concurrent parser/generator context
+type MirCtx struct {
+	context.Context
+	cancelFunc context.CancelFunc
+	IfaceChan  chan *IfaceDescriptor
+	mu         sync.Mutex
+	err        error
 }
 
 // Parser parse entries
@@ -43,6 +68,7 @@ type Parser interface {
 	Name() string
 	Init(opts InitOpts) error
 	Parse(entries []interface{}) (Descriptors, error)
+	GoParse(ctx *MirCtx, entries []interface{})
 	Clone() Parser
 }
 
@@ -51,7 +77,65 @@ type Generator interface {
 	Name() string
 	Init(opts InitOpts) error
 	Generate(Descriptors) error
+	GoGenerate(ctx *MirCtx)
 	Clone() Generator
+}
+
+// errGeneratorDone indicate generator process done
+type errGeneratorDone struct{}
+
+func (errGeneratorDone) Error() string {
+	return "generator process done"
+}
+
+func (errGeneratorDone) Is(err error) bool {
+	_, ok := err.(errGeneratorDone)
+	return ok
+}
+
+// Err return cancel error
+func (c *MirCtx) Err() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return c.err
+}
+
+// Cancel cancel mir's process logic with an error
+func (c *MirCtx) Cancel(err error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.err = err
+	c.cancelFunc()
+}
+
+// IsGeneratorDone whether generator process done
+func (c *MirCtx) IsGeneratorDone() bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	return errors.Is(c.err, errGeneratorDone{})
+}
+
+// GeneratorDone mark generator process done
+func (c *MirCtx) GeneratorDone() {
+	c.Cancel(errGeneratorDone{})
+}
+
+// ParserDone mark parser process  done
+func (c *MirCtx) ParserDone() {
+	close(c.IfaceChan)
+}
+
+// NewMirCtx return a new *MirCtx instance
+func NewMirCtx(capcity int) *MirCtx {
+	ctx := &MirCtx{
+		IfaceChan: make(chan *IfaceDescriptor, capcity),
+		mu:        sync.Mutex{},
+	}
+	ctx.Context, ctx.cancelFunc = context.WithCancel(ctx)
+	return ctx
 }
 
 // RegisterGenerators register generators

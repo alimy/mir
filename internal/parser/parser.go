@@ -35,12 +35,17 @@ func (p *mirParser) Init(opts core.InitOpts) error {
 	return nil
 }
 
-// Parse parse interface define object entries
+// Parse serial parse interface defined object entries
 func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
 	return p.reflex(entries)
+}
+
+// GoParse concurrent parse interface defined object entries
+func (p *mirParser) GoParse(ctx *core.MirCtx, entries []interface{}) {
+	// TODO
 }
 
 // Clone return a copy of Parser

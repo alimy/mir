@@ -19,6 +19,10 @@ func Generate(entries []interface{}, opts *core.Options) (err error) {
 		return errors.New("options is nil")
 	}
 
+	if len(entries) == 0 {
+		return errors.New("entries is empty")
+	}
+
 	p := core.ParserByName(opts.ParserName)
 	// use default parser when not set parser name from options
 	if p == nil {
@@ -36,8 +40,34 @@ func Generate(entries []interface{}, opts *core.Options) (err error) {
 		return
 	}
 
-	if mirTags, err := p.Parse(entries); err == nil {
+	switch opts.RunMode {
+	case core.InSerialMode:
+		err = doInSerial(p, g, entries)
+	case core.InConcurrentMode:
+		err = doInConcurrent(p, g, entries)
+	}
+	return err
+}
+
+func doInSerial(p core.Parser, g core.Generator, entries []interface{}) error {
+	mirTags, err := p.Parse(entries)
+	if err == nil {
 		return g.Generate(mirTags)
 	}
 	return err
+}
+
+func doInConcurrent(p core.Parser, g core.Generator, entries []interface{}) error {
+	ctx := core.NewMirCtx(10)
+
+	go p.GoParse(ctx, entries)
+	go g.GoGenerate(ctx)
+
+	select {
+	case <-ctx.Done():
+		if ctx.IsGeneratorDone() {
+			return nil
+		}
+		return ctx.Err()
+	}
 }

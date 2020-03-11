@@ -50,9 +50,14 @@ func (g *mirGenerator) Init(opts core.InitOpts) (err error) {
 	return errNotExistSinkPath
 }
 
-// Generate generate interface code
+// Generate serial generate interface code
 func (g *mirGenerator) Generate(ds core.Descriptors) error {
 	return generate(g.name, g.sinkPath, ds)
+}
+
+// GoGenerator concurrent generate interface code
+func (g *mirGenerator) GoGenerate(ctx *core.MirCtx) {
+	// TODO
 }
 
 // Clone return a copy of Generator
