@@ -7,21 +7,14 @@ package core
 import (
 	"context"
 	"errors"
+	"log"
 	"sync"
 )
 
-// options key list
 const (
+	// options key list
 	OptSinkPath   = "sinkPath"
 	OptDefaultTag = "defaultTag"
-)
-
-var (
-	// generators generator list
-	generators = make(map[string]Generator, 4)
-
-	// parsers parser list
-	parsers = make(map[string]Parser, 1)
 
 	// generator Names
 	GeneratorGin        = "gin"
@@ -33,12 +26,25 @@ var (
 	ParserStructTag = "structTag"
 
 	// run mode list
-	InSerialMode     = false
-	InConcurrentMode = true
+	InSerialMode RunMode = iota
+	InConcurrentMode
+	InSerialDebugMode
+	InConcurrentDebugMode
+)
+
+var (
+	// generators generator list
+	generators = make(map[string]Generator, 4)
+
+	// parsers parser list
+	parsers = make(map[string]Parser, 1)
+
+	// InDebug whether in debug mode
+	InDebug bool
 )
 
 // RunMode indicate process mode (InSerialMode Or InConcurrentMode)
-type RunMode = bool
+type RunMode = uint
 
 // Opts use for generator or parser init
 type InitOpts = map[string]string
@@ -54,15 +60,6 @@ type Options struct {
 	ParserOpts    InitOpts
 }
 
-// MirCtx mir's concurrent parser/generator context
-type MirCtx struct {
-	context.Context
-	cancelFunc context.CancelFunc
-	IfaceChan  chan *IfaceDescriptor
-	mu         sync.Mutex
-	err        error
-}
-
 // Crate component common info
 type Crate interface {
 	Name() string
@@ -73,7 +70,7 @@ type Crate interface {
 type Parser interface {
 	Crate
 	Parse(entries []interface{}) (Descriptors, error)
-	GoParse(ctx *MirCtx, entries []interface{})
+	GoParse(ctx MirCtx, entries []interface{})
 	Clone() Parser
 }
 
@@ -81,8 +78,26 @@ type Parser interface {
 type Generator interface {
 	Crate
 	Generate(Descriptors) error
-	GoGenerate(ctx *MirCtx)
+	GoGenerate(ctx MirCtx)
 	Clone() Generator
+}
+
+// MirCtx mir's concurrent parser/generator context
+type MirCtx interface {
+	context.Context
+	Cancel(err error)
+	ParserDone()
+	GeneratorDone()
+	IsGeneratorDone() bool
+	Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor)
+}
+
+type mirCtx struct {
+	context.Context
+	cancelFunc context.CancelFunc
+	IfaceChan  chan *IfaceDescriptor
+	mu         sync.Mutex
+	err        error
 }
 
 // errGeneratorDone indicate generator process done
@@ -98,7 +113,7 @@ func (errGeneratorDone) Is(err error) bool {
 }
 
 // Err return cancel error
-func (c *MirCtx) Err() error {
+func (c *mirCtx) Err() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -106,7 +121,7 @@ func (c *MirCtx) Err() error {
 }
 
 // Cancel cancel mir's process logic with an error
-func (c *MirCtx) Cancel(err error) {
+func (c *mirCtx) Cancel(err error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -115,7 +130,7 @@ func (c *MirCtx) Cancel(err error) {
 }
 
 // IsGeneratorDone whether generator process done
-func (c *MirCtx) IsGeneratorDone() bool {
+func (c *mirCtx) IsGeneratorDone() bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -123,18 +138,23 @@ func (c *MirCtx) IsGeneratorDone() bool {
 }
 
 // GeneratorDone mark generator process done
-func (c *MirCtx) GeneratorDone() {
+func (c *mirCtx) GeneratorDone() {
 	c.Cancel(errGeneratorDone{})
 }
 
 // ParserDone mark parser process  done
-func (c *MirCtx) ParserDone() {
+func (c *mirCtx) ParserDone() {
 	close(c.IfaceChan)
 }
 
-// NewMirCtx return a new *MirCtx instance
-func NewMirCtx(capcity int) *MirCtx {
-	ctx := &MirCtx{
+// Pipe return source/sink chan *IfaceDescriptor
+func (c *mirCtx) Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor) {
+	return c.IfaceChan, c.IfaceChan
+}
+
+// NewMirCtx return a new mir's context instance
+func NewMirCtx(capcity int) MirCtx {
+	ctx := &mirCtx{
 		IfaceChan: make(chan *IfaceDescriptor, capcity),
 		mu:        sync.Mutex{},
 	}
@@ -189,4 +209,9 @@ func ParserByName(name string) Parser {
 // DefaultParser get a default parser
 func DefaultParser() Parser {
 	return parsers[ParserStructTag]
+}
+
+// Logus print log info
+func Logus(format string, v ...interface{}) {
+	log.Printf("[mir] "+format, v...)
 }

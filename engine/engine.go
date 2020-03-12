@@ -7,6 +7,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"runtime"
 
 	"github.com/alimy/mir/v2/core"
 
@@ -41,8 +42,16 @@ func Generate(entries []interface{}, opts *core.Options) (err error) {
 	}
 
 	switch opts.RunMode {
+	case core.InSerialDebugMode:
+		core.InDebug = true
+		core.Logus("run in serial debug mode")
+		fallthrough
 	case core.InSerialMode:
 		err = doInSerial(p, g, entries)
+	case core.InConcurrentDebugMode:
+		core.InDebug = true
+		core.Logus("run in concurrent debug mode")
+		fallthrough
 	case core.InConcurrentMode:
 		err = doInConcurrent(p, g, entries)
 	}
@@ -50,14 +59,20 @@ func Generate(entries []interface{}, opts *core.Options) (err error) {
 }
 
 func doInSerial(p core.Parser, g core.Generator, entries []interface{}) error {
-	mirTags, err := p.Parse(entries)
+	descriptors, err := p.Parse(entries)
 	if err == nil {
-		return g.Generate(mirTags)
+		return g.Generate(descriptors)
 	}
 	return err
 }
 
 func doInConcurrent(p core.Parser, g core.Generator, entries []interface{}) error {
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU)
+	if core.InDebug {
+		core.Logus("set GOMAXPROCS: %d", numCPU)
+	}
+
 	ctx := core.NewMirCtx(10)
 
 	go p.GoParse(ctx, entries)

@@ -95,6 +95,11 @@ func (d *IfaceDescriptor) SnakeFileName() string {
 	return b.String()
 }
 
+// SnakeGroup return snake group name
+func (d *IfaceDescriptor) SnakeGroup() string {
+	return snakeName(d.Group).String()
+}
+
 // SetPkgName set package name
 func (d *IfaceDescriptor) SetPkgName(name string) {
 	d.PkgName = snakeName(name).String()

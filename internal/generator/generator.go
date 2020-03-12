@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/alimy/mir/v2"
@@ -56,8 +57,27 @@ func (g *mirGenerator) Generate(ds core.Descriptors) error {
 }
 
 // GoGenerator concurrent generate interface code
-func (g *mirGenerator) GoGenerate(ctx *core.MirCtx) {
-	// TODO
+func (g *mirGenerator) GoGenerate(ctx core.MirCtx) {
+	tmpl, err := templateFrom(g.name)
+	if err != nil {
+		ctx.Cancel(err)
+		return
+	}
+	apiPath := filepath.Join(g.sinkPath, "api")
+	ifaceSource, _ := ctx.Pipe()
+
+	wg := &sync.WaitGroup{}
+	for iface := range ifaceSource {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			go goGenerate(ctx, wg, tmpl, apiPath, iface)
+		}
+	}
+	wg.Wait()
+
+	ctx.GeneratorDone()
 }
 
 // Clone return a copy of Generator
@@ -109,14 +129,7 @@ func inflateQuery(qs []string) string {
 	return strings.TrimRight(b.String(), ",")
 }
 
-func generate(generatorName string, sinkPath string, ds core.Descriptors) error {
-	var (
-		err               error
-		file              *os.File
-		dirPath, filePath string
-	)
-
-	apiPath := filepath.Join(sinkPath, "api")
+func templateFrom(generatorName string) (*template.Template, error) {
 	tmpl := template.New("mir").Funcs(template.FuncMap{
 		"notEmptyStr":  notEmptyStr,
 		"notHttpAny":   notHttpAny,
@@ -126,11 +139,19 @@ func generate(generatorName string, sinkPath string, ds core.Descriptors) error 
 	})
 	assetName, exist := tmplFiles[generatorName]
 	if !exist {
-		return fmt.Errorf("not exist templates for genererator:%s", generatorName)
+		return nil, fmt.Errorf("not exist templates for genererator:%s", generatorName)
 	}
-	if tmpl, err = tmpl.Parse(MustAssetString(assetName)); err != nil {
+	return tmpl.Parse(MustAssetString(assetName))
+}
+
+func generate(generatorName string, sinkPath string, ds core.Descriptors) error {
+	var dirPath string
+
+	tmpl, err := templateFrom(generatorName)
+	if err != nil {
 		return err
 	}
+	apiPath := filepath.Join(sinkPath, "api")
 
 FuckErr:
 	for key, ifaces := range ds {
@@ -140,21 +161,43 @@ FuckErr:
 			break
 		}
 		for _, iface := range ifaces {
-			filePath = filepath.Join(dirPath, iface.SnakeFileName())
-			file, err = os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-			if err != nil {
-				break FuckErr
-			}
-			if err = tmpl.Execute(file, iface); err != nil {
-				break FuckErr
-			}
-			if err = file.Close(); err != nil {
+			if err = doGenerate(dirPath, tmpl, iface); err != nil {
 				break FuckErr
 			}
 		}
 	}
 
 	return err
+}
+
+func goGenerate(ctx core.MirCtx, wg *sync.WaitGroup, tmpl *template.Template, apiPath string, iface *core.IfaceDescriptor) {
+	defer wg.Done()
+
+	dirPath := filepath.Join(apiPath, iface.SnakeGroup())
+	err := os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		ctx.Cancel(err)
+		return
+	}
+	if err = doGenerate(dirPath, tmpl, iface); err != nil {
+		ctx.Cancel(err)
+		return
+	}
+}
+
+func doGenerate(dirPath string, tmpl *template.Template, iface *core.IfaceDescriptor) error {
+	filePath := filepath.Join(dirPath, iface.SnakeFileName())
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	if err = tmpl.Execute(file, iface); err != nil {
+		return err
+	}
+	if err = file.Close(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func evalSinkPath(path string) (string, error) {

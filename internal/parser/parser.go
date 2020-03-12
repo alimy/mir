@@ -6,6 +6,7 @@ package parser
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/alimy/mir/v2/core"
 )
@@ -44,8 +45,44 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 }
 
 // GoParse concurrent parse interface defined object entries
-func (p *mirParser) GoParse(ctx *core.MirCtx, entries []interface{}) {
-	// TODO
+func (p *mirParser) GoParse(ctx core.MirCtx, entries []interface{}) {
+	// start an *core.IfaceDescriptor deliver goroutine
+	_, sink := ctx.Pipe()
+	ifaceChan := make(chan *core.IfaceDescriptor, len(sink))
+	go p.ifaceDeliver(ctx, ifaceChan)
+
+	// concurrent parse entries
+	var (
+		err   error
+		iface *core.IfaceDescriptor
+	)
+
+	wg := &sync.WaitGroup{}
+	for _, entry := range entries {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			go func() {
+				defer func() {
+					recover() // avoid send on closed channel error
+				}()
+
+				wg.Add(1)
+				defer wg.Done()
+
+				iface, err = p.ifaceFrom(entry)
+				if err != nil {
+					ctx.Cancel(err)
+				}
+				ifaceChan <- iface
+			}()
+		}
+	}
+	wg.Wait()
+
+	// parse entries done and mark finish status
+	close(ifaceChan)
 }
 
 // Clone return a copy of Parser

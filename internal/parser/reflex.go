@@ -31,6 +31,32 @@ func (p *mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
 	return ds, err
 }
 
+func (p *mirParser) ifaceDeliver(ctx core.MirCtx, source <-chan *core.IfaceDescriptor) {
+	var err error
+
+	_, ifaceSink := ctx.Pipe()
+	ds := make(core.Descriptors, len(ifaceSink))
+
+FuckErr:
+	for iface := range source {
+		select {
+		case <-ctx.Done():
+			break FuckErr
+		default:
+			if len(iface.Fields) == 0 {
+				continue
+			}
+			if err = ds.Put(iface); err != nil {
+				ctx.Cancel(err)
+				break FuckErr
+			}
+			ifaceSink <- iface
+		}
+	}
+
+	ctx.ParserDone()
+}
+
 func (p *mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
