@@ -15,6 +15,7 @@ import (
 
 	"github.com/alimy/mir/v2"
 	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v2/internal/container"
 )
 
 var (
@@ -65,6 +66,9 @@ func (g *mirGenerator) GoGenerate(ctx core.MirCtx) {
 	}
 	apiPath := filepath.Join(g.sinkPath, "api")
 	ifaceSource, _ := ctx.Pipe()
+	onceSet := container.NewOnceSet(func(path string) error {
+		return os.MkdirAll(path, 0755)
+	})
 
 	wg := &sync.WaitGroup{}
 	for iface := range ifaceSource {
@@ -72,7 +76,7 @@ func (g *mirGenerator) GoGenerate(ctx core.MirCtx) {
 		case <-ctx.Done():
 			return
 		default:
-			go goGenerate(ctx, wg, tmpl, apiPath, iface)
+			go goGenerate(ctx, wg, tmpl, onceSet, apiPath, iface)
 		}
 	}
 	wg.Wait()
@@ -170,34 +174,30 @@ FuckErr:
 	return err
 }
 
-func goGenerate(ctx core.MirCtx, wg *sync.WaitGroup, tmpl *template.Template, apiPath string, iface *core.IfaceDescriptor) {
+func goGenerate(ctx core.MirCtx, wg *sync.WaitGroup, tmpl *template.Template,
+	onceSet container.OnceSet, apiPath string, iface *core.IfaceDescriptor) {
 	defer wg.Done()
 
 	dirPath := filepath.Join(apiPath, iface.SnakeGroup())
-	err := os.MkdirAll(dirPath, 0755)
+	err := onceSet.Add(dirPath)
+	if err == nil {
+		err = doGenerate(dirPath, tmpl, iface)
+	}
 	if err != nil {
 		ctx.Cancel(err)
-		return
-	}
-	if err = doGenerate(dirPath, tmpl, iface); err != nil {
-		ctx.Cancel(err)
-		return
 	}
 }
 
 func doGenerate(dirPath string, tmpl *template.Template, iface *core.IfaceDescriptor) error {
 	filePath := filepath.Join(dirPath, iface.SnakeFileName())
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
+	if err == nil {
+		defer func() {
+			_ = file.Close()
+		}()
+		err = tmpl.Execute(file, iface)
 	}
-	if err = tmpl.Execute(file, iface); err != nil {
-		return err
-	}
-	if err = file.Close(); err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func evalSinkPath(path string) (string, error) {
