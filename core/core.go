@@ -44,7 +44,7 @@ var (
 )
 
 // RunMode indicate process mode (InSerialMode Or InConcurrentMode)
-type RunMode = uint
+type RunMode = uint8
 
 // Opts use for generator or parser init
 type InitOpts = map[string]string
