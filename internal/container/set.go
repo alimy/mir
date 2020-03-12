@@ -16,7 +16,11 @@ type onceSet struct {
 // Add add a item to set
 func (s *onceSet) Add(it string) error {
 	if _, exist := s.inSet[it]; !exist {
-		return s.onceFunc(it)
+		err := s.onceFunc(it)
+		if err != nil {
+			return err
+		}
+		s.inSet[it] = struct{}{}
 	}
 	return nil
 }
