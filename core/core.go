@@ -138,7 +138,7 @@ func NewMirCtx(capcity int) *MirCtx {
 		IfaceChan: make(chan *IfaceDescriptor, capcity),
 		mu:        sync.Mutex{},
 	}
-	ctx.Context, ctx.cancelFunc = context.WithCancel(ctx)
+	ctx.Context, ctx.cancelFunc = context.WithCancel(context.Background())
 	return ctx
 }
 
