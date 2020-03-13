@@ -27,6 +27,7 @@ func init() {
 		&mirGenerator{name: core.GeneratorGin},
 		&mirGenerator{name: core.GeneratorChi},
 		&mirGenerator{name: core.GeneratorMux},
+		&mirGenerator{name: core.GeneratorMacaron},
 		&mirGenerator{name: core.GeneratorHttpRouter},
 	)
 }

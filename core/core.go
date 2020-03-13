@@ -12,6 +12,12 @@ import (
 )
 
 const (
+	// run mode list
+	InSerialMode RunMode = iota
+	InConcurrentMode
+	InSerialDebugMode
+	InConcurrentDebugMode
+
 	// options key list
 	OptSinkPath   = "sinkPath"
 	OptDefaultTag = "defaultTag"
@@ -20,16 +26,11 @@ const (
 	GeneratorGin        = "gin"
 	GeneratorChi        = "chi"
 	GeneratorMux        = "mux"
+	GeneratorMacaron    = "macaron"
 	GeneratorHttpRouter = "httprouter"
 
 	// parser Names
 	ParserStructTag = "structTag"
-
-	// run mode list
-	InSerialMode RunMode = iota
-	InConcurrentMode
-	InSerialDebugMode
-	InConcurrentDebugMode
 )
 
 var (
@@ -43,8 +44,8 @@ var (
 	InDebug bool
 )
 
-// RunMode indicate process mode (InSerialMode Or InConcurrentMode)
-type RunMode = uint8
+// RunMode indicate process mode (InSerialMode | InSerialDebugMode | InConcurrentMode | InConcurrentDebugMode)
+type RunMode  uint8
 
 // Opts use for generator or parser init
 type InitOpts = map[string]string
@@ -110,6 +111,21 @@ func (errGeneratorDone) Error() string {
 func (errGeneratorDone) Is(err error) bool {
 	_, ok := err.(errGeneratorDone)
 	return ok
+}
+
+func (m RunMode) String() string {
+	res := "not support mode"
+	switch m {
+	case InSerialMode:
+		res = "serial mode"
+	case InSerialDebugMode:
+		res = "serial debug mode"
+	case InConcurrentMode:
+		res = "concurrent mode"
+	case InConcurrentDebugMode:
+		res = "concurrent debug mode"
+	}
+	return res
 }
 
 // Err return cancel error
@@ -213,5 +229,7 @@ func DefaultParser() Parser {
 
 // Logus print log info
 func Logus(format string, v ...interface{}) {
-	log.Printf("[mir] "+format, v...)
+	if InDebug {
+		log.Printf("[mir] "+format, v...)
+	}
 }

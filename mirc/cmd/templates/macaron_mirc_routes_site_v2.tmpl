@@ -1,0 +1,14 @@
+package v2
+
+import (
+    mir "github.com/alimy/mir/v2"
+)
+
+// Site site v2 interface info
+type Site struct {
+    Group    mir.Group `mir:"v2"`
+    Index    mir.Get   `mir:"/index/"`
+    Articles mir.Get   `mir:"/articles/:category/"`
+    Category mir.Get   `mir:"/category/"`
+}
+

@@ -9,5 +9,6 @@ var tmplFiles = map[string]string{
 	core.GeneratorGin:        "gin_iface.tmpl",
 	core.GeneratorChi:        "chi_iface.tmpl",
 	core.GeneratorMux:        "mux_iface.tmpl",
+	core.GeneratorMacaron:    "macaron_iface.tmpl",
 	core.GeneratorHttpRouter: "httprouter_iface.tmpl",
 }

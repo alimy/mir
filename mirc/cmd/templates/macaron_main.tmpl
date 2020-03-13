@@ -1,0 +1,19 @@
+package main
+
+import (
+    "gopkg.in/macaron.v1"
+)
+
+func main() {
+    m := macaron.New()
+
+    // register servants to gin
+    registerServants(m)
+
+    // start servant service(:4000)
+    m.Run()
+}
+
+func registerServants(m *macaron.Macaron) {
+    // TODO: register routes to m
+}

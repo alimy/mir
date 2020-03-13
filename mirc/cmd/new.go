@@ -30,7 +30,7 @@ func init() {
 	// parse flags for agentCmd
 	newCmd.Flags().StringVarP(&dstPath, "dst", "d", ".", "genereted destination target directory")
 	newCmd.Flags().StringVarP(&pkgName, "pkg", "p", "github.com/alimy/mir-example", "project's package name")
-	newCmd.Flags().StringVarP(&style, "type", "t", "gin", "generated engine type style(eg: gin,chi,mux,httprout)")
+	newCmd.Flags().StringVarP(&style, "type", "t", "gin", "generated engine type style eg: gin,chi,mux,macaron,httprouter")
 
 	// register agentCmd as sub-command
 	register(newCmd)
