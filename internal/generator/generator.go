@@ -113,7 +113,7 @@ func (g *mirGenerator) GoGenerate(ctx core.MirCtx) {
 				if err := writer.Write(dirPath, iface); err != nil {
 					ctx.Cancel(err)
 				}
-			} (ctx, wg, writer, iface)
+			}(ctx, wg, writer, iface)
 		}
 	}
 	wg.Wait()
