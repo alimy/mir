@@ -45,7 +45,7 @@ var (
 )
 
 // RunMode indicate process mode (InSerialMode | InSerialDebugMode | InConcurrentMode | InConcurrentDebugMode)
-type RunMode  uint8
+type RunMode uint8
 
 // Opts use for generator or parser init
 type InitOpts = map[string]string
@@ -90,15 +90,18 @@ type MirCtx interface {
 	ParserDone()
 	GeneratorDone()
 	IsGeneratorDone() bool
+	ChanCapcity() int
 	Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor)
 }
 
 type mirCtx struct {
 	context.Context
-	cancelFunc context.CancelFunc
-	IfaceChan  chan *IfaceDescriptor
-	mu         sync.Mutex
-	err        error
+
+	mu           *sync.Mutex
+	err          error
+	chanCapacity int
+	ifaceChan    chan *IfaceDescriptor
+	cancelFunc   context.CancelFunc
 }
 
 // errGeneratorDone indicate generator process done
@@ -136,6 +139,11 @@ func (c *mirCtx) Err() error {
 	return c.err
 }
 
+// ChanCapacity return ifaceChan's capacity
+func (c *mirCtx) ChanCapcity() int {
+	return c.chanCapacity
+}
+
 // Cancel cancel mir's process logic with an error
 func (c *mirCtx) Cancel(err error) {
 	c.mu.Lock()
@@ -160,20 +168,22 @@ func (c *mirCtx) GeneratorDone() {
 
 // ParserDone mark parser process  done
 func (c *mirCtx) ParserDone() {
-	close(c.IfaceChan)
+	close(c.ifaceChan)
 }
 
 // Pipe return source/sink chan *IfaceDescriptor
 func (c *mirCtx) Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor) {
-	return c.IfaceChan, c.IfaceChan
+	return c.ifaceChan, c.ifaceChan
 }
 
 // NewMirCtx return a new mir's context instance
 func NewMirCtx(capcity int) MirCtx {
 	ctx := &mirCtx{
-		IfaceChan: make(chan *IfaceDescriptor, capcity),
-		mu:        sync.Mutex{},
+		mu:           &sync.Mutex{},
+		chanCapacity: capcity,
+		ifaceChan:    make(chan *IfaceDescriptor, capcity),
 	}
+	Logus("ctx.IfaceChan: %d", len(ctx.ifaceChan))
 	ctx.Context, ctx.cancelFunc = context.WithCancel(context.Background())
 	return ctx
 }
