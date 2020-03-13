@@ -49,11 +49,11 @@ type tagInfo struct {
 }
 
 // tagInfoFrom build tagInfo from field
-func (p *mirParser) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
+func (r *reflex) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	info := &tagInfo{}
 
 	// lookup mir tag info from struct field
-	tag, exist := field.Tag.Lookup(p.tagName)
+	tag, exist := field.Tag.Lookup(r.tagName)
 	if !exist {
 		return nil, errNotExist
 	}
@@ -146,7 +146,7 @@ func (p *mirParser) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 			}
 			queryStr := tag[1:i]
 			if queryStr != "" {
-				info.Queries = inflateQuery(queryStr)
+				info.Queries = r.inflateQuery(queryStr)
 			}
 			tag = tag[i:]
 		}
@@ -170,7 +170,7 @@ func (p *mirParser) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	return info, nil
 }
 
-func inflateQuery(qs string) []string {
+func (r *reflex) inflateQuery(qs string) []string {
 	items := strings.Split(qs, "&")
 	res := make([]string, 0, len(items)*2)
 	for _, q := range items {
@@ -183,7 +183,7 @@ func inflateQuery(qs string) []string {
 }
 
 // valueByName return field value by field name
-func valueByName(value reflect.Value, name string) interface{} {
+func (r *reflex) valueByName(value reflect.Value, name string) interface{} {
 	if fieldValue := value.FieldByName(name); !fieldValue.IsNil() {
 		return fieldValue.Elem().Interface()
 	}

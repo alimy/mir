@@ -10,13 +10,18 @@ import (
 	"github.com/alimy/mir/v2/core"
 )
 
+// reflex real parser
+type reflex struct {
+	tagName string
+}
+
 // reflex get Descriptors from parse entries
-// Notice: Descriptors may be an empty if no actual item
-func (p *mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
+// Notice: Descriptors may be an empty if no actual item and is not routine safe
+func (r *reflex) parse(entries []interface{}) (core.Descriptors, error) {
 	var err error
 	ds := make(core.Descriptors)
 	for _, entry := range entries {
-		iface, err := p.ifaceFrom(entry)
+		iface, err := r.ifaceFrom(entry)
 		if err != nil {
 			break
 		}
@@ -31,33 +36,7 @@ func (p *mirParser) reflex(entries []interface{}) (core.Descriptors, error) {
 	return ds, err
 }
 
-func (p *mirParser) ifaceDeliver(ctx core.MirCtx, source <-chan *core.IfaceDescriptor) {
-	var err error
-
-	_, ifaceSink := ctx.Pipe()
-	ds := make(core.Descriptors, len(ifaceSink))
-
-FuckErr:
-	for iface := range source {
-		select {
-		case <-ctx.Done():
-			break FuckErr
-		default:
-			if len(iface.Fields) == 0 {
-				continue
-			}
-			if err = ds.Put(iface); err != nil {
-				ctx.Cancel(err)
-				break FuckErr
-			}
-			ifaceSink <- iface
-		}
-	}
-
-	ctx.ParserDone()
-}
-
-func (p *mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
+func (r *reflex) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
 	isPtr := false
@@ -92,13 +71,13 @@ func (p *mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) 
 	var groupSetuped, chainSetuped bool
 	for i := 0; i < entryType.NumField(); i++ {
 		field := entryType.Field(i)
-		switch tagInfo, err := p.tagInfoFrom(field); err {
+		switch tagInfo, err := r.tagInfoFrom(field); err {
 		case nil:
 			// group field so just parse group info.group info only have one field
 			if tagInfo.isGroup {
 				if !groupSetuped {
 					groupSetuped = true
-					inflateGroupInfo(iface, entryValue, tagInfo)
+					r.inflateGroupInfo(iface, entryValue, tagInfo)
 					break
 				} else {
 					return nil, errMultGroupInfo
@@ -114,7 +93,7 @@ func (p *mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) 
 					return nil, errMultChainInfo
 				}
 			}
-			iface.Fields = append(iface.Fields, fieldFrom(tagInfo))
+			iface.Fields = append(iface.Fields, r.fieldFrom(tagInfo))
 		case errNotExist:
 			// normal field but had no mir tag info so just break to continue process next field
 		default:
@@ -125,7 +104,7 @@ func (p *mirParser) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) 
 }
 
 // inflateGroupInfo setup tag group info to TagMir instance
-func inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *tagInfo) {
+func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *tagInfo) {
 	// group field value assign to m.group first or tag group string info assigned
 	if group := v.FieldByName(t.fieldName).String(); group != "" {
 		d.Group = group
@@ -136,7 +115,7 @@ func inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *tagInfo) {
 }
 
 // fieldFrom build tagField from entry and tagInfo
-func fieldFrom(t *tagInfo) *core.FieldDescriptor {
+func (r *reflex) fieldFrom(t *tagInfo) *core.FieldDescriptor {
 	return &core.FieldDescriptor{
 		HttpMethod: t.Method,
 		Host:       t.Host,

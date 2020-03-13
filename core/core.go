@@ -183,7 +183,6 @@ func NewMirCtx(capcity int) MirCtx {
 		chanCapacity: capcity,
 		ifaceChan:    make(chan *IfaceDescriptor, capcity),
 	}
-	Logus("ctx.IfaceChan: %d", len(ctx.ifaceChan))
 	ctx.Context, ctx.cancelFunc = context.WithCancel(context.Background())
 	return ctx
 }
