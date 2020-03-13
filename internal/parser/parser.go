@@ -73,7 +73,7 @@ func (p *mirParser) GoParse(ctx core.MirCtx, entries []interface{}) {
 					ctx.Cancel(err)
 				}
 				ifaceSink <- iface
-				core.Logus("deliver iface: %s.%s", iface.PkgName, iface.TypeName)
+				core.Logus("parsed iface: %s.%s", iface.PkgName, iface.TypeName)
 			}(ifaceChan, p.tagName, entry)
 		}
 	}
@@ -98,11 +98,14 @@ func (p *mirParser) ifaceDeliver(ctx core.MirCtx, source <-chan *core.IfaceDescr
 				return
 			}
 			ifaceSink <- iface
+			core.Logus("delivered iface: %s.%s", iface.PkgName, iface.TypeName)
 		case <-ctx.Done():
 			return
 		case <-parserDone:
-			ctx.ParserDone()
-			return
+			if len(source) == 0 {
+				ctx.ParserDone()
+				return
+			}
 		}
 	}
 }

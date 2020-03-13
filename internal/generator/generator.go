@@ -37,6 +37,24 @@ type mirGenerator struct {
 	name     string
 }
 
+type mirWriter struct {
+	tmpl *template.Template
+}
+
+func (w *mirWriter) Write(dirPath string, iface *core.IfaceDescriptor) error {
+	filePath := filepath.Join(dirPath, iface.SnakeFileName())
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err == nil {
+		defer func() {
+			_ = file.Close()
+		}()
+		if err = w.tmpl.Execute(file, iface); err == nil {
+			core.Logus("generated iface: %s.%s to file: %s", iface.PkgName, iface.TypeName, filePath)
+		}
+	}
+	return err
+}
+
 // Name name of generator
 func (g *mirGenerator) Name() string {
 	return g.name
@@ -71,18 +89,38 @@ func (g *mirGenerator) GoGenerate(ctx core.MirCtx) {
 		return os.MkdirAll(path, 0755)
 	})
 
+	var t *template.Template
 	wg := &sync.WaitGroup{}
 	for iface := range ifaceSource {
 		select {
 		case <-ctx.Done():
 			return
 		default:
-			go goGenerate(ctx, wg, tmpl, onceSet, apiPath, iface)
+			dirPath := filepath.Join(apiPath, iface.SnakeGroup())
+			if err = onceSet.Add(dirPath); err != nil {
+				goto FuckErr
+			}
+			if t, err = tmpl.Clone(); err != nil {
+				goto FuckErr
+			}
+			writer := mirWriter{tmpl: t}
+			go func(ctx core.MirCtx, wg *sync.WaitGroup, writer mirWriter, iface *core.IfaceDescriptor) {
+				wg.Add(1)
+				defer wg.Done()
+
+				if err := writer.Write(dirPath, iface); err != nil {
+					ctx.Cancel(err)
+				}
+			} (ctx, wg, writer, iface)
 		}
 	}
 	wg.Wait()
 
 	ctx.GeneratorDone()
+	return
+
+FuckErr:
+	ctx.Cancel(err)
 }
 
 // Clone return a copy of Generator
@@ -146,7 +184,8 @@ func templateFrom(generatorName string) (*template.Template, error) {
 	if !exist {
 		return nil, fmt.Errorf("not exist templates for genererator:%s", generatorName)
 	}
-	return tmpl.Parse(MustAssetString(assetName))
+	data := bytesToString(MustAsset(assetName))
+	return tmpl.Parse(data)
 }
 
 func generate(generatorName string, sinkPath string, ds core.Descriptors) error {
@@ -156,6 +195,7 @@ func generate(generatorName string, sinkPath string, ds core.Descriptors) error 
 	if err != nil {
 		return err
 	}
+	writer := &mirWriter{tmpl: tmpl}
 	apiPath := filepath.Join(sinkPath, "api")
 
 FuckErr:
@@ -166,38 +206,12 @@ FuckErr:
 			break
 		}
 		for _, iface := range ifaces {
-			if err = doGenerate(dirPath, tmpl, iface); err != nil {
+			if err = writer.Write(dirPath, iface); err != nil {
 				break FuckErr
 			}
 		}
 	}
 
-	return err
-}
-
-func goGenerate(ctx core.MirCtx, wg *sync.WaitGroup, tmpl *template.Template,
-	onceSet container.OnceSet, apiPath string, iface *core.IfaceDescriptor) {
-	defer wg.Done()
-
-	dirPath := filepath.Join(apiPath, iface.SnakeGroup())
-	err := onceSet.Add(dirPath)
-	if err == nil {
-		err = doGenerate(dirPath, tmpl, iface)
-	}
-	if err != nil {
-		ctx.Cancel(err)
-	}
-}
-
-func doGenerate(dirPath string, tmpl *template.Template, iface *core.IfaceDescriptor) error {
-	filePath := filepath.Join(dirPath, iface.SnakeFileName())
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	if err == nil {
-		defer func() {
-			_ = file.Close()
-		}()
-		err = tmpl.Execute(file, iface)
-	}
 	return err
 }
 

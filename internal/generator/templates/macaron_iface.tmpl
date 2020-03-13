@@ -24,7 +24,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 {{range .Fields}}{{if notHttpAny .HttpMethod }}        m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}...){{else}}        m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}...){{end}}
 {{end}}}, middlewares...){{else}} m.Group("{{.Group}}", func() {
 {{range .Fields}}{{if notHttpAny .HttpMethod }}        m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}...){{else}}        m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}...){{end}}
-{{end}}}, middlewares...){{end}}{{else}}{{if notEmptyStr .Chain }}    // use chain for router
+{{end}}}){{end}}{{else}}{{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
     m.Use(middlewares...){{end}}
 {{range .Fields}}{{if notHttpAny .HttpMethod }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}...){{else}}    m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}...){{end}}
