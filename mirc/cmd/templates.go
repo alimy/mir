@@ -59,6 +59,16 @@ var tmplFiles = map[string]map[string]tmplInfo{
 		"mirc/routes/v1/site.go": {"echo_mirc_routes_site_v1.tmpl", false},
 		"mirc/routes/v2/site.go": {"echo_mirc_routes_site_v2.tmpl", false},
 	},
+	"iris": {
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"iris_go_mod.tmpl", true},
+		"main.go":                {"iris_main.tmpl", false},
+		"mirc/main.go":           {"iris_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"iris_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"iris_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"iris_mirc_routes_site_v2.tmpl", false},
+	},
 	"macaron": {
 		"Makefile":               {"makefile.tmpl", false},
 		"README.md":              {"readme.tmpl", false},

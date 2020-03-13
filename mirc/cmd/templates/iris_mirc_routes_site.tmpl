@@ -1,0 +1,12 @@
+package routes
+
+import (
+    mir "github.com/alimy/mir/v2"
+)
+
+// Site site interface info
+type Site struct {
+    Chain    mir.Chain `mir:"-"`
+    Index    mir.Get   `mir:"/index/"`
+    Articles mir.Get   `mir:"/articles/{category:string}"`
+}
