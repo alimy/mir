@@ -26,6 +26,7 @@ const (
 	GeneratorGin        = "gin"
 	GeneratorChi        = "chi"
 	GeneratorMux        = "mux"
+	GeneratorEcho       = "echo"
 	GeneratorMacaron    = "macaron"
 	GeneratorHttpRouter = "httprouter"
 
