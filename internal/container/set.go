@@ -24,7 +24,7 @@ type onceSet struct {
 }
 
 type muxSet struct {
-	mux   *sync.Mutex
+	mu    *sync.RWMutex
 	inSet map[string]struct{}
 }
 
@@ -48,8 +48,8 @@ func (s *onceSet) Exist(it string) bool {
 
 // Add add a item to set
 func (s *muxSet) Add(it string) error {
-	s.mux.Lock()
-	defer s.mux.Unlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	if _, exist := s.inSet[it]; exist {
 		return errExist
@@ -60,8 +60,8 @@ func (s *muxSet) Add(it string) error {
 
 // Exist whether it exist
 func (s *muxSet) Exist(it string) bool {
-	s.mux.Lock()
-	defer s.mux.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 
 	_, exist := s.inSet[it]
 	return exist
@@ -79,7 +79,7 @@ func NewOnceSet(onceFunc OnceFunc) Set {
 // NewMuxSet return a goroutine safe set
 func NewMuxSet() Set {
 	return &muxSet{
-		mux:   &sync.Mutex{},
+		mu:    &sync.RWMutex{},
 		inSet: make(map[string]struct{}),
 	}
 }
