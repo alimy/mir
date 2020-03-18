@@ -45,8 +45,8 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	return r.parse(entries)
 }
 
-// GoParse concurrent parse interface defined object entries
-func (p *mirParser) GoParse(ctx core.MirCtx, entries []interface{}) {
+// ParseContext concurrent parse interface defined object entries
+func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 	// start an *core.IfaceDescriptor deliver goroutine
 	ifaceChan := make(chan *core.IfaceDescriptor, ctx.ChanCapcity())
 	parserDone := make(chan struct{})

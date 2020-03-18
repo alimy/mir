@@ -78,8 +78,8 @@ func (g *mirGenerator) Generate(ds core.Descriptors) error {
 	return generate(g.name, g.sinkPath, ds)
 }
 
-// GoGenerator concurrent generate interface code
-func (g *mirGenerator) GoGenerate(ctx core.MirCtx) {
+// GenerateContext concurrent generate interface code
+func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 	tmpl, err := templateFrom(g.name)
 	if err != nil {
 		ctx.Cancel(err)

@@ -73,7 +73,7 @@ type Crate interface {
 type Parser interface {
 	Crate
 	Parse(entries []interface{}) (Descriptors, error)
-	GoParse(ctx MirCtx, entries []interface{})
+	ParseContext(ctx MirCtx, entries []interface{})
 	Clone() Parser
 }
 
@@ -81,7 +81,7 @@ type Parser interface {
 type Generator interface {
 	Crate
 	Generate(Descriptors) error
-	GoGenerate(ctx MirCtx)
+	GenerateContext(ctx MirCtx)
 	Clone() Generator
 }
 
@@ -151,8 +151,10 @@ func (c *mirCtx) Cancel(err error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	c.err = err
-	c.cancelFunc()
+	if c.err != nil {
+		c.err = err
+		c.cancelFunc()
+	}
 }
 
 // IsGeneratorDone whether generator process done

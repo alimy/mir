@@ -73,8 +73,8 @@ func doInConcurrent(p core.Parser, g core.Generator, entries []interface{}) erro
 
 	ctx := core.NewMirCtx(10)
 
-	go p.GoParse(ctx, entries)
-	go g.GoGenerate(ctx)
+	go p.ParseContext(ctx, entries)
+	go g.GenerateContext(ctx)
 
 	select {
 	case <-ctx.Done():
