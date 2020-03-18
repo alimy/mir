@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v2/internal/container"
 )
 
 func init() {
@@ -47,67 +48,33 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 
 // ParseContext concurrent parse interface defined object entries
 func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
-	// start an *core.IfaceDescriptor deliver goroutine
-	ifaceChan := make(chan *core.IfaceDescriptor, ctx.ChanCapcity())
-	parserDone := make(chan struct{})
-	go p.ifaceDeliver(ctx, ifaceChan, parserDone)
-
-	// concurrent parse entries
-	var (
-		err   error
-		iface *core.IfaceDescriptor
-	)
+	_, ifaceSink := ctx.Pipe()
+	muxSet := container.NewMuxSet()
 
 	wg := &sync.WaitGroup{}
-	wg.Add(len(entries))
 	for _, entry := range entries {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			go func(ifaceSink chan<- *core.IfaceDescriptor, tagName string, entry interface{}) {
-				wg.Done()
-				r := &reflex{tagName: tagName}
-				iface, err = r.ifaceFrom(entry)
-				if err != nil {
-					ctx.Cancel(err)
-				}
-				ifaceSink <- iface
-				core.Logus("parsed iface: %s.%s", iface.PkgName, iface.TypeName)
-			}(ifaceChan, p.tagName, entry)
-		}
-	}
-	wg.Wait()
+		wg.Add(1)
+		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, tagName string, entry interface{}) {
+			defer wg.Done()
 
-	// parse entries done and mark finish status
-	close(parserDone)
-}
-
-func (p *mirParser) ifaceDeliver(ctx core.MirCtx, source <-chan *core.IfaceDescriptor, parserDone <-chan struct{}) {
-	var err error
-	_, ifaceSink := ctx.Pipe()
-	ds := make(core.Descriptors, ctx.ChanCapcity())
-	for {
-		select {
-		case iface := <-source:
-			if len(iface.Fields) == 0 {
-				continue
+			r := &reflex{tagName: tagName}
+			iface, err := r.ifaceFrom(entry)
+			if err != nil {
+				ctx.Cancel(err)
+				return
 			}
-			if err = ds.Put(iface); err != nil {
+			core.Logus("parsed iface: %s.%s", iface.PkgName, iface.TypeName)
+			if err = muxSet.Add(iface.PkgName + iface.TypeName); err != nil {
 				ctx.Cancel(err)
 				return
 			}
 			ifaceSink <- iface
 			core.Logus("delivered iface: %s.%s", iface.PkgName, iface.TypeName)
-		case <-ctx.Done():
-			return
-		case <-parserDone:
-			if len(source) == 0 {
-				ctx.ParserDone()
-				return
-			}
-		}
+		}(ctx, wg, ifaceSink, p.tagName, entry)
 	}
+	wg.Wait()
+
+	ctx.ParserDone()
 }
 
 // Clone return a copy of Parser

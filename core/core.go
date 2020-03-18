@@ -6,9 +6,7 @@ package core
 
 import (
 	"context"
-	"errors"
 	"log"
-	"sync"
 )
 
 const (
@@ -91,31 +89,9 @@ type MirCtx interface {
 	Cancel(err error)
 	ParserDone()
 	GeneratorDone()
-	IsGeneratorDone() bool
-	ChanCapcity() int
+	Wait() error
+	Capcity() int
 	Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor)
-}
-
-type mirCtx struct {
-	context.Context
-
-	mu           *sync.Mutex
-	err          error
-	chanCapacity int
-	ifaceChan    chan *IfaceDescriptor
-	cancelFunc   context.CancelFunc
-}
-
-// errGeneratorDone indicate generator process done
-type errGeneratorDone struct{}
-
-func (errGeneratorDone) Error() string {
-	return "generator process done"
-}
-
-func (errGeneratorDone) Is(err error) bool {
-	_, ok := err.(errGeneratorDone)
-	return ok
 }
 
 func (m RunMode) String() string {
@@ -131,64 +107,6 @@ func (m RunMode) String() string {
 		res = "concurrent debug mode"
 	}
 	return res
-}
-
-// Err return cancel error
-func (c *mirCtx) Err() error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	return c.err
-}
-
-// ChanCapacity return ifaceChan's capacity
-func (c *mirCtx) ChanCapcity() int {
-	return c.chanCapacity
-}
-
-// Cancel cancel mir's process logic with an error
-func (c *mirCtx) Cancel(err error) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	if c.err != nil {
-		c.err = err
-		c.cancelFunc()
-	}
-}
-
-// IsGeneratorDone whether generator process done
-func (c *mirCtx) IsGeneratorDone() bool {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	return errors.Is(c.err, errGeneratorDone{})
-}
-
-// GeneratorDone mark generator process done
-func (c *mirCtx) GeneratorDone() {
-	c.Cancel(errGeneratorDone{})
-}
-
-// ParserDone mark parser process  done
-func (c *mirCtx) ParserDone() {
-	close(c.ifaceChan)
-}
-
-// Pipe return source/sink chan *IfaceDescriptor
-func (c *mirCtx) Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor) {
-	return c.ifaceChan, c.ifaceChan
-}
-
-// NewMirCtx return a new mir's context instance
-func NewMirCtx(capcity int) MirCtx {
-	ctx := &mirCtx{
-		mu:           &sync.Mutex{},
-		chanCapacity: capcity,
-		ifaceChan:    make(chan *IfaceDescriptor, capcity),
-	}
-	ctx.Context, ctx.cancelFunc = context.WithCancel(context.Background())
-	return ctx
 }
 
 // RegisterGenerators register generators

@@ -94,27 +94,22 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 	var t *template.Template
 	wg := &sync.WaitGroup{}
 	for iface := range ifaceSource {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			dirPath := filepath.Join(apiPath, iface.SnakeGroup())
-			if err = onceSet.Add(dirPath); err != nil {
-				goto FuckErr
-			}
-			if t, err = tmpl.Clone(); err != nil {
-				goto FuckErr
-			}
-			writer := mirWriter{tmpl: t}
-			go func(ctx core.MirCtx, wg *sync.WaitGroup, writer mirWriter, iface *core.IfaceDescriptor) {
-				wg.Add(1)
-				defer wg.Done()
-
-				if err := writer.Write(dirPath, iface); err != nil {
-					ctx.Cancel(err)
-				}
-			}(ctx, wg, writer, iface)
+		dirPath := filepath.Join(apiPath, iface.SnakeGroup())
+		if err = onceSet.Add(dirPath); err != nil {
+			goto FuckErr
 		}
+		if t, err = tmpl.Clone(); err != nil {
+			goto FuckErr
+		}
+		writer := mirWriter{tmpl: t}
+		wg.Add(1)
+		go func(ctx core.MirCtx, wg *sync.WaitGroup, writer mirWriter, iface *core.IfaceDescriptor) {
+			defer wg.Done()
+
+			if err := writer.Write(dirPath, iface); err != nil {
+				ctx.Cancel(err)
+			}
+		}(ctx, wg, writer, iface)
 	}
 	wg.Wait()
 

@@ -10,6 +10,7 @@ import (
 	"runtime"
 
 	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v2/internal"
 
 	_ "github.com/alimy/mir/v2/internal"
 )
@@ -71,16 +72,10 @@ func doInConcurrent(p core.Parser, g core.Generator, entries []interface{}) erro
 	runtime.GOMAXPROCS(numCPU)
 	core.Logus("set GOMAXPROCS: %d", numCPU)
 
-	ctx := core.NewMirCtx(10)
+	ctx := internal.NewMirCtx(16)
 
 	go p.ParseContext(ctx, entries)
 	go g.GenerateContext(ctx)
 
-	select {
-	case <-ctx.Done():
-		if ctx.IsGeneratorDone() {
-			return nil
-		}
-		return ctx.Err()
-	}
+	return ctx.Wait()
 }
