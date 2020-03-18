@@ -113,7 +113,7 @@ func (fi bindataFileInfo) Sys() interface{} {
 	return nil
 }
 
-var _chi_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x41\x0e\xc2\x20\x10\x05\xd0\xfd\x9c\xe2\x2f\x35\xc6\xa1\x45\xcf\x61\xbc\x02\x45\x02\x13\x19\x47\x49\x21\x31\x4d\xef\xee\xde\xfd\x53\x7b\xf4\x9a\xb0\x6d\xe0\xfb\x33\xdf\x82\x26\xec\x3b\x51\x36\xcc\x3c\x7b\xa2\x96\x3e\x5d\x5a\xc2\x81\x00\x20\xcb\x5a\xfa\xc2\xd1\xd4\x85\x2a\xfa\x75\x2a\xcd\x0d\x8f\xe1\x79\xe2\xe9\x9f\x64\x3b\xc7\x22\x2e\x16\xc1\xb8\xf2\xc4\x97\x93\xbc\xa2\xe9\x3b\xac\xb2\xd4\x44\x47\xfa\x05\x00\x00\xff\xff\x3d\x41\x8d\x5d\x7d\x00\x00\x00"
+var _chi_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x41\x0e\xc2\x20\x10\x05\xd0\xfd\x9c\xe2\x2f\x35\xc6\xa1\x45\xcf\x61\xbc\x02\x45\x02\x13\x19\x47\x49\x21\x31\x4d\xef\xee\xde\xfd\x53\x7b\xf4\x9a\xb0\x6d\xe0\xfb\x33\xdf\x82\x26\xec\x3b\x51\x36\xcc\x3c\x7b\xa2\x96\x3e\x5d\x5a\xc2\x81\x00\x20\xcb\x5a\xfa\xc2\xd1\xd4\x85\x2a\xfa\x75\x2a\xcd\x0d\x8f\xe1\x79\xe6\xe9\x9f\x64\x3b\xc7\x22\x2e\x16\xc1\xb8\xf2\xc4\x97\x93\xbc\xa2\xe9\x3b\xac\xb2\xd4\x44\x47\xfa\x05\x00\x00\xff\xff\x30\xbd\x41\x34\x7d\x00\x00\x00"
 
 func chi_go_modTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -128,8 +128,8 @@ func chi_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "chi_go_mod.tmpl", size: 125, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
-	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x72, 0x85, 0xff, 0xdf, 0xa1, 0x5b, 0x27, 0x61, 0x9e, 0x93, 0x9f, 0xc2, 0x8d, 0x68, 0xf4, 0xc8, 0x4a, 0xd3, 0xee, 0x14, 0x7d, 0x6f, 0x94, 0x19, 0x4a, 0xd1, 0xbc, 0x61, 0xa9, 0x5, 0xdf, 0x6a}}
+	info := bindataFileInfo{name: "chi_go_mod.tmpl", size: 125, mode: os.FileMode(0644), modTime: time.Unix(1584548470, 0)}
+	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x77, 0xb3, 0xbd, 0x54, 0x3b, 0x3c, 0x47, 0x99, 0xea, 0x74, 0xf, 0xb8, 0x6, 0x1c, 0xf4, 0x5d, 0x90, 0x7c, 0x9d, 0x71, 0xbd, 0xda, 0x3c, 0x5e, 0xdf, 0x2c, 0xe1, 0x9c, 0x90, 0x31, 0xb, 0x66}}
 	return a, nil
 }
 
@@ -148,7 +148,7 @@ func chi_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "chi_main.tmpl", size: 372, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "chi_main.tmpl", size: 372, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xb6, 0x7b, 0xbd, 0xf2, 0x7c, 0x50, 0x17, 0xfb, 0x58, 0x6e, 0xc5, 0xb6, 0xca, 0x6f, 0xce, 0x60, 0x21, 0x3f, 0xae, 0xed, 0x88, 0xec, 0xd8, 0x81, 0x7c, 0xe7, 0x19, 0xdd, 0x34, 0xbd, 0xcb, 0xbe}}
 	return a, nil
 }
@@ -168,7 +168,7 @@ func chi_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "chi_mirc_main.tmpl", size: 770, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "chi_mirc_main.tmpl", size: 770, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xe8, 0x4a, 0x8b, 0xd, 0x37, 0x6d, 0xfc, 0xcf, 0x6c, 0x5e, 0xc6, 0xd8, 0x5b, 0x72, 0xa7, 0xe3, 0xe9, 0x91, 0x17, 0x45, 0xc4, 0xff, 0x33, 0xaf, 0x42, 0x77, 0xfc, 0x36, 0xd7, 0x3a, 0x84, 0x66}}
 	return a, nil
 }
@@ -188,7 +188,7 @@ func chi_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "chi_mirc_routes_site.tmpl", size: 247, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "chi_mirc_routes_site.tmpl", size: 247, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x1a, 0xd6, 0x44, 0xd0, 0xd2, 0x3b, 0xf8, 0x4b, 0x15, 0xfd, 0x19, 0xea, 0x6c, 0xc6, 0x24, 0x6b, 0x5b, 0x1e, 0x4, 0x2e, 0x7, 0x96, 0x20, 0x12, 0x80, 0x57, 0x18, 0x8f, 0xa7, 0x5a, 0x96, 0x8e}}
 	return a, nil
 }
@@ -208,7 +208,7 @@ func chi_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "chi_mirc_routes_site_v1.tmpl", size: 280, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "chi_mirc_routes_site_v1.tmpl", size: 280, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xe5, 0xeb, 0x61, 0xa3, 0x53, 0x21, 0x89, 0xe3, 0x72, 0xac, 0x83, 0x73, 0x3e, 0x38, 0x29, 0xd2, 0x56, 0xe4, 0x9d, 0xa0, 0x1b, 0x85, 0x5d, 0xd5, 0xb7, 0xb2, 0x15, 0xa0, 0x2b, 0x70, 0xc6, 0xeb}}
 	return a, nil
 }
@@ -228,7 +228,7 @@ func chi_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "chi_mirc_routes_site_v2.tmpl", size: 290, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "chi_mirc_routes_site_v2.tmpl", size: 290, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x52, 0x3b, 0xfc, 0xfa, 0x6b, 0x77, 0x8b, 0xef, 0x6f, 0x3c, 0xac, 0xb1, 0xdc, 0x2d, 0xe8, 0xda, 0xd9, 0x6, 0xc6, 0x7c, 0xcc, 0x4b, 0x15, 0xbf, 0xca, 0x17, 0xda, 0xcd, 0x64, 0x14, 0xa2, 0xf0}}
 	return a, nil
 }
@@ -248,7 +248,7 @@ func echo_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "echo_go_mod.tmpl", size: 119, mode: os.FileMode(0644), modTime: time.Unix(1584105883, 0)}
+	info := bindataFileInfo{name: "echo_go_mod.tmpl", size: 119, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x47, 0x5d, 0xcf, 0xe7, 0x7a, 0xf9, 0x8d, 0xac, 0xe0, 0xb8, 0x81, 0xcd, 0x94, 0x8e, 0x72, 0xd5, 0x8d, 0xb9, 0xd, 0xdf, 0x32, 0x4f, 0x54, 0x59, 0x40, 0x8d, 0x22, 0x4c, 0x1e, 0xae, 0x1c, 0x8e}}
 	return a, nil
 }
@@ -268,7 +268,7 @@ func echo_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "echo_main.tmpl", size: 344, mode: os.FileMode(0644), modTime: time.Unix(1584105253, 0)}
+	info := bindataFileInfo{name: "echo_main.tmpl", size: 344, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x60, 0xb1, 0xa2, 0xfb, 0x2b, 0x87, 0x65, 0xbe, 0x59, 0x5b, 0x8e, 0xf5, 0x8a, 0x27, 0xd5, 0x7, 0x4e, 0x9c, 0x67, 0x25, 0x91, 0x78, 0xd5, 0x7a, 0x17, 0x6a, 0xc0, 0x17, 0xc, 0xf6, 0x31, 0xe3}}
 	return a, nil
 }
@@ -288,7 +288,7 @@ func echo_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "echo_mirc_main.tmpl", size: 771, mode: os.FileMode(0644), modTime: time.Unix(1584104834, 0)}
+	info := bindataFileInfo{name: "echo_mirc_main.tmpl", size: 771, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xe9, 0xe0, 0xa8, 0x59, 0x90, 0x9e, 0x7f, 0x6c, 0x5c, 0xe1, 0x98, 0x4c, 0xce, 0x1f, 0xef, 0xe1, 0x88, 0xc4, 0xfa, 0xde, 0x45, 0x61, 0x8, 0xfe, 0xdd, 0x42, 0xf7, 0x3a, 0xe9, 0xbb, 0xdf, 0x37}}
 	return a, nil
 }
@@ -308,7 +308,7 @@ func echo_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "echo_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0644), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "echo_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x5a, 0x4f, 0xfa, 0x94, 0xfc, 0xde, 0xbd, 0xc4, 0x73, 0x1c, 0x5c, 0x1, 0x6, 0xc0, 0xb1, 0x3, 0xe9, 0x45, 0x4a, 0x88, 0x1b, 0x3e, 0x78, 0x93, 0xcc, 0x91, 0x13, 0xe6, 0x80, 0x49, 0x99, 0x88}}
 	return a, nil
 }
@@ -328,7 +328,7 @@ func echo_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "echo_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0644), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "echo_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x2, 0x2c, 0x70, 0x3a, 0xa, 0x23, 0xcb, 0x84, 0xc8, 0xda, 0x13, 0x6b, 0x56, 0xd5, 0xda, 0x60, 0xbe, 0xca, 0x57, 0xf3, 0xe2, 0xec, 0x45, 0x4f, 0x3b, 0x6e, 0xa1, 0x20, 0x63, 0x32, 0x38, 0x74}}
 	return a, nil
 }
@@ -348,12 +348,12 @@ func echo_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "echo_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0644), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "echo_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xce, 0xda, 0xf5, 0x1, 0xac, 0xa9, 0x50, 0x7c, 0x7e, 0x5f, 0xfa, 0x68, 0x71, 0x2, 0x7b, 0x32, 0x2a, 0x8c, 0xf4, 0x6e, 0x60, 0xab, 0x47, 0x25, 0x99, 0xce, 0xf4, 0x8d, 0x70, 0x57, 0xfd, 0x28}}
 	return a, nil
 }
 
-var _gin_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x3d\x0a\x02\x41\x0c\x06\xd0\x3e\xa7\xf8\x4a\x2d\xcc\xfc\xe0\x39\xc4\x2b\xac\x6b\x88\xc1\xcd\x06\x07\x67\x40\x96\xbd\xbb\xd8\xda\xbd\xe2\x79\xdc\xfb\x22\xd8\x36\xf0\xf5\xa9\x97\xc9\x05\xfb\x4e\xa4\x81\xc2\xa5\x12\x35\x79\x75\x6b\x82\x03\x01\x80\xda\xfb\xd1\x6f\x3c\x87\xa7\x69\x31\xff\x24\xb7\x96\x46\xc5\xa8\x9c\x39\xff\x17\xb5\xf5\xa4\xb1\xda\xfc\x13\x46\xe1\x33\x67\x3a\xd2\x37\x00\x00\xff\xff\x27\xe1\x1c\x53\x73\x00\x00\x00"
+var _gin_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x31\x0e\xc2\x30\x0c\x05\xd0\xdd\xa7\xf8\x23\x0c\x38\x4d\xc4\x39\x10\x57\x28\xc5\x32\x16\x75\x2d\x22\x12\x09\x55\xb9\x3b\x62\x65\x7b\xc3\xf3\xb8\xb7\x55\xb0\xef\xe0\xeb\x53\x2f\xb3\x0b\xc6\x20\xd2\x40\xe6\x5c\x88\xaa\xbc\x9a\x55\xc1\x81\x00\x40\xed\xfd\x68\x37\x5e\xc2\xd3\xbc\x9a\x7f\x92\x5b\x4d\xbd\xa0\x17\xce\x3c\xfd\x17\xb5\xed\xa4\xb1\xd9\xf2\x13\x7a\xe6\x33\x4f\x74\xa4\x6f\x00\x00\x00\xff\xff\xc9\x65\x25\xf2\x73\x00\x00\x00"
 
 func gin_go_modTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -368,8 +368,8 @@ func gin_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_go_mod.tmpl", size: 115, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
-	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xa7, 0x9a, 0x51, 0x4e, 0x3b, 0x6a, 0xfc, 0xab, 0x7f, 0x65, 0x3, 0x25, 0x37, 0x53, 0x55, 0x63, 0x3, 0xfc, 0x3a, 0x43, 0xb8, 0x65, 0xc9, 0x9d, 0xf3, 0xd5, 0x27, 0x4d, 0x6c, 0x59, 0xf1, 0xba}}
+	info := bindataFileInfo{name: "gin_go_mod.tmpl", size: 115, mode: os.FileMode(0644), modTime: time.Unix(1584548470, 0)}
+	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x63, 0x56, 0x3c, 0x9b, 0x8f, 0x40, 0xd5, 0x10, 0x71, 0xe, 0xb6, 0x71, 0x42, 0x30, 0xba, 0xbf, 0xbe, 0x56, 0x71, 0x36, 0x58, 0xd1, 0x51, 0x5, 0xd6, 0x97, 0xdb, 0xac, 0xaf, 0x51, 0x70, 0xed}}
 	return a, nil
 }
 
@@ -388,7 +388,7 @@ func gin_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_main.tmpl", size: 331, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "gin_main.tmpl", size: 331, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xe1, 0x9e, 0x47, 0x80, 0x70, 0x82, 0x34, 0x72, 0x40, 0x7b, 0xac, 0xab, 0xd5, 0xc3, 0xef, 0xab, 0x4d, 0xd2, 0xf8, 0xe5, 0x45, 0x88, 0x8a, 0x9c, 0x47, 0x4f, 0xcc, 0x47, 0x8c, 0xa1, 0x6, 0x1e}}
 	return a, nil
 }
@@ -408,7 +408,7 @@ func gin_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_mirc_main.tmpl", size: 770, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "gin_mirc_main.tmpl", size: 770, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x1e, 0x82, 0x70, 0x4c, 0x83, 0x91, 0xc5, 0x3f, 0xd5, 0xcc, 0xba, 0x0, 0x38, 0x3a, 0x9f, 0x4e, 0x4d, 0x5d, 0xa4, 0x44, 0x2b, 0x7, 0x77, 0x61, 0xb0, 0xc0, 0x8a, 0xbe, 0x10, 0x66, 0x48, 0xdb}}
 	return a, nil
 }
@@ -428,7 +428,7 @@ func gin_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "gin_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x5a, 0x4f, 0xfa, 0x94, 0xfc, 0xde, 0xbd, 0xc4, 0x73, 0x1c, 0x5c, 0x1, 0x6, 0xc0, 0xb1, 0x3, 0xe9, 0x45, 0x4a, 0x88, 0x1b, 0x3e, 0x78, 0x93, 0xcc, 0x91, 0x13, 0xe6, 0x80, 0x49, 0x99, 0x88}}
 	return a, nil
 }
@@ -448,7 +448,7 @@ func gin_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "gin_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x2, 0x2c, 0x70, 0x3a, 0xa, 0x23, 0xcb, 0x84, 0xc8, 0xda, 0x13, 0x6b, 0x56, 0xd5, 0xda, 0x60, 0xbe, 0xca, 0x57, 0xf3, 0xe2, 0xec, 0x45, 0x4f, 0x3b, 0x6e, 0xa1, 0x20, 0x63, 0x32, 0x38, 0x74}}
 	return a, nil
 }
@@ -468,12 +468,12 @@ func gin_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "gin_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "gin_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xce, 0xda, 0xf5, 0x1, 0xac, 0xa9, 0x50, 0x7c, 0x7e, 0x5f, 0xfa, 0x68, 0x71, 0x2, 0x7b, 0x32, 0x2a, 0x8c, 0xf4, 0x6e, 0x60, 0xab, 0x47, 0x25, 0x99, 0xce, 0xf4, 0x8d, 0x70, 0x57, 0xfd, 0x28}}
 	return a, nil
 }
 
-var _httprouter_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x3d\xae\xc2\x30\x0c\x07\xf0\xdd\xa7\xf8\x8f\xef\x2d\xce\x07\xf7\x40\x5c\xa1\xb4\x56\x62\x88\x09\x84\x24\x12\xaa\x7a\x77\x76\xf6\x9f\xd5\x6d\x14\xc1\xbe\x83\x2f\xf7\x74\x5e\x4c\x70\x1c\x44\xa9\x22\x70\x88\x44\x4d\x5e\x43\x9b\xe0\x8f\x00\x20\x69\xcf\xe3\xca\x6b\x35\xb7\x14\xb5\x8f\x33\x6d\x6e\x46\xcc\xc8\x9e\xfd\x2f\xb9\x8d\xa2\xf2\x78\xaf\xd9\x74\xeb\x2e\xf7\xfe\x6c\x75\x74\x69\x98\x81\x4f\xec\xe9\x9f\xbe\x01\x00\x00\xff\xff\xd0\x22\x68\x92\x7e\x00\x00\x00"
+var _httprouter_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x41\x0e\xc2\x20\x10\x05\xd0\xfd\x9c\xe2\x2f\x75\x33\x14\xbc\x87\xf1\x0a\xb5\x9d\xc0\x28\x23\x8a\x40\x62\x9a\xde\xdd\x7d\xf7\xcf\xca\xda\xb3\x60\xdb\xc0\xb7\x67\xbc\xce\x26\xd8\x77\xa2\x58\xe0\xd9\x07\xa2\x2a\x9f\xae\x55\x70\x22\x00\x88\xda\x52\xbf\xf3\x52\xcc\xcd\x59\xed\xe7\x4c\xab\x1b\x01\x23\xb0\xe7\xe9\x48\x1e\x3d\xab\xbc\xbe\x4b\x32\x5d\x9b\x4b\xad\xbd\x6b\xe9\x4d\x2a\x86\xe7\x0b\x4f\x74\xa6\x7f\x00\x00\x00\xff\xff\x91\x92\xb0\xec\x7e\x00\x00\x00"
 
 func httprouter_go_modTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -488,8 +488,8 @@ func httprouter_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "httprouter_go_mod.tmpl", size: 126, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
-	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xd, 0x9e, 0x23, 0xe, 0x7f, 0x78, 0xe9, 0x22, 0x35, 0xf2, 0x14, 0x2e, 0x54, 0xba, 0x25, 0x7b, 0xc7, 0x1c, 0x36, 0x34, 0x7b, 0x2a, 0x84, 0x99, 0x9, 0xb3, 0x86, 0xb7, 0xc, 0xa1, 0xde, 0xcd}}
+	info := bindataFileInfo{name: "httprouter_go_mod.tmpl", size: 126, mode: os.FileMode(0644), modTime: time.Unix(1584548470, 0)}
+	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x25, 0xea, 0xd4, 0x91, 0x4b, 0x9b, 0xd, 0xb4, 0x24, 0xa4, 0x6f, 0xbd, 0x24, 0x6e, 0x42, 0x5, 0xa1, 0xf, 0x41, 0x1, 0xf6, 0x2b, 0x34, 0xf0, 0x9c, 0x6, 0x90, 0xf9, 0x63, 0x71, 0xf2, 0x8}}
 	return a, nil
 }
 
@@ -508,7 +508,7 @@ func httprouter_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "httprouter_main.tmpl", size: 402, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "httprouter_main.tmpl", size: 402, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x7d, 0x80, 0x74, 0x9e, 0x62, 0xae, 0xa4, 0xe4, 0xb, 0x71, 0x1b, 0x20, 0x53, 0x3f, 0xd1, 0x88, 0xf6, 0xf9, 0xd4, 0xc3, 0x36, 0x4c, 0xdc, 0x9c, 0x5, 0x28, 0x41, 0xfc, 0xcb, 0xfd, 0xe0, 0x15}}
 	return a, nil
 }
@@ -528,7 +528,7 @@ func httprouter_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "httprouter_mirc_main.tmpl", size: 777, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "httprouter_mirc_main.tmpl", size: 777, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x4, 0x28, 0x0, 0xf7, 0x33, 0xca, 0x7f, 0x25, 0x36, 0x60, 0x32, 0x9e, 0x6, 0xa0, 0x85, 0x19, 0x32, 0xd3, 0xff, 0xea, 0xd6, 0x39, 0xa, 0x3, 0x78, 0xcf, 0x21, 0x60, 0x3, 0x74, 0x2f, 0x99}}
 	return a, nil
 }
@@ -548,7 +548,7 @@ func httprouter_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "httprouter_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "httprouter_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x5a, 0x4f, 0xfa, 0x94, 0xfc, 0xde, 0xbd, 0xc4, 0x73, 0x1c, 0x5c, 0x1, 0x6, 0xc0, 0xb1, 0x3, 0xe9, 0x45, 0x4a, 0x88, 0x1b, 0x3e, 0x78, 0x93, 0xcc, 0x91, 0x13, 0xe6, 0x80, 0x49, 0x99, 0x88}}
 	return a, nil
 }
@@ -568,7 +568,7 @@ func httprouter_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "httprouter_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "httprouter_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x2, 0x2c, 0x70, 0x3a, 0xa, 0x23, 0xcb, 0x84, 0xc8, 0xda, 0x13, 0x6b, 0x56, 0xd5, 0xda, 0x60, 0xbe, 0xca, 0x57, 0xf3, 0xe2, 0xec, 0x45, 0x4f, 0x3b, 0x6e, 0xa1, 0x20, 0x63, 0x32, 0x38, 0x74}}
 	return a, nil
 }
@@ -588,7 +588,7 @@ func httprouter_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "httprouter_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "httprouter_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xce, 0xda, 0xf5, 0x1, 0xac, 0xa9, 0x50, 0x7c, 0x7e, 0x5f, 0xfa, 0x68, 0x71, 0x2, 0x7b, 0x32, 0x2a, 0x8c, 0xf4, 0x6e, 0x60, 0xab, 0x47, 0x25, 0x99, 0xce, 0xf4, 0x8d, 0x70, 0x57, 0xfd, 0x28}}
 	return a, nil
 }
@@ -608,7 +608,7 @@ func iris_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "iris_go_mod.tmpl", size: 119, mode: os.FileMode(0644), modTime: time.Unix(1584107143, 0)}
+	info := bindataFileInfo{name: "iris_go_mod.tmpl", size: 119, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xf3, 0xb9, 0xef, 0x81, 0xe, 0x7d, 0x2b, 0xc6, 0xb4, 0x80, 0x53, 0xc, 0xd5, 0x59, 0x2a, 0x1c, 0xa9, 0x88, 0xc9, 0x7, 0x95, 0xae, 0x5b, 0x30, 0x3, 0x46, 0x5d, 0xcc, 0xee, 0x14, 0xda, 0xa6}}
 	return a, nil
 }
@@ -628,7 +628,7 @@ func iris_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "iris_main.tmpl", size: 372, mode: os.FileMode(0644), modTime: time.Unix(1584107550, 0)}
+	info := bindataFileInfo{name: "iris_main.tmpl", size: 372, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x85, 0x62, 0x83, 0x9, 0x2d, 0xd8, 0xa6, 0x8f, 0xb7, 0x1d, 0xe9, 0xb1, 0x28, 0x19, 0xd6, 0x36, 0x76, 0x8f, 0xe4, 0xfa, 0x99, 0x75, 0xab, 0x10, 0xf2, 0x5f, 0x73, 0x71, 0x70, 0x48, 0x87, 0x14}}
 	return a, nil
 }
@@ -648,7 +648,7 @@ func iris_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "iris_mirc_main.tmpl", size: 771, mode: os.FileMode(0644), modTime: time.Unix(1584106770, 0)}
+	info := bindataFileInfo{name: "iris_mirc_main.tmpl", size: 771, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xbb, 0x3f, 0x88, 0x76, 0x22, 0xa4, 0x6b, 0xf4, 0xe6, 0x48, 0x68, 0x5b, 0x55, 0x46, 0x60, 0x83, 0xab, 0x45, 0x8d, 0xda, 0xab, 0xc5, 0x3e, 0xbe, 0xd2, 0xbc, 0xb3, 0xdb, 0xf8, 0x4b, 0x1e, 0x1}}
 	return a, nil
 }
@@ -668,7 +668,7 @@ func iris_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "iris_mirc_routes_site.tmpl", size: 242, mode: os.FileMode(0644), modTime: time.Unix(1584106936, 0)}
+	info := bindataFileInfo{name: "iris_mirc_routes_site.tmpl", size: 242, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xdb, 0xe9, 0xb6, 0xa8, 0x13, 0x1e, 0xf5, 0x33, 0xea, 0xd5, 0xf4, 0x5e, 0xe1, 0x2e, 0x19, 0x75, 0x59, 0x47, 0xac, 0xaa, 0x85, 0xb4, 0x84, 0xdf, 0x62, 0x11, 0xfa, 0x5, 0xd7, 0xac, 0x34, 0x25}}
 	return a, nil
 }
@@ -688,7 +688,7 @@ func iris_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "iris_mirc_routes_site_v1.tmpl", size: 275, mode: os.FileMode(0644), modTime: time.Unix(1584106936, 0)}
+	info := bindataFileInfo{name: "iris_mirc_routes_site_v1.tmpl", size: 275, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x6b, 0x9f, 0x3d, 0x40, 0xe2, 0xcc, 0xce, 0x89, 0xfc, 0x94, 0x96, 0xb7, 0xb7, 0x67, 0x2, 0x60, 0x31, 0x34, 0x6a, 0x1e, 0x48, 0x8f, 0x9c, 0xee, 0xf7, 0xdd, 0xad, 0x54, 0x11, 0xe8, 0xfc, 0x55}}
 	return a, nil
 }
@@ -708,7 +708,7 @@ func iris_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "iris_mirc_routes_site_v2.tmpl", size: 285, mode: os.FileMode(0644), modTime: time.Unix(1584106936, 0)}
+	info := bindataFileInfo{name: "iris_mirc_routes_site_v2.tmpl", size: 285, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xc8, 0xdb, 0x80, 0x15, 0xc7, 0xea, 0xe9, 0x7, 0xed, 0xe4, 0xc7, 0x77, 0xa6, 0x61, 0xbc, 0x80, 0x98, 0x61, 0x40, 0xa4, 0xc8, 0x2e, 0x77, 0xa5, 0x62, 0x0, 0xc3, 0x74, 0x8, 0xb0, 0x8e, 0x7a}}
 	return a, nil
 }
@@ -728,7 +728,7 @@ func macaron_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macaron_go_mod.tmpl", size: 110, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "macaron_go_mod.tmpl", size: 110, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x74, 0x8f, 0xe6, 0x10, 0x63, 0x99, 0xaf, 0x80, 0xfd, 0x24, 0x5c, 0xe2, 0x94, 0x9a, 0x52, 0xca, 0x4d, 0x36, 0xcb, 0x69, 0xff, 0x83, 0x39, 0x69, 0xaf, 0x63, 0xea, 0x57, 0xe2, 0x8c, 0x32, 0xfa}}
 	return a, nil
 }
@@ -748,7 +748,7 @@ func macaron_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macaron_main.tmpl", size: 282, mode: os.FileMode(0664), modTime: time.Unix(1584105095, 0)}
+	info := bindataFileInfo{name: "macaron_main.tmpl", size: 282, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x5, 0x55, 0x52, 0x74, 0x55, 0x0, 0xda, 0xbb, 0x5d, 0xb2, 0xbc, 0x3b, 0xf7, 0x5a, 0xec, 0x82, 0x27, 0xe4, 0x77, 0xee, 0x87, 0x17, 0xe9, 0x46, 0xeb, 0xe8, 0x4a, 0x83, 0xd, 0xe4, 0xf2, 0x8a}}
 	return a, nil
 }
@@ -768,7 +768,7 @@ func macaron_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macaron_mirc_main.tmpl", size: 774, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "macaron_mirc_main.tmpl", size: 774, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xac, 0xbe, 0x60, 0xab, 0x7f, 0x9b, 0xb7, 0x60, 0xf4, 0xd9, 0x9f, 0x6, 0xf, 0xcc, 0xea, 0x3f, 0xc0, 0x1e, 0x8a, 0xd7, 0x42, 0xd9, 0x2d, 0xd0, 0xdd, 0x65, 0x83, 0xd2, 0x6c, 0x7f, 0xc0, 0xdd}}
 	return a, nil
 }
@@ -788,7 +788,7 @@ func macaron_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macaron_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "macaron_mirc_routes_site.tmpl", size: 235, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x5a, 0x4f, 0xfa, 0x94, 0xfc, 0xde, 0xbd, 0xc4, 0x73, 0x1c, 0x5c, 0x1, 0x6, 0xc0, 0xb1, 0x3, 0xe9, 0x45, 0x4a, 0x88, 0x1b, 0x3e, 0x78, 0x93, 0xcc, 0x91, 0x13, 0xe6, 0x80, 0x49, 0x99, 0x88}}
 	return a, nil
 }
@@ -808,7 +808,7 @@ func macaron_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macaron_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "macaron_mirc_routes_site_v1.tmpl", size: 268, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x2, 0x2c, 0x70, 0x3a, 0xa, 0x23, 0xcb, 0x84, 0xc8, 0xda, 0x13, 0x6b, 0x56, 0xd5, 0xda, 0x60, 0xbe, 0xca, 0x57, 0xf3, 0xe2, 0xec, 0x45, 0x4f, 0x3b, 0x6e, 0xa1, 0x20, 0x63, 0x32, 0x38, 0x74}}
 	return a, nil
 }
@@ -828,7 +828,7 @@ func macaron_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macaron_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "macaron_mirc_routes_site_v2.tmpl", size: 278, mode: os.FileMode(0644), modTime: time.Unix(1584548272, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xce, 0xda, 0xf5, 0x1, 0xac, 0xa9, 0x50, 0x7c, 0x7e, 0x5f, 0xfa, 0x68, 0x71, 0x2, 0x7b, 0x32, 0x2a, 0x8c, 0xf4, 0x6e, 0x60, 0xab, 0x47, 0x25, 0x99, 0xce, 0xf4, 0x8d, 0x70, 0x57, 0xfd, 0x28}}
 	return a, nil
 }
@@ -848,12 +848,12 @@ func makefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "makefile.tmpl", size: 339, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "makefile.tmpl", size: 339, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x17, 0x52, 0xc3, 0x7, 0x59, 0x95, 0x2b, 0xc0, 0xf6, 0x39, 0x5a, 0x0, 0x90, 0x9e, 0xee, 0x43, 0xca, 0x88, 0x12, 0xa7, 0x69, 0xdf, 0xd9, 0x9c, 0x82, 0x7b, 0xf6, 0xac, 0x67, 0xbf, 0xd1, 0x27}}
 	return a, nil
 }
 
-var _mux_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x41\x0a\x02\x31\x0c\x05\xd0\x7d\x4e\xf1\x97\xba\x49\xa7\x45\xf0\x16\xe2\x15\xaa\x96\x1a\x6c\x08\x06\x53\x94\x61\xee\xee\x7e\xf6\x4f\xed\x11\xa3\x61\x5d\xc1\xd7\x57\xbf\x54\x6d\xd8\x36\xa2\x6e\xc8\x9c\x0b\x91\xb7\x77\x88\x37\x1c\x08\x00\xba\x7c\x9e\x71\xe3\xbb\x69\xaa\x43\xf4\x97\x54\x3c\xcd\x82\x59\x78\xe1\x65\x4f\xba\xb9\x8c\x51\x93\xc6\x17\x33\xf3\x99\x4f\x74\xa4\x7f\x00\x00\x00\xff\xff\x8c\x68\xf6\x1c\x71\x00\x00\x00"
+var _mux_go_modTmpl = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\xca\x31\x0a\x42\x31\x0c\x06\xe0\x3d\xa7\xf8\x47\x5d\x52\x5b\x04\x6f\x21\x5e\xa1\x6a\xa9\xc1\x86\x60\x30\x45\x79\xf4\xee\xee\xee\x9f\xda\x3d\x46\xc3\xb6\x81\x2f\xcf\x7e\xae\xda\xb0\x16\x51\x37\x64\xce\x85\xc8\xdb\x2b\xc4\x1b\x76\x04\x00\x5d\xde\x8f\xb8\xf2\xcd\x34\xd5\x21\xfa\x4d\x2a\x9e\x66\xc1\x2c\x9c\xf9\xf0\x4f\xba\xb9\x8c\x51\x93\xc6\x07\x33\xf3\x89\x8f\xb4\xa7\x5f\x00\x00\x00\xff\xff\xcb\xfa\xb2\xb3\x71\x00\x00\x00"
 
 func mux_go_modTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -868,8 +868,8 @@ func mux_go_modTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mux_go_mod.tmpl", size: 113, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
-	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x0, 0x4d, 0x83, 0x69, 0x2a, 0x6, 0xbb, 0xf1, 0x53, 0x3e, 0x13, 0x5e, 0xb1, 0x1a, 0xdb, 0x1e, 0xa3, 0x89, 0x1c, 0x37, 0x32, 0x5b, 0xf9, 0xba, 0x7e, 0x4d, 0xea, 0xe9, 0x6d, 0x78, 0x98, 0x1f}}
+	info := bindataFileInfo{name: "mux_go_mod.tmpl", size: 113, mode: os.FileMode(0644), modTime: time.Unix(1584548470, 0)}
+	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x6e, 0xb8, 0xf4, 0x9d, 0xed, 0xb5, 0x34, 0xcd, 0x99, 0x59, 0xea, 0x9b, 0x7f, 0xb7, 0x6a, 0x5d, 0x91, 0xbb, 0x3d, 0x55, 0x2c, 0x49, 0xd0, 0x7, 0xc4, 0xd5, 0xa0, 0x18, 0x74, 0x20, 0xab, 0xf3}}
 	return a, nil
 }
 
@@ -888,7 +888,7 @@ func mux_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mux_main.tmpl", size: 374, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "mux_main.tmpl", size: 374, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x89, 0xd5, 0xc2, 0x39, 0x38, 0x8f, 0xff, 0x34, 0x50, 0xc7, 0x47, 0xe9, 0x2b, 0x50, 0xc, 0x56, 0x51, 0x70, 0x8f, 0x5b, 0xd5, 0x59, 0x38, 0xf6, 0xaf, 0xd9, 0xaa, 0xc2, 0x21, 0x92, 0x53, 0x8f}}
 	return a, nil
 }
@@ -908,7 +908,7 @@ func mux_mirc_mainTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mux_mirc_main.tmpl", size: 770, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "mux_mirc_main.tmpl", size: 770, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x9f, 0x46, 0x38, 0x3f, 0xe, 0x45, 0x94, 0x9a, 0x21, 0x89, 0x0, 0xe7, 0x35, 0x35, 0x33, 0xc2, 0x72, 0xe4, 0x11, 0x73, 0xcf, 0x83, 0x8, 0xf6, 0x29, 0xfa, 0xfc, 0x2a, 0xfc, 0x91, 0x4a, 0x7b}}
 	return a, nil
 }
@@ -928,7 +928,7 @@ func mux_mirc_routes_siteTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mux_mirc_routes_site.tmpl", size: 311, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "mux_mirc_routes_site.tmpl", size: 311, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x72, 0xec, 0x60, 0x67, 0x48, 0xcd, 0xbe, 0xa1, 0x74, 0xf8, 0x5f, 0x84, 0x72, 0xb3, 0x1d, 0x5b, 0xe3, 0x7a, 0xba, 0xaa, 0xb0, 0x48, 0xbc, 0xfe, 0x32, 0xe2, 0xc1, 0x2f, 0x19, 0x44, 0x28, 0xf7}}
 	return a, nil
 }
@@ -948,7 +948,7 @@ func mux_mirc_routes_site_v1Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mux_mirc_routes_site_v1.tmpl", size: 344, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "mux_mirc_routes_site_v1.tmpl", size: 344, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x17, 0xc6, 0xb9, 0x30, 0xa1, 0x9c, 0x1e, 0x88, 0xaa, 0xfa, 0xd, 0xab, 0x52, 0xd, 0x89, 0xfa, 0x44, 0xcb, 0x14, 0x36, 0x1a, 0xaa, 0x6c, 0xb4, 0x3f, 0x70, 0xf1, 0xb9, 0x2b, 0x14, 0x43, 0xf6}}
 	return a, nil
 }
@@ -968,7 +968,7 @@ func mux_mirc_routes_site_v2Tmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mux_mirc_routes_site_v2.tmpl", size: 354, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "mux_mirc_routes_site_v2.tmpl", size: 354, mode: os.FileMode(0644), modTime: time.Unix(1583565237, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0x3a, 0xb4, 0xc1, 0xc1, 0xf3, 0x2a, 0xa1, 0xe3, 0xb3, 0x2f, 0xcc, 0x2, 0xb1, 0x37, 0x1a, 0x41, 0x81, 0x65, 0xf7, 0x87, 0x9a, 0xe, 0x7c, 0xb, 0xba, 0xd8, 0x16, 0xb3, 0xaa, 0xe2, 0x86, 0xed}}
 	return a, nil
 }
@@ -988,7 +988,7 @@ func readmeTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "readme.tmpl", size: 142, mode: os.FileMode(0664), modTime: time.Unix(1584082042, 0)}
+	info := bindataFileInfo{name: "readme.tmpl", size: 142, mode: os.FileMode(0644), modTime: time.Unix(1583485705, 0)}
 	a := &asset{bytes: bytes, info: info, digest: [32]uint8{0xbf, 0x93, 0xd9, 0x49, 0x63, 0xdd, 0x1, 0xbf, 0xc2, 0x90, 0x6c, 0xd6, 0x94, 0x31, 0xcd, 0xa0, 0xe2, 0x63, 0x53, 0xef, 0xb5, 0x96, 0x41, 0xce, 0x42, 0x53, 0x68, 0x9, 0xd7, 0x7f, 0x2b, 0x25}}
 	return a, nil
 }
