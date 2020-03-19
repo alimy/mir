@@ -16,7 +16,6 @@ var (
 // AppVer version of Mirc
 var AppVer = semver.Version{
 	Major:      2,
-	Minor:      0,
+	Minor:      1,
 	Patch:      0,
-	PreRelease: "alpha.3",
 }
