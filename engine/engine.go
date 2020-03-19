@@ -11,8 +11,6 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/internal"
-
-	_ "github.com/alimy/mir/v2/internal"
 )
 
 // Generate generate interface code

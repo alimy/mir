@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/alimy/mir/v2/core"
+
 	_ "github.com/alimy/mir/v2/internal/generator"
 	_ "github.com/alimy/mir/v2/internal/parser"
 )
