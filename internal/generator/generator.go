@@ -101,9 +101,9 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 		if t, err = tmpl.Clone(); err != nil {
 			goto FuckErr
 		}
-		writer := mirWriter{tmpl: t}
+		writer := &mirWriter{tmpl: t}
 		wg.Add(1)
-		go func(ctx core.MirCtx, wg *sync.WaitGroup, writer mirWriter, iface *core.IfaceDescriptor) {
+		go func(ctx core.MirCtx, wg *sync.WaitGroup, writer *mirWriter, iface *core.IfaceDescriptor) {
 			defer wg.Done()
 
 			if err := writer.Write(dirPath, iface); err != nil {
