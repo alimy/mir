@@ -6,7 +6,7 @@ default: ci
 
 .PHONY: ci
 ci: misspell vet
-	go test .
+	go test ./...
 
 .PHONY: build
 build: fmt
