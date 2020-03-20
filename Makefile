@@ -20,7 +20,7 @@ generate:
 
 .PHONY: test
 test: fmt misspell vet
-	go test .
+	go test ./...
 
 .PHONY: vet
 vet:
