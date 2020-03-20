@@ -20,6 +20,7 @@ func main() {
 	log.Println("generate code start")
 	entries := mirEntries()
 	opts := &core.Options{
+		RunMode:       core.InConcurrentDebugMode,
 		GeneratorName: core.GeneratorGin,
 		GeneratorOpts: core.InitOpts{
 			core.OptSinkPath: "./gen",
