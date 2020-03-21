@@ -21,9 +21,9 @@ func (EmptySiteWithNoGroup) Chain() gin.HandlersChain {
 }
 
 func (EmptySiteWithNoGroup) Index(c *gin.Context) {
-	c.String(http.StatusOK, "get index data (v1)")
+	c.String(http.StatusOK, "get index data")
 }
 
 func (EmptySiteWithNoGroup) Articles(c *gin.Context) {
-	c.String(http.StatusOK, "get articles data (v1)")
+	c.String(http.StatusOK, "get articles data")
 }
