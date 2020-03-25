@@ -8,14 +8,14 @@ import "github.com/coreos/go-semver/semver"
 
 var (
 	// GitHash Value will be set during build
-	GitHash = "Not provided"
+	GitHash = ""
 	// BuildTime Value will be set during build
-	BuildTime = "Not provided"
+	BuildTime = ""
 )
 
 // AppVer version of Mirc
 var AppVer = semver.Version{
 	Major: 2,
 	Minor: 2,
-	Patch: 0,
+	Patch: 1,
 }
