@@ -4,7 +4,14 @@
 
 package v1
 
-import "github.com/alimy/mir/v2"
+import (
+	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v2/engine"
+)
+
+func init() {
+	engine.AddEntry(new(Site))
+}
 
 // Site mir's struct tag define
 type Site struct {
