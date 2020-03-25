@@ -8,19 +8,45 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
+	"sync"
 
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/internal"
 )
 
-// Generate generate interface code
-func Generate(entries []interface{}, opts *core.Options) (err error) {
+var (
+	mu         = &sync.Mutex{}
+	mirEntries = make([]interface{}, 0, 8)
+)
+
+// AddEntry add mir's entry
+func AddEntry(entry interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	mirEntries = append(mirEntries, entry)
+}
+
+// AddEntries add mir's entry list
+func AddEntries(entries ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	addEntries(entries...)
+}
+
+// Generate generate interface code from mir's iface entry
+func Generate(opts *core.Options, entries ...interface{}) (err error) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if opts == nil {
 		return errors.New("options is nil")
 	}
 
-	if len(entries) == 0 {
-		return errors.New("entries is empty")
+	addEntries(entries...)
+	if len(mirEntries) == 0 {
+		return errors.New("mir entries is empty maybe need add entries first")
 	}
 
 	p := core.ParserByName(opts.ParserName)
@@ -46,15 +72,19 @@ func Generate(entries []interface{}, opts *core.Options) (err error) {
 		core.Logus("run in %s", opts.RunMode)
 		fallthrough
 	case core.InSerialMode:
-		err = doInSerial(p, g, entries)
+		err = doInSerial(p, g, mirEntries)
 	case core.InConcurrentDebugMode:
 		core.InDebug = true
 		core.Logus("run in %s", opts.RunMode)
 		fallthrough
 	case core.InConcurrentMode:
-		err = doInConcurrent(p, g, entries)
+		err = doInConcurrent(p, g, mirEntries)
 	}
 	return err
+}
+
+func addEntries(entries ...interface{}) {
+	mirEntries = append(mirEntries, entries...)
 }
 
 func doInSerial(p core.Parser, g core.Generator, entries []interface{}) error {

@@ -1,8 +1,13 @@
 package v1
 
 import (
-    mir "github.com/alimy/mir/v2"
+    "github.com/alimy/mir/v2"
+    "github.com/alimy/mir/v2/engine"
 )
+
+func init() {
+    engine.AddEntry(new(Site))
+}
 
 // Site site v1 interface info
 type Site struct {

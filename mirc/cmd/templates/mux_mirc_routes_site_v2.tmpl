@@ -1,8 +1,13 @@
 package v2
 
 import (
-    mir "github.com/alimy/mir/v2"
+    "github.com/alimy/mir/v2"
+    "github.com/alimy/mir/v2/engine"
 )
+
+func init() {
+    engine.AddEntry(new(Site))
+}
 
 // Site site v2 interface info
 type Site struct {
@@ -11,4 +16,3 @@ type Site struct {
     Articles mir.Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
     Category mir.Get   `mir:"/category/"`
 }
-

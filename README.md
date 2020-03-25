@@ -10,6 +10,7 @@ Mir is used for register handler to http router(eg: [Gin](https://github.com/gin
  ## Usage
  
  * Generate a simple template project
+ 
  ```
 % go get github.com/alimy/mir/mirc/v2@latest
 % mirc new -d mir-examples
@@ -33,12 +34,20 @@ mir-examples
  ```
  
  * Custom route info just use struct tag. eg:
+ 
 ```go
 // file: mirc/routes/site.go
 
 package routes
 
-import "github.com/alimy/mir/v2"
+import (
+	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v2/engine"
+)
+
+func init() {
+	engine.AddEntry(new(Site))
+}
 
 // Site mir's struct tag define
 type Site struct {
@@ -49,6 +58,7 @@ type Site struct {
 ```
 
 * Invoke mir's generator to generate interface. eg:
+
 ```
 % cat mirc/main.go
 package main
@@ -59,15 +69,14 @@ import (
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/engine"
 
-	routes "github.com/alimy/mir/v2/examples/mirc/routes"
-	v1 "github.com/alimy/mir/v2/examples/mirc/routes/v1"
-	v2 "github.com/alimy/mir/v2/examples/mirc/routes/v2"
+	_ "github.com/alimy/mir/v2/examples/mirc/routes"
+	_ "github.com/alimy/mir/v2/examples/mirc/routes/v1"
+	_ "github.com/alimy/mir/v2/examples/mirc/routes/v2"
 )
 
 //go:generate go run main.go
 func main() {
 	log.Println("generate code start")
-	entries := mirEntries()
 	opts := &core.Options{
 		RunMode:       core.InSerialMode,
 		GeneratorName: core.GeneratorGin,
@@ -75,22 +84,15 @@ func main() {
 			core.OptSinkPath: "./gen",
 		},
 	}
-	if err := engine.Generate(entries, opts); err != nil {
+	if err := engine.Generate(opts); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("generate code finish")
 }
-
-func mirEntries() []interface{} {
-	return []interface{}{
-		new(routes.Site),
-		new(v1.Site),
-		new(v2.Site),
-	}
-}
 ```
 
 * Then generate interface from routes info defined above
+
 ```go
 % make generate
 % cat mirc/gen/api/site.go
@@ -124,6 +126,7 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 ```
 
 * Register interface to router
+
 ```go
 package main
 
@@ -132,9 +135,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/alimy/mir/v2/examples/mirc/gen/api"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
+	api "github.com/alimy/mir/v2/examples/mirc/gen/api"
+	v1 "github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
+	v2 "github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
 	"github.com/alimy/mir/v2/examples/servants"
 )
 
@@ -167,4 +170,5 @@ func registerServants(e *gin.Engine) {
 ```shell
 % make run
 ```
-**Please look at [examples](examples) project for more detail.Have an enjoy in your heart.**
+
+**Please look at [examples](examples) project for more details.Have an enjoy in your heart.**

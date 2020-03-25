@@ -15,6 +15,7 @@ import (
 
 var (
 	// error list
+	errNilType       tagError = "nil type is not valide"
 	errNotExist      tagError = "mir struct tag filed not exist"
 	errNoPathInfo    tagError = "mir struct tag not contains path info"
 	errNotValideType tagError = "not valide type, just struct and struct ptr is avalibale"

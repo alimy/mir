@@ -39,9 +39,12 @@ func (r *reflex) parse(entries []interface{}) (core.Descriptors, error) {
 func (r *reflex) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
-	isPtr := false
+	if entryType == nil {
+		return nil, errNilType
+	}
 
 	// get real entry type
+	isPtr := false
 	if entryType.Kind() == reflect.Ptr {
 		isPtr = true
 		entryType = entryType.Elem()
