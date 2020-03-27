@@ -18,10 +18,6 @@ import (
 	"github.com/alimy/mir/v2/internal/container"
 )
 
-var (
-	errNotExistSinkPath = errors.New("not exist output path")
-)
-
 func init() {
 	core.RegisterGenerators(
 		&mirGenerator{name: core.GeneratorGin},
@@ -63,14 +59,12 @@ func (g *mirGenerator) Name() string {
 }
 
 // Init init generator
-func (g *mirGenerator) Init(opts core.InitOpts) (err error) {
-	if len(opts) != 0 {
-		if sp, exist := opts[core.OptSinkPath]; exist {
-			g.sinkPath, err = evalSinkPath(sp)
-			return
-		}
+func (g *mirGenerator) Init(opts *core.GeneratorOpts) (err error) {
+	if opts == nil {
+		return errors.New("init opts is nil")
 	}
-	return errNotExistSinkPath
+	g.sinkPath, err = evalSinkPath(opts.SinkPath)
+	return
 }
 
 // Generate serial generate interface code

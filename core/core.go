@@ -11,14 +11,10 @@ import (
 
 const (
 	// run mode list
-	InSerialMode RunMode = iota
+	InSerialMode runMode = iota
 	InConcurrentMode
 	InSerialDebugMode
 	InConcurrentDebugMode
-
-	// options key list
-	OptSinkPath   = "sinkPath"
-	OptDefaultTag = "defaultTag"
 
 	// generator Names
 	GeneratorGin        = "gin"
@@ -40,36 +36,74 @@ var (
 	// parsers parser list
 	parsers = make(map[string]Parser, 1)
 
-	// InDebug whether in debug mode
-	InDebug bool
+	// inDebug whether in debug mode
+	inDebug bool
 )
 
-// RunMode indicate process mode (InSerialMode | InSerialDebugMode | InConcurrentMode | InConcurrentDebugMode)
-type RunMode uint8
+// runMode indicate process mode (InSerialMode | InSerialDebugMode | InConcurrentMode | InConcurrentDebugMode)
+type runMode uint8
 
-// Opts use for generator or parser init
-type InitOpts = map[string]string
-
-// Options generator options
-type Options struct {
-	// RunMode set run mode (InSerialMode Or InConcurrentMode).
-	// Default is InSerialMode if not set explicit.
-	RunMode       RunMode
+// InitOpts use for generator or parser init
+type InitOpts struct {
+	RunMode       runMode
 	GeneratorName string
 	ParserName    string
-	GeneratorOpts InitOpts
-	ParserOpts    InitOpts
+	SinkPath      string
+	DefaultTag    string
 }
 
-// Crate component common info
-type Crate interface {
-	Name() string
-	Init(opts InitOpts) error
+// ParserOpts used for initial parser
+type ParserOpts struct {
+	DefaultTag string
+}
+
+// GeneratorOpts used for initial generator
+type GeneratorOpts struct {
+	SinkPath string
+}
+
+// Option pass option to custom run behavior
+type Option interface {
+	apply(opts *InitOpts)
+}
+
+// Options generator options
+type Options []Option
+
+// InitOpts return an initOpts instance
+func (opts Options) InitOpts() *InitOpts {
+	res := defaultInitOpts()
+	for _, opt := range opts {
+		opt.apply(res)
+	}
+	return res
+}
+
+// ParserOpts return a ParserOpts instance
+func (opts *InitOpts) ParserOpts() *ParserOpts {
+	return &ParserOpts{
+		DefaultTag: opts.DefaultTag,
+	}
+}
+
+// GeneratorOpts return a GeneratorOpts
+func (opts *InitOpts) GeneratorOpts() *GeneratorOpts {
+	return &GeneratorOpts{
+		SinkPath: opts.SinkPath,
+	}
+}
+
+// optFunc used for convert function to Option interface
+type optFunc func(opts *InitOpts)
+
+func (f optFunc) apply(opts *InitOpts) {
+	f(opts)
 }
 
 // Parser parse entries
 type Parser interface {
-	Crate
+	Name() string
+	Init(opts *ParserOpts) error
 	Parse(entries []interface{}) (Descriptors, error)
 	ParseContext(ctx MirCtx, entries []interface{})
 	Clone() Parser
@@ -77,7 +111,8 @@ type Parser interface {
 
 // Generator generate interface code for engine
 type Generator interface {
-	Crate
+	Name() string
+	Init(opts *GeneratorOpts) error
 	Generate(Descriptors) error
 	GenerateContext(ctx MirCtx)
 	Clone() Generator
@@ -94,7 +129,8 @@ type MirCtx interface {
 	Pipe() (<-chan *IfaceDescriptor, chan<- *IfaceDescriptor)
 }
 
-func (m RunMode) String() string {
+// String runMode describe
+func (m runMode) String() string {
 	res := "not support mode"
 	switch m {
 	case InSerialMode:
@@ -107,6 +143,41 @@ func (m RunMode) String() string {
 		res = "concurrent debug mode"
 	}
 	return res
+}
+
+// RunMode set run mode option
+func RunMode(mode runMode) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.RunMode = mode
+	})
+}
+
+// GeneratorName set generator name option
+func GeneratorName(name string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = name
+	})
+}
+
+// ParserName set parser name option
+func ParserName(name string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.ParserName = name
+	})
+}
+
+// SinkPath set generated code out directory
+func SinkPath(path string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.SinkPath = path
+	})
+}
+
+// DefaultTag set parser's default struct field tag string key
+func DefaultTag(tag string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.DefaultTag = tag
+	})
 }
 
 // RegisterGenerators register generators
@@ -124,17 +195,6 @@ func RegisterParsers(ps ...Parser) {
 		if p != nil && p.Name() != "" {
 			parsers[p.Name()] = p
 		}
-	}
-}
-
-// DefaultOptions get a default options
-func DefaultOptions() *Options {
-	return &Options{
-		GeneratorName: GeneratorGin,
-		ParserName:    ParserStructTag,
-		GeneratorOpts: InitOpts{
-			OptSinkPath: "./gen",
-		},
 	}
 }
 
@@ -160,7 +220,36 @@ func DefaultParser() Parser {
 
 // Logus print log info
 func Logus(format string, v ...interface{}) {
-	if InDebug {
+	if inDebug {
 		log.Printf("[mir] "+format, v...)
+	}
+}
+
+// Init initial from Options and return an InitOpts instance
+func Init(opts Options) *InitOpts {
+	var initOpts *InitOpts
+	if opts == nil {
+		initOpts = defaultInitOpts()
+	} else {
+		initOpts = opts.InitOpts()
+	}
+
+	switch initOpts.RunMode {
+	case InSerialDebugMode, InConcurrentDebugMode:
+		inDebug = true
+	default:
+		inDebug = false
+	}
+
+	return initOpts
+}
+
+func defaultInitOpts() *InitOpts {
+	return &InitOpts{
+		RunMode:       InSerialMode,
+		GeneratorName: GeneratorGin,
+		ParserName:    ParserStructTag,
+		SinkPath:      ".gen",
+		DefaultTag:    "mir",
 	}
 }

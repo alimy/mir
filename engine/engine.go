@@ -36,48 +36,38 @@ func AddEntries(entries ...interface{}) {
 }
 
 // Generate generate interface code from mir's iface entry
-func Generate(opts *core.Options, entries ...interface{}) (err error) {
+func Generate(opts core.Options, entries ...interface{}) (err error) {
 	mu.Lock()
 	defer mu.Unlock()
-
-	if opts == nil {
-		return errors.New("options is nil")
-	}
 
 	addEntries(entries...)
 	if len(mirEntries) == 0 {
 		return errors.New("mir entries is empty maybe need add entries first")
 	}
 
-	p := core.ParserByName(opts.ParserName)
+	initOpts := core.Init(opts)
+	p := core.ParserByName(initOpts.ParserName)
 	// use default parser when not set parser name from options
 	if p == nil {
 		p = core.DefaultParser()
 	}
-	if err = p.Init(opts.ParserOpts); err != nil {
+	if err = p.Init(initOpts.ParserOpts()); err != nil {
 		return
 	}
 
-	g := core.GeneratorByName(opts.GeneratorName)
+	g := core.GeneratorByName(initOpts.GeneratorName)
 	if g == nil {
-		return fmt.Errorf("unknow generators that name %s", opts.GeneratorName)
+		return fmt.Errorf("unknow generators that name %s", initOpts.GeneratorName)
 	}
-	if err = g.Init(opts.GeneratorOpts); err != nil {
+	if err = g.Init(initOpts.GeneratorOpts()); err != nil {
 		return
 	}
 
-	switch opts.RunMode {
-	case core.InSerialDebugMode:
-		core.InDebug = true
-		core.Logus("run in %s", opts.RunMode)
-		fallthrough
-	case core.InSerialMode:
+	core.Logus("run in %s", initOpts.RunMode)
+	switch initOpts.RunMode {
+	case core.InSerialDebugMode, core.InSerialMode:
 		err = doInSerial(p, g, mirEntries)
-	case core.InConcurrentDebugMode:
-		core.InDebug = true
-		core.Logus("run in %s", opts.RunMode)
-		fallthrough
-	case core.InConcurrentMode:
+	case core.InConcurrentDebugMode, core.InConcurrentMode:
 		err = doInConcurrent(p, g, mirEntries)
 	}
 	return err

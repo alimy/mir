@@ -2,18 +2,10 @@ package engine
 
 import (
 	"testing"
-
-	"github.com/alimy/mir/v2/core"
 )
 
 func TestGenerate(t *testing.T) {
-	if err := Generate(nil); err == nil {
-		t.Error("want an error but not")
-	}
-	if err := Generate(core.DefaultOptions()); err == nil {
-		t.Error("want an error but not")
-	}
-	if err := Generate(core.DefaultOptions(), nil); err != nil {
+	if err := Generate(nil, nil); err != nil {
 		t.Error("don't want an error but not")
 	}
 	AddEntry(nil)

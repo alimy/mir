@@ -27,10 +27,11 @@ func (p *mirParser) Name() string {
 }
 
 // Init init parser
-func (p *mirParser) Init(opts core.InitOpts) error {
-	if len(opts) != 0 {
-		p.tagName = opts[core.OptDefaultTag]
+func (p *mirParser) Init(opts *core.ParserOpts) error {
+	if opts == nil {
+		return errors.New("init opts is nil")
 	}
+	p.tagName = opts.DefaultTag
 	if p.tagName == "" {
 		p.tagName = defaultTag
 	}
