@@ -18,12 +18,10 @@ import (
 //go:generate go run main.go
 func main() {
 	log.Println("generate code start")
-	opts := &core.Options{
-		RunMode:       core.InConcurrentDebugMode,
-		GeneratorName: core.GeneratorGin,
-		GeneratorOpts: core.InitOpts{
-			core.OptSinkPath: "./gen",
-		},
+	opts := core.Options{
+		core.RunMode(core.InSerialMode),
+		core.GeneratorName(core.GeneratorGin),
+		core.SinkPath("./gen"),
 	}
 	if err := engine.Generate(opts); err != nil {
 		log.Fatal(err)
