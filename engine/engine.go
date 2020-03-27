@@ -45,7 +45,7 @@ func Generate(opts core.Options, entries ...interface{}) (err error) {
 		return errors.New("mir entries is empty maybe need add entries first")
 	}
 
-	initOpts := core.Init(opts)
+	initOpts := core.InitFrom(opts)
 	p := core.ParserByName(initOpts.ParserName)
 	// use default parser when not set parser name from options
 	if p == nil {

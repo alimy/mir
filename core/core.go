@@ -225,8 +225,8 @@ func Logus(format string, v ...interface{}) {
 	}
 }
 
-// Init initial from Options and return an InitOpts instance
-func Init(opts Options) *InitOpts {
+// InitFrom initial from Options and return an InitOpts instance
+func InitFrom(opts Options) *InitOpts {
 	var initOpts *InitOpts
 	if opts == nil {
 		initOpts = defaultInitOpts()
