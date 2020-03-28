@@ -50,6 +50,7 @@ type InitOpts struct {
 	ParserName    string
 	SinkPath      string
 	DefaultTag    string
+	Cleanup       bool
 }
 
 // ParserOpts used for initial parser
@@ -60,6 +61,7 @@ type ParserOpts struct {
 // GeneratorOpts used for initial generator
 type GeneratorOpts struct {
 	SinkPath string
+	Cleanup  bool
 }
 
 // Option pass option to custom run behavior
@@ -90,6 +92,7 @@ func (opts *InitOpts) ParserOpts() *ParserOpts {
 func (opts *InitOpts) GeneratorOpts() *GeneratorOpts {
 	return &GeneratorOpts{
 		SinkPath: opts.SinkPath,
+		Cleanup:  opts.Cleanup,
 	}
 }
 
@@ -173,6 +176,13 @@ func SinkPath(path string) Option {
 	})
 }
 
+// Cleanup set generator cleanup out first when re-generate code
+func Cleanup(enable bool) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.Cleanup = enable
+	})
+}
+
 // DefaultTag set parser's default struct field tag string key
 func DefaultTag(tag string) Option {
 	return optFunc(func(opts *InitOpts) {
@@ -251,5 +261,6 @@ func defaultInitOpts() *InitOpts {
 		ParserName:    ParserStructTag,
 		SinkPath:      ".gen",
 		DefaultTag:    "mir",
+		Cleanup:       true,
 	}
 }

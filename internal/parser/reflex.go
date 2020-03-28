@@ -6,6 +6,7 @@ package parser
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/alimy/mir/v2/core"
 )
@@ -114,7 +115,10 @@ func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *t
 	} else {
 		d.Group = t.group
 	}
-	d.SetPkgName(d.Group)
+	if d.Group != "" {
+		pkgName := strings.Split(d.Group, "/")
+		d.SetPkgName(pkgName[len(pkgName)-1])
+	}
 }
 
 // fieldFrom build tagField from entry and tagInfo

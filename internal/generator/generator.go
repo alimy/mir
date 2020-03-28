@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -31,8 +32,9 @@ func init() {
 }
 
 type mirGenerator struct {
-	sinkPath string
-	name     string
+	sinkPath  string
+	name      string
+	isCleanup bool
 }
 
 type mirWriter struct {
@@ -63,12 +65,15 @@ func (g *mirGenerator) Init(opts *core.GeneratorOpts) (err error) {
 	if opts == nil {
 		return errors.New("init opts is nil")
 	}
+	g.isCleanup = opts.Cleanup
 	g.sinkPath, err = evalSinkPath(opts.SinkPath)
 	return
 }
 
 // Generate serial generate interface code
 func (g *mirGenerator) Generate(ds core.Descriptors) error {
+	// cleanup out first if need
+	g.cleanup()
 	return generate(g.name, g.sinkPath, ds)
 }
 
@@ -85,10 +90,13 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 		return os.MkdirAll(path, 0755)
 	})
 
+	// cleanup out first if need
+	g.cleanup()
+
 	var t *template.Template
 	wg := &sync.WaitGroup{}
 	for iface := range ifaceSource {
-		dirPath := filepath.Join(apiPath, iface.SnakeGroup())
+		dirPath := filepath.Join(apiPath, iface.Group)
 		if err = onceSet.Add(dirPath); err != nil {
 			goto FuckErr
 		}
@@ -119,6 +127,16 @@ func (g *mirGenerator) Clone() core.Generator {
 	return &mirGenerator{
 		name:     g.name,
 		sinkPath: g.sinkPath,
+	}
+}
+
+func (g *mirGenerator) cleanup() {
+	if g.isCleanup {
+		apiPath := path.Join(g.sinkPath, "api")
+		core.Logus("cleanup out: %s", apiPath)
+		if err := os.RemoveAll(apiPath); err != nil {
+			core.Logus("want cleanup out first but failure: %s.do it later by yourself.", err)
+		}
 	}
 }
 
@@ -192,7 +210,7 @@ func generate(generatorName string, sinkPath string, ds core.Descriptors) error 
 FuckErr:
 	for key, ifaces := range ds {
 		group := ds.GroupFrom(key)
-		dirPath = filepath.Join(apiPath, ds.SnakeStr(group))
+		dirPath = filepath.Join(apiPath, group)
 		if err = os.MkdirAll(dirPath, 0755); err != nil {
 			break
 		}
