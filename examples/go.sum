@@ -1,5 +1,5 @@
-github.com/alimy/mir/v2 v2.3.0 h1:4JfLwgIQFP9pcFNBVLywZ4tnihW14KIpiwMn8LQfLhg=
-github.com/alimy/mir/v2 v2.3.0/go.mod h1:AkAOYbPbTxjp8DsUBTERZdXo+7jcSLEvKhLW+Zp9MZ8=
+github.com/alimy/mir/v2 v2.3.1 h1:wboMHjP6qf6nUNy2nJBUNFvcK8O2/ExHdtXkEeOj4II=
+github.com/alimy/mir/v2 v2.3.1/go.mod h1:AkAOYbPbTxjp8DsUBTERZdXo+7jcSLEvKhLW+Zp9MZ8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
