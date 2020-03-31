@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"unicode"
 )
 
 // FieldDescriptor field Descriptor info
@@ -79,46 +78,11 @@ func (d Descriptors) GroupFrom(key string) string {
 	return strings.TrimLeft(key, "_")
 }
 
-// SnakeStr return snake string
-func (d Descriptors) SnakeStr(s string) string {
-	return snakeName(s).String()
-}
-
 func (d Descriptors) keyFrom(s string) string {
 	return "_" + s
 }
 
-// SnakeFileName return snake file name for interface define file
-func (d *IfaceDescriptor) SnakeFileName() string {
-	b := snakeName(d.TypeName)
-	b.WriteString(".go")
-	return b.String()
-}
-
-// SnakeGroup return snake group name
-func (d *IfaceDescriptor) SnakeGroup() string {
-	return snakeName(d.Group).String()
-}
-
 // SetPkgName set package name
 func (d *IfaceDescriptor) SetPkgName(name string) {
-	d.PkgName = snakeName(name).String()
-}
-
-func snakeName(name string) *strings.Builder {
-	b := &strings.Builder{}
-	notFirst := false
-	b.Grow(len(name) + 3)
-	for _, r := range name {
-		if unicode.IsUpper(r) {
-			if notFirst {
-				b.WriteRune('_')
-			}
-			b.WriteRune(unicode.ToLower(r))
-		} else {
-			b.WriteRune(r)
-		}
-		notFirst = true
-	}
-	return b
+	d.PkgName = name
 }

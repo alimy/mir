@@ -17,6 +17,7 @@ import (
 	"github.com/alimy/mir/v2"
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/internal/container"
+	"github.com/alimy/mir/v2/internal/naming"
 )
 
 func init() {
@@ -38,11 +39,13 @@ type mirGenerator struct {
 }
 
 type mirWriter struct {
+	ns   naming.NamingStrategy
 	tmpl *template.Template
 }
 
 func (w *mirWriter) Write(dirPath string, iface *core.IfaceDescriptor) error {
-	filePath := filepath.Join(dirPath, iface.SnakeFileName())
+	fileName := w.ns.Naming(iface.TypeName) + ".go"
+	filePath := filepath.Join(dirPath, fileName)
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err == nil {
 		defer func() {
@@ -95,6 +98,7 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 
 	var t *template.Template
 	wg := &sync.WaitGroup{}
+	ns := naming.NewSnakeNamingStrategy()
 	for iface := range ifaceSource {
 		dirPath := filepath.Join(apiPath, iface.Group)
 		if err = onceSet.Add(dirPath); err != nil {
@@ -103,7 +107,7 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 		if t, err = tmpl.Clone(); err != nil {
 			goto FuckErr
 		}
-		writer := &mirWriter{tmpl: t}
+		writer := &mirWriter{tmpl: t, ns: ns}
 		wg.Add(1)
 		go func(ctx core.MirCtx, wg *sync.WaitGroup, writer *mirWriter, iface *core.IfaceDescriptor) {
 			defer wg.Done()
@@ -204,7 +208,7 @@ func generate(generatorName string, sinkPath string, ds core.Descriptors) error 
 	if err != nil {
 		return err
 	}
-	writer := &mirWriter{tmpl: tmpl}
+	writer := &mirWriter{tmpl: tmpl, ns: naming.NewSnakeNamingStrategy()}
 	apiPath := filepath.Join(sinkPath, "api")
 
 FuckErr:

@@ -9,10 +9,12 @@ import (
 	"strings"
 
 	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v2/internal/naming"
 )
 
 // reflex real parser
 type reflex struct {
+	ns      naming.NamingStrategy
 	tagName string
 }
 
@@ -116,8 +118,9 @@ func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *t
 		d.Group = t.group
 	}
 	if d.Group != "" {
-		pkgName := strings.Split(d.Group, "/")
-		d.SetPkgName(pkgName[len(pkgName)-1])
+		names := strings.Split(d.Group, "/")
+		pkgName := r.ns.Naming(names[len(names)-1])
+		d.SetPkgName(pkgName)
 	}
 }
 

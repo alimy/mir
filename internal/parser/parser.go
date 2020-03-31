@@ -10,6 +10,7 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/internal/container"
+	"github.com/alimy/mir/v2/internal/naming"
 )
 
 func init() {
@@ -43,7 +44,7 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
-	r := &reflex{tagName: p.tagName}
+	r := &reflex{tagName: p.tagName, ns: naming.NewSnakeNamingStrategy()}
 	return r.parse(entries)
 }
 
