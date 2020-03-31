@@ -7,7 +7,7 @@
 Mir is used for register handler to http router(eg: [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter))
  depends on struct tag string info that defined in logic object's struct type field.
  
- ## Usage
+ ### Usage
  
  * Generate a simple template project
  
@@ -169,4 +169,10 @@ func registerServants(e *gin.Engine) {
 % make run
 ```
 
-**Please look at [examples](examples) project for more details.Have an enjoy in your heart.**
+### Reference Project
+ * [examples](examples)  
+ Just a simple exmples project for explain how to use [Mir](https://github.com/alimy/mir).
+ 
+ * [mir-covid19](https://github.com/alimy/mir-covid19)  
+ COVID-19 Live Updates of Tencent Health is developed to track the live updates of COVID-19, including the global pandemic trends, domestic live updates, and overseas live updates. This project is just a go version of [TH_COVID19_International](https://github.com/Tencent/TH_COVID19_International) for a guide of how to use [Mir](https://github.com/alimy/mir) to develop web application.
+
