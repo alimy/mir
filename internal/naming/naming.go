@@ -4,7 +4,7 @@
 
 package naming
 
-// NamingStrategy
+// NamingStrategy naming strategy interface
 type NamingStrategy interface {
 	Naming(string) string
 }
