@@ -10,7 +10,6 @@ import (
 
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/internal/container"
-	"github.com/alimy/mir/v2/internal/naming"
 )
 
 func init() {
@@ -19,7 +18,8 @@ func init() {
 
 // mirParser parse for struct tag
 type mirParser struct {
-	tagName string
+	tagName   string
+	noneQuery bool
 }
 
 // Name name of parser
@@ -32,7 +32,7 @@ func (p *mirParser) Init(opts *core.ParserOpts) error {
 	if opts == nil {
 		return errors.New("init opts is nil")
 	}
-	p.tagName = opts.DefaultTag
+	p.tagName, p.noneQuery = opts.DefaultTag, opts.NoneQuery
 	if p.tagName == "" {
 		p.tagName = defaultTag
 	}
@@ -44,7 +44,7 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
-	r := &reflex{tagName: p.tagName, ns: naming.NewSnakeNamingStrategy()}
+	r := newReflex(p.tagName, p.noneQuery)
 	return r.parse(entries)
 }
 
@@ -56,10 +56,10 @@ func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 	wg := &sync.WaitGroup{}
 	for _, entry := range entries {
 		wg.Add(1)
-		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, tagName string, entry interface{}) {
+		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, entry interface{}) {
 			defer wg.Done()
 
-			r := &reflex{tagName: tagName}
+			r := newReflex(p.tagName, p.noneQuery)
 			iface, err := r.ifaceFrom(entry)
 			if err != nil {
 				ctx.Cancel(err)
@@ -72,7 +72,7 @@ func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 			}
 			ifaceSink <- iface
 			core.Logus("delivered iface: %s.%s", iface.PkgName, iface.TypeName)
-		}(ctx, wg, ifaceSink, p.tagName, entry)
+		}(ctx, wg, ifaceSink, entry)
 	}
 	wg.Wait()
 

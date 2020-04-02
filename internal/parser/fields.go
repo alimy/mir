@@ -112,9 +112,10 @@ func (r *reflex) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	if len(tag) == 0 && !info.isGroup {
 		return nil, errNoPathInfo
 	}
-	i = 0
-	for i < len(tag) && tag[i] != '?' && tag[i] != '#' {
-		i++
+	for i = 0; i < len(tag) && tag[i] != '#'; i++ {
+		if !r.noneQuery && tag[i] == '?' {
+			break
+		}
 	}
 	info.Path = tag[0:i]
 	tag = tag[i:]

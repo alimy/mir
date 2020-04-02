@@ -14,8 +14,9 @@ import (
 
 // reflex real parser
 type reflex struct {
-	ns      naming.NamingStrategy
-	tagName string
+	ns        naming.NamingStrategy
+	tagName   string
+	noneQuery bool
 }
 
 // reflex get Descriptors from parse entries
@@ -132,5 +133,13 @@ func (r *reflex) fieldFrom(t *tagInfo) *core.FieldDescriptor {
 		Path:       t.Path,
 		Queries:    t.Queries,
 		MethodName: t.fieldName,
+	}
+}
+
+func newReflex(tagName string, noneQuery bool) *reflex {
+	return &reflex{
+		ns:        naming.NewSnakeNamingStrategy(),
+		tagName:   tagName,
+		noneQuery: noneQuery,
 	}
 }

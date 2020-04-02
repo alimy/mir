@@ -22,6 +22,7 @@ const (
 	GeneratorMux        = "mux"
 	GeneratorEcho       = "echo"
 	GeneratorIris       = "iris"
+	GeneratorFiber      = "fiber"
 	GeneratorMacaron    = "macaron"
 	GeneratorHttpRouter = "httprouter"
 
@@ -50,12 +51,14 @@ type InitOpts struct {
 	ParserName    string
 	SinkPath      string
 	DefaultTag    string
+	NoneQuery     bool
 	Cleanup       bool
 }
 
 // ParserOpts used for initial parser
 type ParserOpts struct {
 	DefaultTag string
+	NoneQuery  bool
 }
 
 // GeneratorOpts used for initial generator
@@ -85,6 +88,7 @@ func (opts Options) InitOpts() *InitOpts {
 func (opts *InitOpts) ParserOpts() *ParserOpts {
 	return &ParserOpts{
 		DefaultTag: opts.DefaultTag,
+		NoneQuery:  opts.NoneQuery,
 	}
 }
 
@@ -180,6 +184,13 @@ func SinkPath(path string) Option {
 func Cleanup(enable bool) Option {
 	return optFunc(func(opts *InitOpts) {
 		opts.Cleanup = enable
+	})
+}
+
+// NoneQuery set parser whether parse query
+func NoneQuery(enable bool) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.NoneQuery = enable
 	})
 }
 

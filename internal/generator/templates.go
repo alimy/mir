@@ -15,6 +15,7 @@ var tmplFiles = map[string]string{
 	core.GeneratorMux:        "mux_iface.tmpl",
 	core.GeneratorEcho:       "echo_iface.tmpl",
 	core.GeneratorIris:       "iris_iface.tmpl",
+	core.GeneratorFiber:      "fiber_iface.tmpl",
 	core.GeneratorMacaron:    "macaron_iface.tmpl",
 	core.GeneratorHttpRouter: "httprouter_iface.tmpl",
 }
