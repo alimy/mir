@@ -169,7 +169,7 @@ func registerServants(e *gin.Engine) {
 % make run
 ```
 
-### Reference Project
+### Tutorial(demo)
  * [examples](examples)  
  Just a simple exmples project for explain how to use [Mir](https://github.com/alimy/mir).
  
