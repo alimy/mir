@@ -5,17 +5,17 @@
 package routes
 
 import (
-	"github.com/alimy/mir/v2"
-	"github.com/alimy/mir/v2/engine"
+	. "github.com/alimy/mir/v2"
+	. "github.com/alimy/mir/v2/engine"
 )
 
 func init() {
-	engine.AddEntry(new(Site))
+	AddEntry(new(Site))
 }
 
 // Site mir's struct tag define
 type Site struct {
-	Chain    mir.Chain `mir:"-"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
+	Chain    Chain `mir:"-"`
+	Index    Get   `mir:"/index/"`
+	Articles Get   `mir:"/articles/:category/"`
 }

@@ -1,18 +1,18 @@
 package v2
 
 import (
-    "github.com/alimy/mir/v2"
-    "github.com/alimy/mir/v2/engine"
+    . "github.com/alimy/mir/v2"
+    . "github.com/alimy/mir/v2/engine"
 )
 
 func init() {
-    engine.AddEntry(new(Site))
+    AddEntry(new(Site))
 }
 
 // Site site v2 interface info
 type Site struct {
-    Group    mir.Group `mir:"v2"`
-    Index    mir.Get   `mir:"/index/"`
-    Articles mir.Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
-    Category mir.Get   `mir:"/category/"`
+    Group    Group `mir:"v2"`
+    Index    Get   `mir:"/index/"`
+    Articles Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
+    Category Get   `mir:"/category/"`
 }

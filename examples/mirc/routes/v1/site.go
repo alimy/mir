@@ -5,18 +5,18 @@
 package v1
 
 import (
-	"github.com/alimy/mir/v2"
-	"github.com/alimy/mir/v2/engine"
+	. "github.com/alimy/mir/v2"
+	. "github.com/alimy/mir/v2/engine"
 )
 
 func init() {
-	engine.AddEntry(new(Site))
+	AddEntry(new(Site))
 }
 
 // Site mir's struct tag define
 type Site struct {
-	Chain    mir.Chain `mir:"-"`
-	Group    mir.Group `mir:"v1"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
+	Chain    Chain `mir:"-"`
+	Group    Group `mir:"v1"`
+	Index    Get   `mir:"/index/"`
+	Articles Get   `mir:"/articles/:category/"`
 }
