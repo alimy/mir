@@ -207,4 +207,6 @@ func registerServants(e *gin.Engine) {
  
  * [mir-covid19](https://github.com/alimy/mir-covid19)  
  COVID-19 Live Updates of Tencent Health is developed to track the live updates of COVID-19, including the global pandemic trends, domestic live updates, and overseas live updates. This project is just a go version of [TH_COVID19_International](https://github.com/Tencent/TH_COVID19_International) for a guide of how to use [Mir](https://github.com/alimy/mir) to develop web application.
-
+ 
+ * [zim-ms](https://github.com/alimy/zim-ms)   
+Zim-ms is a demo micro-service project explain how to use [TarsGo](https://github.com/TarsCloud/TarsGo) and [go-mir](https://github.com/alimy/mir) to develop micro-service.It's easy and enjoy you heart.
