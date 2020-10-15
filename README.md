@@ -13,7 +13,20 @@ Mir is used for register handler to http router(eg: [Gin](https://github.com/gin
  
  ```
 % go get github.com/alimy/mir/mirc/v2@latest
-% mirc new -d mir-examples -t gin
+% mirc new -h
+create template project
+
+Usage:
+  mirc new [flags]
+
+Flags:
+  -d, --dst string     genereted destination target directory (default ".")
+  -h, --help           help for new
+      --mir string     mir replace package name or place
+  -p, --pkg string     project's package name (default "github.com/alimy/mir-example")
+  -s, --style string   generated engine style eg: gin,chi,mux,echo,iris,fiber,macaron,httprouter (default "gin")
+
+% mirc new -s gin -d mir-examples
 % tree mir-examples
 mir-examples
 ├── Makefile
