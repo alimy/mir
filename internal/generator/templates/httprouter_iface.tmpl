@@ -5,7 +5,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/julienschmidt/httprouter"
+    httprouter "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/julienschmidt/httprouter{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

@@ -3,7 +3,7 @@
 package {{ .PkgName }}
 
 import (
-    "github.com/gofiber/fiber"
+    fiber "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gofiber/fiber{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

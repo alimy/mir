@@ -3,6 +3,11 @@ module {{ .PkgName }}
 go 1.12
 
 require (
-    github.com/alimy/mir/v2 v2.4.0
-    github.com/gofiber/fiber v1.12.5
+    github.com/alimy/mir/v2 v2.5.0
+    github.com/gofiber/fiber/v2 v2.0.6
 )
+{{if notEmptyStr .MirPkgName }}
+replace (
+    github.com/alimy/mir/v2 => {{ .MirPkgName }}
+)
+{{end}}

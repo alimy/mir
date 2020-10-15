@@ -17,6 +17,7 @@ func main() {
     opts := Options{
         RunMode(InSerialMode),
         GeneratorName(GeneratorFiber),
+        EnginePkgName("github.com/gofiber/fiber/v2"),
         NoneQuery(true),
         SinkPath("./gen"),
     }

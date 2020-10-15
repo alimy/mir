@@ -14,9 +14,10 @@ import (
 
 // reflex real parser
 type reflex struct {
-	ns        naming.NamingStrategy
-	tagName   string
-	noneQuery bool
+	engineInfo *core.EngineInfo
+	ns         naming.NamingStrategy
+	tagName    string
+	noneQuery  bool
 }
 
 // reflex get Descriptors from parse entries
@@ -71,9 +72,10 @@ func (r *reflex) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 
 	// get IfaceDescriptor from entryType and entryPtrType
 	iface := &core.IfaceDescriptor{
-		TypeName: entryType.Name(),
-		PkgName:  "api", // set default pkg name
-		Fields:   make([]*core.FieldDescriptor, 0),
+		EngineInfo: r.engineInfo,
+		TypeName:   entryType.Name(),
+		PkgName:    "api", // set default pkg name
+		Fields:     make([]*core.FieldDescriptor, 0),
 	}
 	var groupSetuped, chainSetuped bool
 	for i := 0; i < entryType.NumField(); i++ {
@@ -136,10 +138,11 @@ func (r *reflex) fieldFrom(t *tagInfo) *core.FieldDescriptor {
 	}
 }
 
-func newReflex(tagName string, noneQuery bool) *reflex {
+func newReflex(info *core.EngineInfo, tagName string, noneQuery bool) *reflex {
 	return &reflex{
-		ns:        naming.NewSnakeNamingStrategy(),
-		tagName:   tagName,
-		noneQuery: noneQuery,
+		engineInfo: info,
+		ns:         naming.NewSnakeNamingStrategy(),
+		tagName:    tagName,
+		noneQuery:  noneQuery,
 	}
 }

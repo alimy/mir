@@ -3,7 +3,7 @@
 package {{ .PkgName }}
 
 import (
-    "github.com/gin-gonic/gin"
+    gin "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gin-gonic/gin{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+// EngineInfo Engine information
+type EngineInfo struct {
+	PkgName     string
+	ImportAlias string // import alias name
+}
+
 // FieldDescriptor field Descriptor info
 type FieldDescriptor struct {
 	Host       string
@@ -18,12 +24,13 @@ type FieldDescriptor struct {
 
 // IfaceDescriptor interface Descriptor info
 type IfaceDescriptor struct {
-	Group    string
-	Chain    string
-	PkgName  string
-	TypeName string
-	Comment  string // not support now so always empty
-	Fields   []*FieldDescriptor
+	Group      string
+	Chain      string
+	PkgName    string
+	TypeName   string
+	Comment    string // not support now so always empty
+	Fields     []*FieldDescriptor
+	EngineInfo *EngineInfo
 }
 
 // IfaceDescriptors interface Descriptor map {TypeName:*IfaceDescriptor}

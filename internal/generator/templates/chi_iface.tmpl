@@ -5,7 +5,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/go-chi/chi"
+    chi "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/go-chi/chi{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

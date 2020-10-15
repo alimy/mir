@@ -46,17 +46,20 @@ type runMode uint8
 
 // InitOpts use for generator or parser init
 type InitOpts struct {
-	RunMode       runMode
-	GeneratorName string
-	ParserName    string
-	SinkPath      string
-	DefaultTag    string
-	NoneQuery     bool
-	Cleanup       bool
+	RunMode           runMode
+	GeneratorName     string
+	ParserName        string
+	SinkPath          string
+	DefaultTag        string
+	EnginePkgName     string
+	EngineImportAlias string
+	NoneQuery         bool
+	Cleanup           bool
 }
 
 // ParserOpts used for initial parser
 type ParserOpts struct {
+	EngineInfo *EngineInfo
 	DefaultTag string
 	NoneQuery  bool
 }
@@ -89,6 +92,10 @@ func (opts *InitOpts) ParserOpts() *ParserOpts {
 	return &ParserOpts{
 		DefaultTag: opts.DefaultTag,
 		NoneQuery:  opts.NoneQuery,
+		EngineInfo: &EngineInfo{
+			PkgName:     opts.EnginePkgName,
+			ImportAlias: opts.EngineImportAlias,
+		},
 	}
 }
 
@@ -198,6 +205,20 @@ func NoneQuery(enable bool) Option {
 func DefaultTag(tag string) Option {
 	return optFunc(func(opts *InitOpts) {
 		opts.DefaultTag = tag
+	})
+}
+
+// EnginePkgName engine package name
+func EnginePkgName(pkgName string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.EnginePkgName = pkgName
+	})
+}
+
+// EngineImportAlias import package alias name
+func EngineImportAlias(name string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.EngineImportAlias = name
 	})
 }
 

@@ -3,7 +3,7 @@ package main
 import (
     "log"
 
-    "github.com/gofiber/fiber"
+    "github.com/gofiber/fiber/v2"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
     registerServants(app)
 
     // start servant service
-    if err := app.Listen(3000); err != nil {
+    if err := app.Listen(":3000"); err != nil {
         log.Fatal(err)
     }
 }

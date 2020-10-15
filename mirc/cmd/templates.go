@@ -8,7 +8,8 @@ package cmd
 
 // tmplCtx template context for generate project
 type tmplCtx struct {
-	PkgName string
+	PkgName    string
+	MirPkgName string
 }
 
 // tmplInfo template data info

@@ -3,7 +3,7 @@
 package {{ .PkgName }}
 
 import (
-    "github.com/labstack/echo/v4"
+    echo "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/labstack/echo/v4{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

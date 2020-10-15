@@ -13,13 +13,17 @@ import (
 )
 
 func init() {
-	core.RegisterParsers(&mirParser{tagName: defaultTag})
+	core.RegisterParsers(&mirParser{
+		engineInfo: &core.EngineInfo{},
+		tagName:    defaultTag,
+	})
 }
 
 // mirParser parse for struct tag
 type mirParser struct {
-	tagName   string
-	noneQuery bool
+	engineInfo *core.EngineInfo
+	tagName    string
+	noneQuery  bool
 }
 
 // Name name of parser
@@ -31,6 +35,9 @@ func (p *mirParser) Name() string {
 func (p *mirParser) Init(opts *core.ParserOpts) error {
 	if opts == nil {
 		return errors.New("init opts is nil")
+	}
+	if opts.EngineInfo != nil {
+		p.engineInfo = opts.EngineInfo
 	}
 	p.tagName, p.noneQuery = opts.DefaultTag, opts.NoneQuery
 	if p.tagName == "" {
@@ -44,7 +51,7 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
-	r := newReflex(p.tagName, p.noneQuery)
+	r := newReflex(p.engineInfo, p.tagName, p.noneQuery)
 	return r.parse(entries)
 }
 
@@ -59,7 +66,7 @@ func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, entry interface{}) {
 			defer wg.Done()
 
-			r := newReflex(p.tagName, p.noneQuery)
+			r := newReflex(p.engineInfo, p.tagName, p.noneQuery)
 			iface, err := r.ifaceFrom(entry)
 			if err != nil {
 				ctx.Cancel(err)

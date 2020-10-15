@@ -3,7 +3,7 @@
 package {{ .PkgName }}
 
 import (
-    "gopkg.in/macaron.v1"
+    macaron "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}gopkg.in/macaron.v1{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

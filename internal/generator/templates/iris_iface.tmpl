@@ -3,8 +3,9 @@
 package {{ .PkgName }}
 
 import (
-    "github.com/kataras/iris/v12"
-    "github.com/kataras/iris/v12/context"
+    "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}/context{{else}}github.com/kataras/iris/v12/context{{end}}"
+
+    iris "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/kataras/iris/v12{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}

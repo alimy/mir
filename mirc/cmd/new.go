@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	dstPath string
-	pkgName string
-	style   string
+	dstPath    string
+	pkgName    string
+	style      string
+	mirPkgName string
 )
 
 func init() {
@@ -30,7 +31,8 @@ func init() {
 	// parse flags for agentCmd
 	newCmd.Flags().StringVarP(&dstPath, "dst", "d", ".", "genereted destination target directory")
 	newCmd.Flags().StringVarP(&pkgName, "pkg", "p", "github.com/alimy/mir-example", "project's package name")
-	newCmd.Flags().StringVarP(&style, "type", "t", "gin", "generated engine type style eg: gin,chi,mux,echo,iris,fiber,macaron,httprouter")
+	newCmd.Flags().StringVarP(&style, "style", "s", "gin", "generated engine style eg: gin,chi,mux,echo,iris,fiber,macaron,httprouter")
+	newCmd.Flags().StringVar(&mirPkgName, "mir", "", "mir replace package name or place")
 
 	// register agentCmd as sub-command
 	register(newCmd)
@@ -61,7 +63,8 @@ func newRun(_cmd *cobra.Command, _args []string) {
 	}
 
 	ctx := &tmplCtx{
-		PkgName: pkgName,
+		PkgName:    pkgName,
+		MirPkgName: mirPkgName,
 	}
 	if err = genProject(ctx, path, tmpls); err != nil {
 		log.Fatal(err)
@@ -75,7 +78,10 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 		file              *os.File
 	)
 
-	tmpl := template.New("mirc")
+	tmpl := template.New("mirc").Funcs(template.FuncMap{
+		"notEmptyStr": notEmptyStr,
+	})
+
 	for fileName, assetInfo := range tmpls {
 		filePath = filepath.Join(dstPath, fileName)
 		dirPath = filepath.Dir(filePath)
@@ -104,4 +110,8 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 		}
 	}
 	return err
+}
+
+func notEmptyStr(s string) bool {
+	return s != ""
 }

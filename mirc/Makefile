@@ -43,3 +43,11 @@ windows-x64:
 .PHONY: fmt
 fmt:
 	$(GOFMT) -w $(GOFILES)
+
+STYLES = chi echo fiber gin httprouter iris macaron mux
+.PHONY: check-all
+check-all:
+	for target in $(STYLES); do \
+	  rm -rf $$target; \
+	  ./mirc new --mir ../../ --style $$target --dst $$target; \
+	done

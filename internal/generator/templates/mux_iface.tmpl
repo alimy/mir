@@ -6,7 +6,8 @@ import (
     "net/http"
 
     "github.com/alimy/mir/v2"
-    "github.com/gorilla/mux"
+
+    mux "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gorilla/mux{{end}}"
 )
 
 // just use for mir.Any method to register
