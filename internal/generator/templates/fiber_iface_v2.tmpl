@@ -3,7 +3,7 @@
 package {{ .PkgName }}
 
 import (
-    fiber "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gofiber/fiber{{end}}"
+    fiber "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gofiber/fiber/v2{{end}}"
 )
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
@@ -12,7 +12,7 @@ type {{.TypeName}} interface {
     {{.Chain}}() []interface{}
 {{end}}
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
-    {{.MethodName}}(c *fiber.Ctx){{else}}    {{.MethodName}}(c *fiber.Ctx){{end}}
+    {{.MethodName}}(c *fiber.Ctx) error{{else}}    {{.MethodName}}(c *fiber.Ctx) error{{end}}
 {{end}}
 }
 

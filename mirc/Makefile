@@ -44,10 +44,30 @@ windows-x64:
 fmt:
 	$(GOFMT) -w $(GOFILES)
 
-STYLES = chi echo fiber gin httprouter iris macaron mux
 .PHONY: check-all
-check-all:
-	for target in $(STYLES); do \
+check-all: check-debug-all
+
+STYLES = chi echo fiber fiber-v2 gin httprouter iris macaron mux
+.PHONY: check-debug-all
+check-debug-all:
+	@for target in $(STYLES); do \
+	  echo "==========[ processing $$target ]=========="; \
 	  rm -rf $$target; \
 	  ./mirc new --mir ../../ --style $$target --dst $$target; \
+	  cd $$target; \
+	  make generate; \
+	  cd -; \
+	  echo ""; \
+	done
+
+.PHONY: check-release-all
+check-release-all:
+	@for target in $(STYLES); do \
+	  echo "==========[ processing $$target ]=========="; \
+	  rm -rf $$target; \
+	  ./mirc new --style $$target --dst $$target; \
+	  cd $$target; \
+	  make generate; \
+	  cd -; \
+	  echo ""; \
 	done

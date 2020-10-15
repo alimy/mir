@@ -80,6 +80,16 @@ var tmplFiles = map[string]map[string]tmplInfo{
 		"mirc/routes/v1/site.go": {"fiber_mirc_routes_site_v1.tmpl", false},
 		"mirc/routes/v2/site.go": {"fiber_mirc_routes_site_v2.tmpl", false},
 	},
+	"fiber-v2": {
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"fiber_v2_go_mod.tmpl", true},
+		"main.go":                {"fiber_v2_main.tmpl", false},
+		"mirc/main.go":           {"fiber_v2_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"fiber_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"fiber_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"fiber_mirc_routes_site_v2.tmpl", false},
+	},
 	"macaron": {
 		"Makefile":               {"makefile.tmpl", false},
 		"README.md":              {"readme.tmpl", false},

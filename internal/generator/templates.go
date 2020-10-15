@@ -16,6 +16,7 @@ var tmplFiles = map[string]string{
 	core.GeneratorEcho:       "echo_iface.tmpl",
 	core.GeneratorIris:       "iris_iface.tmpl",
 	core.GeneratorFiber:      "fiber_iface.tmpl",
+	core.GeneratorFiberV2:    "fiber_iface_v2.tmpl",
 	core.GeneratorMacaron:    "macaron_iface.tmpl",
 	core.GeneratorHttpRouter: "httprouter_iface.tmpl",
 }
