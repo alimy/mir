@@ -1,27 +1,45 @@
+// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Use of this source code is governed by Apache License 2.0 that
+// can be found in the LICENSE file.
+
 package generator
 
 import (
+	"embed"
 	"unsafe"
 
 	"github.com/alimy/mir/v2/core"
 )
 
-//go:generate go-bindata -nomemcopy -pkg=${GOPACKAGE} -ignore=README.md -prefix=templates -debug=false -o=templates_gen.go templates/...
+//go:embed templates
+var fs embed.FS
+
+type tmplInfos map[string]string
 
 // tmplFiles generator name map assets name
-var tmplFiles = map[string]string{
-	core.GeneratorGin:        "gin_iface.tmpl",
-	core.GeneratorChi:        "chi_iface.tmpl",
-	core.GeneratorMux:        "mux_iface.tmpl",
-	core.GeneratorEcho:       "echo_iface.tmpl",
-	core.GeneratorIris:       "iris_iface.tmpl",
-	core.GeneratorFiber:      "fiber_iface.tmpl",
-	core.GeneratorFiberV2:    "fiber_iface_v2.tmpl",
-	core.GeneratorMacaron:    "macaron_iface.tmpl",
-	core.GeneratorHttpRouter: "httprouter_iface.tmpl",
+var tmplFiles = tmplInfos{
+	core.GeneratorGin:        "templates/gin_iface.tmpl",
+	core.GeneratorChi:        "templates/chi_iface.tmpl",
+	core.GeneratorMux:        "templates/mux_iface.tmpl",
+	core.GeneratorEcho:       "templates/echo_iface.tmpl",
+	core.GeneratorIris:       "templates/iris_iface.tmpl",
+	core.GeneratorFiber:      "templates/fiber_iface.tmpl",
+	core.GeneratorFiberV2:    "templates/fiber_iface_v2.tmpl",
+	core.GeneratorMacaron:    "templates/macaron_iface.tmpl",
+	core.GeneratorHttpRouter: "templates/httprouter_iface.tmpl",
 }
 
-// bytesToString convert byte slice to string
-func bytesToString(bs []byte) string {
-	return *(*string)(unsafe.Pointer(&bs))
+func (t tmplInfos) notExist(name string) bool {
+	if _, exist := t[name]; !exist {
+		return true
+	}
+	return false
+}
+
+func (t tmplInfos) mustString(name string) string {
+	data, err := fs.ReadFile(t[name])
+	if err != nil {
+		panic(err)
+	}
+	return *(*string)(unsafe.Pointer(&data))
 }

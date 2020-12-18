@@ -12,12 +12,6 @@ ci: misspell vet
 build: fmt
 	go build -o mir mirc/main.go
 
-.PHONY: generate
-generate:
-	-rm -f internal/generator/templates_gen.go
-	go generate internal/generator/templates.go
-	$(GOFMT) internal/generator/templates_gen.go
-
 .PHONY: test
 test: fmt misspell vet
 	go test ./...

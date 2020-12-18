@@ -1,4 +1,4 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -195,11 +195,10 @@ func templateFrom(generatorName string) (*template.Template, error) {
 		"valideQuery":  valideQuery,
 		"inflateQuery": inflateQuery,
 	})
-	assetName, exist := tmplFiles[generatorName]
-	if !exist {
+	if tmplFiles.notExist(generatorName) {
 		return nil, fmt.Errorf("not exist templates for genererator:%s", generatorName)
 	}
-	data := bytesToString(MustAsset(assetName))
+	data := tmplFiles.mustString(generatorName)
 	return tmpl.Parse(data)
 }
 

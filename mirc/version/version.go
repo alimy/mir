@@ -17,5 +17,5 @@ var (
 var AppVer = semver.Version{
 	Major: 2,
 	Minor: 6,
-	Patch: 1,
+	Patch: 2,
 }
