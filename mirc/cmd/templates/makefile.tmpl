@@ -12,6 +12,11 @@ build: fmt
 run: fmt
 	go run main.go
 
+.PHONY: mod-tidy
+mod-tidy:
+	@go mod download
+	@go mod tidy
+
 .PHONY: generate
 generate:
 	@go generate mirc/main.go

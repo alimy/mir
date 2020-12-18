@@ -93,7 +93,7 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 			break
 		}
 		if assetInfo.isTmpl {
-			t, err := tmpl.Parse(MustAssetString(assetInfo.name))
+			t, err := tmpl.Parse(string(assetInfo.MustBytes()))
 			if err != nil {
 				break
 			}
@@ -101,7 +101,7 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 				break
 			}
 		} else {
-			if _, err = file.Write(MustAsset(assetInfo.name)); err != nil {
+			if _, err = file.Write(assetInfo.MustBytes()); err != nil {
 				break
 			}
 		}
