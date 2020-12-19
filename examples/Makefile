@@ -14,7 +14,7 @@ run: fmt
 
 .PHONY: generate
 generate:
-	@go generate mirc/main.go
+	@go generate mirc/mirc.go
 	@$(GOFMT) ./
 
 .PHONY: fmt

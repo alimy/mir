@@ -7,27 +7,27 @@ package parser
 import (
 	"testing"
 
-	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v3/internal/core/tag"
 )
 
 type site struct {
-	Chain    mir.Chain `mir:"-"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
+	Chain    tag.Chain `mir:"-"`
+	Index    tag.Get   `mir:"/index/"`
+	Articles tag.Get   `mir:"/articles/:category/"`
 }
 
 type siteV1 struct {
-	Chain    mir.Chain `mir:"-"`
-	Group    mir.Group `mir:"v1"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
+	Chain    tag.Chain `mir:"-"`
+	Group    tag.Group `mir:"v1"`
+	Index    tag.Get   `mir:"/index/"`
+	Articles tag.Get   `mir:"/articles/:category/"`
 }
 
 type siteV2 struct {
-	Group    mir.Group `mir:"v2"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
-	Category mir.Get   `mir:"/category/"`
+	Group    tag.Group `mir:"v2"`
+	Index    tag.Get   `mir:"/index/"`
+	Articles tag.Get   `mir:"/articles/:category/"`
+	Category tag.Get   `mir:"/category/"`
 }
 
 func TestMirParser_Parse(t *testing.T) {

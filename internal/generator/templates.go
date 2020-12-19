@@ -8,7 +8,7 @@ import (
 	"embed"
 	"unsafe"
 
-	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v3/internal/core"
 )
 
 //go:embed templates

@@ -1,60 +1,51 @@
 GOFMT ?= gofmt -s -w
 GOFILES := $(shell find . -name "*.go" -type f)
 
-.PHONY: default
-default: ci
+LDFLAGS += -X "github.com/alimy/mir/mirc/v3/version.BuildTime=$(shell date -u '+%Y-%m-%d %I:%M:%S %Z')"
+LDFLAGS += -X "github.com/alimy/mir/mirc/v3/version.GitHash=$(shell git rev-parse HEAD)"
 
-.PHONY: ci
-ci: misspell vet
-	go test ./...
+RELEASE_ROOT = release
+RELEASE_LINUX_AMD64 = $(RELEASE_ROOT)/linux-amd64/mirc
+RELEASE_DARWIN_AMD64 = $(RELEASE_ROOT)/darwin-amd64/mirc
+RELEASE_DARWIN_ARM64 = $(RELEASE_ROOT)/darwin-arm64/mirc
+RELEASE_WINDOWS_AMD64 = $(RELEASE_ROOT)/windows-amd64/mirc
 
 .PHONY: build
 build: fmt
-	go build -o mir mirc/main.go
+	go build  -ldflags '$(LDFLAGS)' -o mirc main.go
 
-.PHONY: test
-test: fmt misspell vet
-	go test ./...
+.PHONY: release
+release: linux-amd64 darwin-amd64 darwin-arm64 windows-x64
+	cp LICENSE README.md $(RELEASE_LINUX_AMD64)
+	cp LICENSE README.md $(RELEASE_DARWIN_AMD64)
+	cp LICENSE README.md $(RELEASE_DARWIN_ARM64)
+	cp LICENSE README.md $(RELEASE_WINDOWS_AMD64)
+	cd $(RELEASE_LINUX_AMD64)/.. && rm -f *.zip && zip -r mirc-linux_amd64.zip mirc && cd -
+	cd $(RELEASE_DARWIN_AMD64)/.. && rm -f *.zip && zip -r mirc-darwin_amd64.zip mirc && cd -
+	cd $(RELEASE_DARWIN_ARM64)/.. && rm -f *.zip && zip -r mirc-darwin_arm64.zip mirc && cd -
+	cd $(RELEASE_WINDOWS_AMD64)/.. && rm -f *.zip && zip -r mirc-windows_amd64.zip mirc && cd -
 
-.PHONY: vet
-vet:
-	go vet ./...
+.PHONY: linux-amd64
+linux-amd64:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -ldflags '$(LDFLAGS)' -o $(RELEASE_LINUX_AMD64)/mirc main.go
 
-.PHONY: fmt-check
-fmt-check:
-	@diff=$$($(GOFMT) -d $(GOFILES)); \
-	if [ -n "$$diff" ]; then \
-		echo "Please run 'make fmt' and commit the result:"; \
-		echo "$${diff}"; \
-		exit 1; \
-	fi;
+.PHONY: darwin-amd64
+darwin-amd64:
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build  -ldflags '$(LDFLAGS)' -o $(RELEASE_DARWIN_AMD64)/mirc main.go
 
-.PHONY: lint
-lint:
-	@hash golint > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		go get -u golang.org/x/lint/golint; \
-	fi
-	for PKG in $(PACKAGES); do golint -min_confidence 1.0 -set_exit_status $$PKG || exit 1; done;
+.PHONY: darwin-arm64
+darwin-arm64:
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build  -ldflags '$(LDFLAGS)' -o $(RELEASE_DARWIN_ARM64)/mirc main.go
 
-.PHONY: misspell-check
-misspell-check:
-	@hash misspell > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell; \
-	fi
-	misspell -error $(GOFILES)
-
-.PHONY: misspell
-misspell:
-	@hash misspell > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell; \
-	fi
-	misspell -w $(GOFILES)
+.PHONY: windows-x64
+windows-x64:
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build  -ldflags '$(LDFLAGS)' -o $(RELEASE_WINDOWS_AMD64)/mirc main.go
 
 .PHONY: fmt
 fmt:
-	$(GOFMT) $(GOFILES)
+	$(GOFMT) -w $(GOFILES)
 
-.PHONY: tools
-tools:
-	GO111MODULE=off go get golang.org/x/lint/golint
-	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
+.PHONY: generate
+generate:
+	@go generate internal/antlr/antlr.go
+	@$(GOFMT) ./

@@ -22,3 +22,5 @@ tmp.out
 *.iml
 
 /mir
+/mirc
+/release

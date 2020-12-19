@@ -9,10 +9,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/alimy/mir/v2/examples/mirc/gen/api"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
-	"github.com/alimy/mir/v2/examples/servants"
+	"github.com/alimy/mir/v3/examples/mirc/api"
+	"github.com/alimy/mir/v3/examples/mirc/api/v1"
+	"github.com/alimy/mir/v3/examples/mirc/api/v2"
+	"github.com/alimy/mir/v3/examples/servants"
 )
 
 func main() {

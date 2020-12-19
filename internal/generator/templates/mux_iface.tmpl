@@ -5,7 +5,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v2"
+    "github.com/alimy/mir/v3"
 
     mux "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gorilla/mux{{end}}"
 )

@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
+	api "github.com/alimy/mir/v3/examples/mirc/api/v2"
 )
 
 var _ api.Site = EmptySiteV2{}

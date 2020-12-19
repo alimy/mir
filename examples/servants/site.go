@@ -7,7 +7,7 @@ package servants
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v2/examples/mirc/gen/api"
+	"github.com/alimy/mir/v3/examples/mirc/api"
 	"github.com/gin-gonic/gin"
 )
 

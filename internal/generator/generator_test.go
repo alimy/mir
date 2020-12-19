@@ -7,7 +7,7 @@ package generator
 import (
 	"testing"
 
-	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v3/internal/core"
 )
 
 func TestMirGenerator_Init(t *testing.T) {

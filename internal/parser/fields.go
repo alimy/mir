@@ -10,7 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v3/internal/core"
 )
 
 var (
@@ -77,23 +77,23 @@ func (r *reflex) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 		info.group = tag
 		return info, nil
 	case "Get":
-		info.Method = mir.MethodGet
+		info.Method = core.MethodGet
 	case "Put":
-		info.Method = mir.MethodPut
+		info.Method = core.MethodPut
 	case "Post":
-		info.Method = mir.MethodPost
+		info.Method = core.MethodPost
 	case "Delete":
-		info.Method = mir.MethodDelete
+		info.Method = core.MethodDelete
 	case "Head":
-		info.Method = mir.MethodHead
+		info.Method = core.MethodHead
 	case "Options":
-		info.Method = mir.MethodOptions
+		info.Method = core.MethodOptions
 	case "Patch":
-		info.Method = mir.MethodPatch
+		info.Method = core.MethodPatch
 	case "Trace":
-		info.Method = mir.MethodTrace
+		info.Method = core.MethodTrace
 	case "Connect":
-		info.Method = mir.MethodConnect
+		info.Method = core.MethodConnect
 	case "Any":
 		info.Method = "ANY"
 	}
