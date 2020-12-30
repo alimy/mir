@@ -2,10 +2,11 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package api
+package v2
 
-// Site service
-service Site(_ Chain) {
-	Index    Get   `/index/`
-	Articles Get   `/articles/:category/`
+// Site v2 service
+service Site(group: v2) {
+	Index()     `get:"/index/"`
+	Articles()  `get:"/articles/:category/"`
+	Category()  `get:"/category/"`
 }

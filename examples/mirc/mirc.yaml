@@ -1,0 +1,10 @@
+mir:
+  version: v0.1-alpha.1
+generate:
+  go_options:
+    import_path: github.com/alimy/mir/v3/examples/mirc
+  plugins:
+    - name: go
+      type: go
+      flags: plugins=mirc
+      output: api

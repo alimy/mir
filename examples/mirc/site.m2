@@ -2,11 +2,12 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package v2
+//mir:syntax v0.1-alpha.1
 
-// Site v2 service
-service Site(v2 Group) {
-	Index    Get   `/index/`
-	Articles Get   `/articles/:category/`
-	Category Get   `/category/`
+package api
+
+// Site service
+service Site(chain: _) {
+	Index()     `get:"/index/"`
+	Articles()  `get:"/articles/:category/"`
 }
