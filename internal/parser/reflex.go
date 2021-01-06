@@ -23,22 +23,21 @@ type reflex struct {
 // reflex get Descriptors from parse entries
 // Notice: Descriptors may be an empty if no actual item and is not routine safe
 func (r *reflex) parse(entries []interface{}) (core.Descriptors, error) {
-	var err error
 	ds := make(core.Descriptors)
 	for _, entry := range entries {
 		iface, err := r.ifaceFrom(entry)
 		if err != nil {
-			break
+			return nil, err
 		}
 		// no actual fields so just continue
 		if len(iface.Fields) == 0 {
 			continue
 		}
 		if err = ds.Put(iface); err != nil {
-			break
+			return nil, err
 		}
 	}
-	return ds, err
+	return ds, nil
 }
 
 func (r *reflex) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
