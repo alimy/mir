@@ -6,10 +6,18 @@ package cmd
 
 import (
 	"embed"
+
+	"github.com/alimy/embedx"
 )
 
-//go:embed templates
-var fs embed.FS
+var embedFS embedx.EmbedFS
+
+func init() {
+	//go:embed templates
+	var content embed.FS
+
+	embedFS = embedx.NewFileSystem(&content, embedx.ChangeRoot("templates"))
+}
 
 // tmplCtx template context for generate project
 type tmplCtx struct {
@@ -24,7 +32,7 @@ type tmplInfo struct {
 }
 
 func (t tmplInfo) MustBytes() []byte {
-	data, err := fs.ReadFile(t.name)
+	data, err := embedFS.ReadFile(t.name)
 	if err != nil {
 		panic(err)
 	}
@@ -34,93 +42,93 @@ func (t tmplInfo) MustBytes() []byte {
 // tmplFiles map of generated file's assets info
 var tmplFiles = map[string]map[string]tmplInfo{
 	"gin": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/gin_go_mod.tmpl", true},
-		"main.go":                {"templates/gin_main.tmpl", false},
-		"mirc/main.go":           {"templates/gin_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/gin_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/gin_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/gin_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"gin_go_mod.tmpl", true},
+		"main.go":                {"gin_main.tmpl", false},
+		"mirc/main.go":           {"gin_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"gin_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"gin_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"gin_mirc_routes_site_v2.tmpl", false},
 	},
 	"chi": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/chi_go_mod.tmpl", true},
-		"main.go":                {"templates/chi_main.tmpl", false},
-		"mirc/main.go":           {"templates/chi_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/chi_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/chi_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/chi_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"chi_go_mod.tmpl", true},
+		"main.go":                {"chi_main.tmpl", false},
+		"mirc/main.go":           {"chi_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"chi_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"chi_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"chi_mirc_routes_site_v2.tmpl", false},
 	},
 	"mux": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/mux_go_mod.tmpl", true},
-		"main.go":                {"templates/mux_main.tmpl", false},
-		"mirc/main.go":           {"templates/mux_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/mux_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/mux_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/mux_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"mux_go_mod.tmpl", true},
+		"main.go":                {"mux_main.tmpl", false},
+		"mirc/main.go":           {"mux_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"mux_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"mux_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"mux_mirc_routes_site_v2.tmpl", false},
 	},
 	"echo": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/echo_go_mod.tmpl", true},
-		"main.go":                {"templates/echo_main.tmpl", false},
-		"mirc/main.go":           {"templates/echo_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/echo_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/echo_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/echo_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"echo_go_mod.tmpl", true},
+		"main.go":                {"echo_main.tmpl", false},
+		"mirc/main.go":           {"echo_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"echo_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"echo_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"echo_mirc_routes_site_v2.tmpl", false},
 	},
 	"iris": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/iris_go_mod.tmpl", true},
-		"main.go":                {"templates/iris_main.tmpl", false},
-		"mirc/main.go":           {"templates/iris_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/iris_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/iris_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/iris_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"iris_go_mod.tmpl", true},
+		"main.go":                {"iris_main.tmpl", false},
+		"mirc/main.go":           {"iris_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"iris_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"iris_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"iris_mirc_routes_site_v2.tmpl", false},
 	},
 	"fiber": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/fiber_go_mod.tmpl", true},
-		"main.go":                {"templates/fiber_main.tmpl", false},
-		"mirc/main.go":           {"templates/fiber_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/fiber_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/fiber_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/fiber_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"fiber_go_mod.tmpl", true},
+		"main.go":                {"fiber_main.tmpl", false},
+		"mirc/main.go":           {"fiber_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"fiber_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"fiber_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"fiber_mirc_routes_site_v2.tmpl", false},
 	},
 	"fiber-v2": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/fiber_v2_go_mod.tmpl", true},
-		"main.go":                {"templates/fiber_v2_main.tmpl", false},
-		"mirc/main.go":           {"templates/fiber_v2_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/fiber_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/fiber_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/fiber_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"fiber_v2_go_mod.tmpl", true},
+		"main.go":                {"fiber_v2_main.tmpl", false},
+		"mirc/main.go":           {"fiber_v2_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"fiber_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"fiber_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"fiber_mirc_routes_site_v2.tmpl", false},
 	},
 	"macaron": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/macaron_go_mod.tmpl", true},
-		"main.go":                {"templates/macaron_main.tmpl", false},
-		"mirc/main.go":           {"templates/macaron_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/macaron_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/macaron_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/macaron_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"macaron_go_mod.tmpl", true},
+		"main.go":                {"macaron_main.tmpl", false},
+		"mirc/main.go":           {"macaron_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"macaron_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"macaron_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"macaron_mirc_routes_site_v2.tmpl", false},
 	},
 	"httprouter": {
-		"Makefile":               {"templates/makefile.tmpl", false},
-		"README.md":              {"templates/readme.tmpl", false},
-		"go.mod":                 {"templates/httprouter_go_mod.tmpl", true},
-		"main.go":                {"templates/httprouter_main.tmpl", false},
-		"mirc/main.go":           {"templates/httprouter_mirc_main.tmpl", true},
-		"mirc/routes/site.go":    {"templates/httprouter_mirc_routes_site.tmpl", false},
-		"mirc/routes/v1/site.go": {"templates/httprouter_mirc_routes_site_v1.tmpl", false},
-		"mirc/routes/v2/site.go": {"templates/httprouter_mirc_routes_site_v2.tmpl", false},
+		"Makefile":               {"makefile.tmpl", false},
+		"README.md":              {"readme.tmpl", false},
+		"go.mod":                 {"httprouter_go_mod.tmpl", true},
+		"main.go":                {"httprouter_main.tmpl", false},
+		"mirc/main.go":           {"httprouter_mirc_main.tmpl", true},
+		"mirc/routes/site.go":    {"httprouter_mirc_routes_site.tmpl", false},
+		"mirc/routes/v1/site.go": {"httprouter_mirc_routes_site_v1.tmpl", false},
+		"mirc/routes/v2/site.go": {"httprouter_mirc_routes_site_v2.tmpl", false},
 	},
 }
