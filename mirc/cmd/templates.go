@@ -16,7 +16,7 @@ func init() {
 	//go:embed templates
 	var content embed.FS
 
-	embedFS = embedx.NewFileSystem(&content, embedx.ChangeRoot("templates"))
+	embedFS = embedx.ChangeRoot(content, "templates")
 }
 
 // tmplCtx template context for generate project
