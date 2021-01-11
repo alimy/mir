@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"text/template"
 
 	"github.com/spf13/cobra"
 )
@@ -78,9 +77,10 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 		file              *os.File
 	)
 
-	tmpl := template.New("mirc").Funcs(template.FuncMap{
-		"notEmptyStr": notEmptyStr,
-	})
+	t, err := newTemplate()
+	if err != nil {
+		return err
+	}
 
 	for fileName, assetInfo := range tmpls {
 		filePath = filepath.Join(dstPath, fileName)
@@ -92,26 +92,12 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 		if err != nil {
 			break
 		}
-		if assetInfo.isTmpl {
-			t, err := tmpl.Parse(string(assetInfo.MustBytes()))
-			if err != nil {
-				break
-			}
-			if err = t.Execute(file, ctx); err != nil {
-				break
-			}
-		} else {
-			if _, err = file.Write(assetInfo.MustBytes()); err != nil {
-				break
-			}
+		if err = t.ExecuteTemplate(file, assetInfo.name, ctx); err != nil {
+			break
 		}
 		if err = file.Close(); err != nil {
 			break
 		}
 	}
 	return err
-}
-
-func notEmptyStr(s string) bool {
-	return s != ""
 }
