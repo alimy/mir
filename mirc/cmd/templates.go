@@ -11,6 +11,9 @@ import (
 	"github.com/alimy/embedx"
 )
 
+//go:embed templates
+var tmplFS embed.FS
+
 // tmplCtx template context for generate project
 type tmplCtx struct {
 	PkgName    string
@@ -117,10 +120,7 @@ var tmplFiles = map[string]map[string]tmplInfo{
 }
 
 func newTemplate() (*template.Template, error) {
-	//go:embed templates
-	var content embed.FS
-
-	embedFS := embedx.ChangeRoot(content, "templates")
+	embedFS := embedx.ChangeRoot(tmplFS, "templates")
 	t := template.New("mirc").Funcs(template.FuncMap{
 		"notEmptyStr": notEmptyStr,
 	})

@@ -1,8 +1,8 @@
 GOFMT ?= gofmt -s -w
 GOFILES := $(shell find . -name "*.go" -type f)
 
-LDFLAGS += -X "github.com/alimy/mir/mirc/v2/version.BuildTime=$(shell date -u '+%Y-%m-%d %I:%M:%S %Z')"
-LDFLAGS += -X "github.com/alimy/mir/mirc/v2/version.GitHash=$(shell git rev-parse HEAD)"
+LDFLAGS += -X "github.com/alimy/mir/mirc/v2/version.BuildTime=$(shell date -v+8H -u '+%Y-%m-%d %H:%M:%S %Z+8')"
+LDFLAGS += -X "github.com/alimy/mir/mirc/v2/version.GitHash=$(shell git rev-parse --short=12 HEAD)"
 
 RELEASE_ROOT = release
 RELEASE_LINUX_AMD64 = $(RELEASE_ROOT)/linux-amd64/mirc
