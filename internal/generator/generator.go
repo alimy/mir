@@ -6,15 +6,12 @@ package generator
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"sync"
 	"text/template"
 
-	"github.com/alimy/mir/v2"
 	"github.com/alimy/mir/v2/core"
 	"github.com/alimy/mir/v2/internal/container"
 	"github.com/alimy/mir/v2/internal/naming"
@@ -144,62 +141,6 @@ func (g *mirGenerator) cleanup() {
 			core.Logus("want cleanup out first but failure: %s.do it later by yourself.", err)
 		}
 	}
-}
-
-func notEmptyStr(s string) bool {
-	return s != ""
-}
-
-func notHttpAny(m string) bool {
-	return m != mir.MethodAny
-}
-
-func joinPath(group, subpath string) string {
-	if group == "" {
-		return subpath
-	}
-	b := &strings.Builder{}
-	if !strings.HasPrefix(group, "/") {
-		b.WriteByte('/')
-	}
-	b.WriteString(group)
-	if !strings.HasSuffix(group, "/") && !strings.HasPrefix(subpath, "/") {
-		b.WriteByte('/')
-	}
-	b.WriteString(subpath)
-	return b.String()
-}
-
-func valideQuery(qs []string) bool {
-	size := len(qs)
-	return size != 0 && size%2 == 0
-}
-
-func inflateQuery(qs []string) string {
-	var b strings.Builder
-	last := len(qs) - 1
-	b.Grow(last * 10)
-	for _, s := range qs {
-		b.WriteRune('"')
-		b.WriteString(s)
-		b.WriteString(`",`)
-	}
-	return strings.TrimRight(b.String(), ",")
-}
-
-func templateFrom(generatorName string) (*template.Template, error) {
-	tmpl := template.New("mir").Funcs(template.FuncMap{
-		"notEmptyStr":  notEmptyStr,
-		"notHttpAny":   notHttpAny,
-		"joinPath":     joinPath,
-		"valideQuery":  valideQuery,
-		"inflateQuery": inflateQuery,
-	})
-	if tmplFiles.notExist(generatorName) {
-		return nil, fmt.Errorf("not exist templates for genererator:%s", generatorName)
-	}
-	data := tmplFiles.mustString(generatorName)
-	return tmpl.Parse(data)
 }
 
 func generate(generatorName string, sinkPath string, ds core.Descriptors) error {

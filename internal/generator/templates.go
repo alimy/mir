@@ -6,18 +6,19 @@ package generator
 
 import (
 	"embed"
-	"unsafe"
+	"fmt"
+	"strings"
+	"text/template"
 
+	"github.com/alimy/mir/v2"
 	"github.com/alimy/mir/v2/core"
 )
 
 //go:embed templates
-var fs embed.FS
+var content embed.FS
 
-type tmplInfos map[string]string
-
-// tmplFiles generator name map assets name
-var tmplFiles = tmplInfos{
+// tmplInfos generator name map assets name
+var tmplInfos = map[string]string{
 	core.GeneratorGin:        "templates/gin_iface.tmpl",
 	core.GeneratorChi:        "templates/chi_iface.tmpl",
 	core.GeneratorMux:        "templates/mux_iface.tmpl",
@@ -29,17 +30,66 @@ var tmplFiles = tmplInfos{
 	core.GeneratorHttpRouter: "templates/httprouter_iface.tmpl",
 }
 
-func (t tmplInfos) notExist(name string) bool {
-	if _, exist := t[name]; !exist {
-		return true
+func templateFrom(name string) (*template.Template, error) {
+	tmplName, exist := tmplInfos[name]
+	if !exist {
+		return nil, fmt.Errorf("not exist templates for genererator:%s", name)
 	}
-	return false
+	data, err := content.ReadFile(tmplName)
+	if err != nil {
+		return nil, err
+	}
+	t := template.New("mir").Funcs(template.FuncMap{
+		"notEmptyStr":  notEmptyStr,
+		"notHttpAny":   notHttpAny,
+		"joinPath":     joinPath,
+		"valideQuery":  valideQuery,
+		"inflateQuery": inflateQuery,
+	})
+	if tmpl, err := t.Parse(string(data)); err == nil {
+		return tmpl, nil
+	} else {
+		return nil, err
+	}
 }
 
-func (t tmplInfos) mustString(name string) string {
-	data, err := fs.ReadFile(t[name])
-	if err != nil {
-		panic(err)
+func notEmptyStr(s string) bool {
+	return s != ""
+}
+
+func notHttpAny(m string) bool {
+	return m != mir.MethodAny
+}
+
+func joinPath(group, subpath string) string {
+	if group == "" {
+		return subpath
 	}
-	return *(*string)(unsafe.Pointer(&data))
+	b := &strings.Builder{}
+	if !strings.HasPrefix(group, "/") {
+		b.WriteByte('/')
+	}
+	b.WriteString(group)
+	if !strings.HasSuffix(group, "/") && !strings.HasPrefix(subpath, "/") {
+		b.WriteByte('/')
+	}
+	b.WriteString(subpath)
+	return b.String()
+}
+
+func valideQuery(qs []string) bool {
+	size := len(qs)
+	return size != 0 && size%2 == 0
+}
+
+func inflateQuery(qs []string) string {
+	var b strings.Builder
+	last := len(qs) - 1
+	b.Grow(last * 10)
+	for _, s := range qs {
+		b.WriteRune('"')
+		b.WriteString(s)
+		b.WriteString(`",`)
+	}
+	return strings.TrimRight(b.String(), ",")
 }

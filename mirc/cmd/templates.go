@@ -7,12 +7,10 @@ package cmd
 import (
 	"embed"
 	"text/template"
-
-	"github.com/alimy/embedx"
 )
 
 //go:embed templates
-var tmplFS embed.FS
+var content embed.FS
 
 // tmplCtx template context for generate project
 type tmplCtx struct {
@@ -120,11 +118,14 @@ var tmplFiles = map[string]map[string]tmplInfo{
 }
 
 func newTemplate() (*template.Template, error) {
-	embedFS := embedx.ChangeRoot(tmplFS, "templates")
 	t := template.New("mirc").Funcs(template.FuncMap{
 		"notEmptyStr": notEmptyStr,
 	})
-	return embedx.ParseWith(t, embedFS, "*.tmpl")
+	if tmpl, err := t.ParseFS(content, "templates/*.tmpl"); err == nil {
+		return tmpl, nil
+	} else {
+		return nil, err
+	}
 }
 
 func notEmptyStr(s string) bool {

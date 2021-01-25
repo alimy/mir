@@ -74,3 +74,7 @@ check-release-all:
 	  cd -; \
 	  echo ""; \
 	done
+
+.PHONY: clean
+clean:
+	-rm -rf $(STYLES)
