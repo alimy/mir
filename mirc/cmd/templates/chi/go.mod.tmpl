@@ -1,0 +1,13 @@
+module {{ .PkgName }}
+
+go 1.16
+
+require (
+	github.com/alimy/mir/v2 v2.7.0-alpha
+	github.com/go-chi/chi v4.1.2+incompatible
+)
+{{if notEmptyStr .MirPkgName }}
+replace (
+    github.com/alimy/mir/v2 => {{ .MirPkgName }}
+)
+{{end}}

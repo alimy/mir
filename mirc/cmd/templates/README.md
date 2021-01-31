@@ -1,1 +1,0 @@
-## template files for generate a example project

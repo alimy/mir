@@ -3,6 +3,8 @@
 package {{ .PkgName }}
 
 import (
+    "net/http"
+
     "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}/context{{else}}github.com/kataras/iris/v12/context{{end}}"
 
     iris "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/kataras/iris/v12{{end}}"
@@ -28,3 +30,22 @@ func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}) {
     // register routes info to party
 {{range .Fields}}{{if notHttpAny .HttpMethod }}    p.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    p.Any("{{.Path}}", s.{{.MethodName}}){{end}}
 {{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{if notEmptyStr .Chain }}
+func (*{{$unimplementedServant}}){{.Chain}}() context.Handlers {
+    return nil
+}
+
+{{end}}
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(c context.Context) {
+    c.StatusCode(http.StatusNotImplemented)
+    c.WriteString("method {{.MethodName}} not implemented")
+}
+
+{{end}}

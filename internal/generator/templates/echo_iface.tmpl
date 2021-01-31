@@ -3,6 +3,8 @@
 package {{ .PkgName }}
 
 import (
+    "net/http"
+
     echo "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/labstack/echo/v4{{end}}"
 )
 
@@ -26,3 +28,23 @@ func Register{{.TypeName}}Servant(e *echo.Echo, s {{.TypeName}}) {
     // register routes info to router
 {{range .Fields}}{{if notHttpAny .HttpMethod }}    g.Add("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    g.Any("{{.Path}}", s.{{.MethodName}}){{end}}
 {{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{if notEmptyStr .Chain }}
+func (*{{$unimplementedServant}}){{.Chain}}() []echo.MiddlewareFunc {
+    return nil
+}
+
+{{end}}
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(c echo.Context) error {
+    c.String(http.StatusNotImplemented, "method {{.MethodName}} not implemented")
+    return nil
+}
+
+{{end}}
+

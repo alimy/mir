@@ -1,0 +1,21 @@
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"{{ .PkgName }}/servants"
+	"github.com/julienschmidt/httprouter"
+)
+
+func main() {
+	r := httprouter.New()
+
+	// register servants to httprouter
+	servants.RegisterServants(r)
+
+	// start servant service
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		log.Fatal(err)
+	}
+}

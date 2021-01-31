@@ -1,0 +1,16 @@
+package main
+
+import (
+	"{{ .PkgName }}/servants"
+	"gopkg.in/macaron.v1"
+)
+
+func main() {
+	m := macaron.New()
+
+	// register servants to macaron
+	servants.RegisterServants(m)
+
+	// start servant service(:4000)
+	m.Run()
+}

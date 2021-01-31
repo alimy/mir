@@ -41,3 +41,22 @@ func Register{{.TypeName}}Servant(r *mux.Router, s {{.TypeName}}) {
         Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
         Queries({{inflateQuery .Queries}}){{end}}{{end}}
 {{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{if notEmptyStr .Chain }}
+func (*{{$unimplementedServant}}){{.Chain}}() []mux.MiddlewareFunc {
+    return nil
+}
+
+{{end}}
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request) {
+    rw.WriteHeader(http.StatusNotImplemented)
+    rw.Write([]byte("method {{.MethodName}} not implemented"))
+}
+
+{{end}}

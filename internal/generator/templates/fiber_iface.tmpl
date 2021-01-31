@@ -3,6 +3,10 @@
 package {{ .PkgName }}
 
 import (
+    "net/http"
+{{if notEmptyStr .Chain }}
+    "github.com/gofiber/fiber/middleware"
+{{end}}
     fiber "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gofiber/fiber{{end}}"
 )
 
@@ -26,3 +30,22 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
     // register routes info to router
 {{range .Fields}}{{if eq .HttpMethod "GET" }}    router.Get("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "POST"}}    router.Post("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "PUT"}}    router.Put("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "DELETE"}}    router.Delete("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "HEAD"}}    router.Head("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "OPTIONS"}}    router.Options("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "TRACE"}}    router.Trace("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "PATCH"}}    router.Patch("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "CONNECT"}}    router.Connect("{{.Path}}", s.{{.MethodName}}){{else if eq .HttpMethod "ANY" }}    router.All("{{.Path}}", s.{{.MethodName}}){{end}}
 {{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{if notEmptyStr .Chain }}
+func (*{{$unimplementedServant}}){{.Chain}}() []interface{} {
+    return []interface{}{middleware.Logger()}
+}
+
+{{end}}
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(c *fiber.Ctx) {
+    c.Status(http.StatusNotImplemented)
+    c.Write([]byte("method {{.MethodName}} not implemented"))
+}
+
+{{end}}

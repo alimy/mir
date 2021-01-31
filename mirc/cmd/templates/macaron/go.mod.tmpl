@@ -1,0 +1,13 @@
+module {{ .PkgName }}
+
+go 1.16
+
+require (
+	github.com/alimy/mir/v2 v2.7.0-alpha
+	gopkg.in/macaron.v1 v1.3.9
+)
+{{if notEmptyStr .MirPkgName }}
+replace (
+    github.com/alimy/mir/v2 => {{ .MirPkgName }}
+)
+{{end}}

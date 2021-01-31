@@ -1,0 +1,20 @@
+package main
+
+import (
+	"log"
+
+	"{{ .PkgName }}/servants"
+	"github.com/labstack/echo/v4"
+)
+
+func main() {
+	e := echo.New()
+
+	// register servants to echo
+	servants.RegisterServants(e)
+
+	// start servant service
+	if err := e.Start(":4000"); err != nil {
+		log.Fatal(err)
+	}
+}

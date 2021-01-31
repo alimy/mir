@@ -5,17 +5,20 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/alimy/mir/mirc/v2/cmd/templates"
 	"github.com/spf13/cobra"
 )
 
 var (
 	dstPath    string
 	pkgName    string
-	style      string
+	style      []string
 	mirPkgName string
 )
 
@@ -30,7 +33,7 @@ func init() {
 	// parse flags for agentCmd
 	newCmd.Flags().StringVarP(&dstPath, "dst", "d", ".", "genereted destination target directory")
 	newCmd.Flags().StringVarP(&pkgName, "pkg", "p", "github.com/alimy/mir-example", "project's package name")
-	newCmd.Flags().StringVarP(&style, "style", "s", "gin", "generated engine style eg: gin,chi,mux,echo,iris,fiber,fiber-v2,macaron,httprouter")
+	newCmd.Flags().StringSliceVarP(&style, "style", "s", []string{"gin"}, "generated engine style eg: gin,chi,mux,echo,iris,fiber,fiber-v2,macaron,httprouter")
 	newCmd.Flags().StringVar(&mirPkgName, "mir", "", "mir replace package name or place")
 
 	// register agentCmd as sub-command
@@ -55,35 +58,29 @@ func newRun(_cmd *cobra.Command, _args []string) {
 			log.Fatal(err)
 		}
 	}
-
-	tmpls, exist := tmplFiles[style]
-	if !exist {
-		log.Fatal("not exist style engine")
-	}
-
-	ctx := &tmplCtx{
+	ctx := &templates.TmplCtx{
 		PkgName:    pkgName,
 		MirPkgName: mirPkgName,
 	}
-	if err = genProject(ctx, path, tmpls); err != nil {
+	if err = genProject(ctx, path, style); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
+func genProject(ctx *templates.TmplCtx, dstPath string, style []string) error {
 	var (
 		err               error
 		filePath, dirPath string
 		file              *os.File
 	)
 
-	t, err := newTemplate()
+	t, err := templates.NewTemplate(style)
 	if err != nil {
-		return err
+		return fmt.Errorf("not exist style for %s: %w", strings.Join(style, ":"), err)
 	}
 
-	for fileName, assetInfo := range tmpls {
-		filePath = filepath.Join(dstPath, fileName)
+	for _, tmpl := range t.Templates() {
+		filePath = filepath.Join(dstPath, tmpl.Name())
 		dirPath = filepath.Dir(filePath)
 		if err = os.MkdirAll(dirPath, 0755); err != nil {
 			break
@@ -92,12 +89,10 @@ func genProject(ctx *tmplCtx, dstPath string, tmpls map[string]tmplInfo) error {
 		if err != nil {
 			break
 		}
-		if err = t.ExecuteTemplate(file, assetInfo.name, ctx); err != nil {
+		if err = tmpl.Execute(file, ctx); err != nil {
 			break
 		}
-		if err = file.Close(); err != nil {
-			break
-		}
+		file.Close()
 	}
 	return err
 }

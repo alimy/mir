@@ -3,6 +3,8 @@
 package {{ .PkgName }}
 
 import (
+    "net/http"
+
     macaron "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}gopkg.in/macaron.v1{{end}}"
 )
 
@@ -31,3 +33,22 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
     }{{end}}
 {{range .Fields}}{{if notHttpAny .HttpMethod }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else}}    m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{end}}
 {{end}}{{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{if notEmptyStr .Chain }}
+func (*{{$unimplementedServant}}){{.Chain}}() []macaron.Handler {
+    return nil
+}
+
+{{end}}
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(c *macaron.Context) {
+    c.Resp.WriteHeader(http.StatusNotImplemented)
+    c.Resp.Write([]byte("method {{.MethodName}} not implemented"))
+}
+
+{{end}}

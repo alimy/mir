@@ -28,3 +28,16 @@ func Register{{.TypeName}}Servant(r *httprouter.Router, s {{.TypeName}}) {
     r.Handle(http.MethodConnect, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodTrace, "{{joinPath $.Group .Path}}", s.{{.MethodName}}){{end}}
 {{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+    rw.WriteHeader(http.StatusNotImplemented)
+    rw.Write([]byte("method {{.MethodName}} not implemented"))
+}
+
+{{end}}

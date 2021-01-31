@@ -57,7 +57,6 @@ check-debug-all:
 	  ./mirc new --mir ../../ --style $$target --dst $$target; \
 	  cd $$target; \
 	  make mod-tidy; \
-	  make generate; \
 	  cd -; \
 	  echo ""; \
 	done
@@ -70,7 +69,6 @@ check-release-all:
 	  ./mirc new --style $$target --dst $$target; \
 	  cd $$target; \
 	  make mod-tidy; \
-	  make generate; \
 	  cd -; \
 	  echo ""; \
 	done

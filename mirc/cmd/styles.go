@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/alimy/mir/mirc/v2/cmd/templates"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +24,5 @@ func init() {
 
 // stylesRun run styles command
 func stylesRun(_cmd *cobra.Command, _args []string) {
-	styleNames := make([]string, 0, len(tmplFiles))
-	for name := range tmplFiles {
-		styleNames = append(styleNames, name)
-	}
-	fmt.Println(strings.Join(styleNames, " "))
+	fmt.Println(strings.Join(templates.Styles(), " "))
 }

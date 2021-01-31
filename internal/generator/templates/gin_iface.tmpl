@@ -3,6 +3,8 @@
 package {{ .PkgName }}
 
 import (
+    "net/http"
+
     gin "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gin-gonic/gin{{end}}"
 )
 
@@ -26,3 +28,21 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}) {
     // register routes info to router
 {{range .Fields}}{{if notHttpAny .HttpMethod }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    router.Any("{{.Path}}", s.{{.MethodName}}){{end}}
 {{end}}}
+
+{{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
+// {{$unimplementedServant}} can be embedded to have forward compatible implementations.
+type {{$unimplementedServant}} struct {
+}
+
+{{if notEmptyStr .Chain }}
+func (*{{$unimplementedServant}}){{.Chain}}() gin.HandlersChain {
+    return nil
+}
+
+{{end}}
+{{range .Fields}}
+func (*{{$unimplementedServant}}){{.MethodName}}(c *gin.Context) {
+    c.String(http.StatusNotImplemented, "method {{.MethodName}} not implemented")
+}
+
+{{end}}

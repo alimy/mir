@@ -5,6 +5,8 @@
 package version
 
 import (
+	"fmt"
+
 	"github.com/Masterminds/semver/v3"
 )
 
@@ -16,5 +18,13 @@ var (
 	BuildTime = ""
 
 	// AppVer version of Mirc
-	AppVer = semver.MustParse("v2.6.3")
+	AppVer = semver.MustParse("v2.7.0-alpha")
 )
+
+func ShowInfo() string {
+	if BuildTime == "" || GitHash == "" {
+		return fmt.Sprintf("v%s\n", AppVer)
+	} else {
+		return fmt.Sprintf("v%s\nBuildTime: %s\nGitHash: %s\n", AppVer, BuildTime, GitHash)
+	}
+}
