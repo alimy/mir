@@ -21,7 +21,7 @@ func main() {
 	opts := Options{
 		RunMode(InSerialDebugMode),
 		GeneratorName(GeneratorGin),
-		SinkPath("./gen"),
+		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

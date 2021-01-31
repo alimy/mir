@@ -9,26 +9,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
+	api "github.com/alimy/mir/v2/examples/mirc/auto/api/v2"
 )
 
-var _ api.Site = EmptySiteV2{}
+type emptySiteV2 struct {
+	api.UnimplementedSiteServant
+}
 
-// EmptySiteV2 implement api.Site interface
-type EmptySiteV2 struct{}
-
-func (EmptySiteV2) Chain() gin.HandlersChain {
+func (*emptySiteV2) Chain() gin.HandlersChain {
 	return gin.HandlersChain{gin.Logger()}
 }
 
-func (EmptySiteV2) Index(c *gin.Context) {
+func (*emptySiteV2) Index(c *gin.Context) {
 	c.String(http.StatusOK, "get index data (v2)")
 }
 
-func (EmptySiteV2) Articles(c *gin.Context) {
+func (*emptySiteV2) Articles(c *gin.Context) {
 	c.String(http.StatusOK, "get articles data (v2)")
 }
 
-func (EmptySiteV2) Category(c *gin.Context) {
+func (*emptySiteV2) Category(c *gin.Context) {
 	c.String(http.StatusOK, "get Category data (v2)")
+}
+
+func newSiteV2Srv() api.Site {
+	return &emptySiteV2{}
 }

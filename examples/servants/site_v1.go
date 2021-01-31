@@ -9,22 +9,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
+	api "github.com/alimy/mir/v2/examples/mirc/auto/api/v1"
 )
 
-var _ api.Site = EmptySiteV1{}
-
-// EmptySiteV1 implement api.Site interface
-type EmptySiteV1 struct{}
-
-func (EmptySiteV1) Chain() gin.HandlersChain {
-	return nil
+type emptySiteV1 struct {
+	api.UnimplementedSiteServant
 }
 
-func (EmptySiteV1) Index(c *gin.Context) {
+func (*emptySiteV1) Index(c *gin.Context) {
 	c.String(http.StatusOK, "get index data (v1)")
 }
 
-func (EmptySiteV1) Articles(c *gin.Context) {
+func (*emptySiteV1) Articles(c *gin.Context) {
 	c.String(http.StatusOK, "get articles data (v1)")
+}
+
+func newSiteV1Srv() api.Site {
+	return &emptySiteV1{}
 }

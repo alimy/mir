@@ -7,23 +7,26 @@ package servants
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v2/examples/mirc/gen/api"
+	"github.com/alimy/mir/v2/examples/mirc/auto/api"
 	"github.com/gin-gonic/gin"
 )
 
-var _ api.Site = EmptySiteWithNoGroup{}
+type emptySiteWithNoGroup struct {
+	api.UnimplementedSiteServant
+}
 
-// EmptySiteWithNoGroup implement api.Site interface
-type EmptySiteWithNoGroup struct{}
-
-func (EmptySiteWithNoGroup) Chain() gin.HandlersChain {
+func (emptySiteWithNoGroup) Chain() gin.HandlersChain {
 	return gin.HandlersChain{gin.Logger()}
 }
 
-func (EmptySiteWithNoGroup) Index(c *gin.Context) {
+func (emptySiteWithNoGroup) Index(c *gin.Context) {
 	c.String(http.StatusOK, "get index data")
 }
 
-func (EmptySiteWithNoGroup) Articles(c *gin.Context) {
+func (emptySiteWithNoGroup) Articles(c *gin.Context) {
 	c.String(http.StatusOK, "get articles data")
+}
+
+func newSiteSrv() api.Site {
+	return &emptySiteWithNoGroup{}
 }

@@ -3,7 +3,9 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
+	gin "github.com/gin-gonic/gin"
 )
 
 type Site interface {
@@ -24,4 +26,20 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 	// register routes info to router
 	router.Handle("GET", "/index/", s.Index)
 	router.Handle("GET", "/articles/:category/", s.Articles)
+}
+
+// UnimplementedSiteServant can be embedded to have forward compatible implementations.
+type UnimplementedSiteServant struct {
+}
+
+func (*UnimplementedSiteServant) Chain() gin.HandlersChain {
+	return nil
+}
+
+func (*UnimplementedSiteServant) Index(c *gin.Context) {
+	c.String(http.StatusNotImplemented, "method Index not implemented")
+}
+
+func (*UnimplementedSiteServant) Articles(c *gin.Context) {
+	c.String(http.StatusNotImplemented, "method Articles not implemented")
 }

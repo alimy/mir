@@ -7,33 +7,18 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/gin"
-
-	"github.com/alimy/mir/v2/examples/mirc/gen/api"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
 	"github.com/alimy/mir/v2/examples/servants"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	e := gin.New()
 
 	// register servants to engine
-	registerServants(e)
+	servants.RegisterServants(e)
 
 	// start servant service
 	if err := e.Run(); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func registerServants(e *gin.Engine) {
-	// register default group routes
-	api.RegisterSiteServant(e, servants.EmptySiteWithNoGroup{})
-
-	// register routes for group v1
-	v1.RegisterSiteServant(e, servants.EmptySiteV1{})
-
-	// register routes for group v2
-	v2.RegisterSiteServant(e, servants.EmptySiteV2{})
 }
