@@ -3,8 +3,8 @@ module {{ .PkgName }}
 go 1.16
 
 require (
-	github.com/alimy/mir/v2 v2.7.0-alpha
-	github.com/gofiber/fiber v1.14.6
+	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.0" }}
+	github.com/gofiber/fiber {{ .VersionOfEngine "v1.14.6" }}
 )
 {{if notEmptyStr .MirPkgName }}
 replace (

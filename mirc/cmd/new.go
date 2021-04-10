@@ -20,6 +20,8 @@ var (
 	pkgName    string
 	style      []string
 	mirPkgName string
+	mirVersion string
+	engVersion string
 )
 
 func init() {
@@ -35,6 +37,8 @@ func init() {
 	newCmd.Flags().StringVarP(&pkgName, "pkg", "p", "github.com/alimy/mir-example", "project's package name")
 	newCmd.Flags().StringSliceVarP(&style, "style", "s", []string{"gin"}, "generated engine style eg: gin,chi,mux,echo,iris,fiber,fiber-v2,macaron,httprouter")
 	newCmd.Flags().StringVar(&mirPkgName, "mir", "", "mir replace package name or place")
+	newCmd.Flags().StringVar(&mirVersion, "mir-version", "", "set mir version")
+	newCmd.Flags().StringVar(&engVersion, "engine-version", "", "set engine version")
 
 	// register agentCmd as sub-command
 	register(newCmd)
@@ -61,6 +65,8 @@ func newRun(_cmd *cobra.Command, _args []string) {
 	ctx := &templates.TmplCtx{
 		PkgName:    pkgName,
 		MirPkgName: mirPkgName,
+		MirVersion: mirVersion,
+		EngVersion: engVersion,
 	}
 	if err = genProject(ctx, path, style); err != nil {
 		log.Fatal(err)

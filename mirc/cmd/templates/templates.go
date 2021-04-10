@@ -41,6 +41,8 @@ var (
 type TmplCtx struct {
 	PkgName    string
 	MirPkgName string
+	MirVersion string
+	EngVersion string
 }
 
 // ts style slice alice type
@@ -99,6 +101,22 @@ func init() {
 	} {
 		styles[s.styles.String()] = s.info
 	}
+}
+
+// VersionOfMir return mir's version
+func (c *TmplCtx) VersionOfMir(defVer string) string {
+	if c.MirVersion != "" {
+		return c.MirVersion
+	}
+	return defVer
+}
+
+// VersionOfEngine return engine's version
+func (c *TmplCtx) VersionOfEngine(defVer string) string {
+	if c.EngVersion != "" {
+		return c.EngVersion
+	}
+	return defVer
 }
 
 func (t *tmplInfo) globFiles(fsys fs.FS) ([]string, error) {
