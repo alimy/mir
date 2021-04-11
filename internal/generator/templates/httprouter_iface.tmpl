@@ -14,6 +14,8 @@ type {{.TypeName}} interface {
     {{.MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params)
     {{else}}    {{.MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params){{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
@@ -35,9 +37,10 @@ type {{$unimplementedServant}} struct {
 }
 
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func ({{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
     rw.WriteHeader(http.StatusNotImplemented)
     rw.Write([]byte("method {{.MethodName}} not implemented"))
 }
 
 {{end}}
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

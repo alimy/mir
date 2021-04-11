@@ -18,6 +18,8 @@ type {{.TypeName}} interface {
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(c *fiber.Ctx) error{{else}}    {{.MethodName}}(c *fiber.Ctx) error{{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to fiber
@@ -37,17 +39,17 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func (*{{$unimplementedServant}}){{.Chain}}() []interface{} {
+func ({{$unimplementedServant}}){{.Chain}}() []interface{} {
     return []interface{}{logger.New()}
 }
 
 {{end}}
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(c *fiber.Ctx) error {
+func ({{$unimplementedServant}}){{.MethodName}}(c *fiber.Ctx) error {
     c.Status(http.StatusNotImplemented)
     c.Write([]byte("method {{.MethodName}} not implemented"))
     return nil
 }
 
 {{end}}
-
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

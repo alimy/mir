@@ -12,6 +12,8 @@ type Site interface {
 	Index(http.ResponseWriter, *http.Request)
 	Articles(http.ResponseWriter, *http.Request)
 	Category(http.ResponseWriter, *http.Request)
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to chi
@@ -29,17 +31,19 @@ func RegisterSiteServant(r chi.Router, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request) {
+func (UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Index not implemented"))
 }
 
-func (*UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request) {
+func (UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Articles not implemented"))
 }
 
-func (*UnimplementedSiteServant) Category(rw http.ResponseWriter, r *http.Request) {
+func (UnimplementedSiteServant) Category(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Category not implemented"))
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

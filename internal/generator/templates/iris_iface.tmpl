@@ -18,6 +18,8 @@ type {{.TypeName}} interface {
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(context.Context){{else}}    {{.MethodName}}(context.Context){{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to iris
@@ -37,15 +39,16 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func (*{{$unimplementedServant}}){{.Chain}}() context.Handlers {
+func ({{$unimplementedServant}}){{.Chain}}() context.Handlers {
     return nil
 }
 
 {{end}}
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(c context.Context) {
+func ({{$unimplementedServant}}){{.MethodName}}(c context.Context) {
     c.StatusCode(http.StatusNotImplemented)
     c.WriteString("method {{.MethodName}} not implemented")
 }
 
 {{end}}
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

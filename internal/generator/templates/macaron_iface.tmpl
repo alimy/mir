@@ -16,6 +16,8 @@ type {{.TypeName}} interface {
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(*macaron.Context){{else}}    {{.MethodName}}(*macaron.Context){{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to macaron
@@ -40,15 +42,16 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func (*{{$unimplementedServant}}){{.Chain}}() []macaron.Handler {
+func ({{$unimplementedServant}}){{.Chain}}() []macaron.Handler {
     return nil
 }
 
 {{end}}
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(c *macaron.Context) {
+func ({{$unimplementedServant}}){{.MethodName}}(c *macaron.Context) {
     c.Resp.WriteHeader(http.StatusNotImplemented)
     c.Resp.Write([]byte("method {{.MethodName}} not implemented"))
 }
 
 {{end}}
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

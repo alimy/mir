@@ -12,6 +12,8 @@ type Site interface {
 	Index(c *fiber.Ctx) error
 	Articles(c *fiber.Ctx) error
 	Category(c *fiber.Ctx) error
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to fiber
@@ -28,20 +30,22 @@ func RegisterSiteServant(app *fiber.App, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Index(c *fiber.Ctx) error {
+func (UnimplementedSiteServant) Index(c *fiber.Ctx) error {
 	c.Status(http.StatusNotImplemented)
 	c.Write([]byte("method Index not implemented"))
 	return nil
 }
 
-func (*UnimplementedSiteServant) Articles(c *fiber.Ctx) error {
+func (UnimplementedSiteServant) Articles(c *fiber.Ctx) error {
 	c.Status(http.StatusNotImplemented)
 	c.Write([]byte("method Articles not implemented"))
 	return nil
 }
 
-func (*UnimplementedSiteServant) Category(c *fiber.Ctx) error {
+func (UnimplementedSiteServant) Category(c *fiber.Ctx) error {
 	c.Status(http.StatusNotImplemented)
 	c.Write([]byte("method Category not implemented"))
 	return nil
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

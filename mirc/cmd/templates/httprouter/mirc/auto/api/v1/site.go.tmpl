@@ -11,6 +11,8 @@ import (
 type Site interface {
 	Index(http.ResponseWriter, *http.Request, httprouter.Params)
 	Articles(http.ResponseWriter, *http.Request, httprouter.Params)
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to httprouter
@@ -23,12 +25,14 @@ func RegisterSiteServant(r *httprouter.Router, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Index not implemented"))
 }
 
-func (*UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Articles not implemented"))
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

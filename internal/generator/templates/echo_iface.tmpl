@@ -16,6 +16,8 @@ type {{.TypeName}} interface {
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(echo.Context) error{{else}}    {{.MethodName}}(echo.Context) error{{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to echo
@@ -35,16 +37,16 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func (*{{$unimplementedServant}}){{.Chain}}() []echo.MiddlewareFunc {
+func ({{$unimplementedServant}}){{.Chain}}() []echo.MiddlewareFunc {
     return nil
 }
 
 {{end}}
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(c echo.Context) error {
+func ({{$unimplementedServant}}){{.MethodName}}(c echo.Context) error {
     c.String(http.StatusNotImplemented, "method {{.MethodName}} not implemented")
     return nil
 }
 
 {{end}}
-
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

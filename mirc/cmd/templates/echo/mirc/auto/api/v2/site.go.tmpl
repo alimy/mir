@@ -12,6 +12,8 @@ type Site interface {
 	Index(echo.Context) error
 	Articles(echo.Context) error
 	Category(echo.Context) error
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to echo
@@ -28,17 +30,19 @@ func RegisterSiteServant(e *echo.Echo, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Index(c echo.Context) error {
+func (UnimplementedSiteServant) Index(c echo.Context) error {
 	c.String(http.StatusNotImplemented, "method Index not implemented")
 	return nil
 }
 
-func (*UnimplementedSiteServant) Articles(c echo.Context) error {
+func (UnimplementedSiteServant) Articles(c echo.Context) error {
 	c.String(http.StatusNotImplemented, "method Articles not implemented")
 	return nil
 }
 
-func (*UnimplementedSiteServant) Category(c echo.Context) error {
+func (UnimplementedSiteServant) Category(c echo.Context) error {
 	c.String(http.StatusNotImplemented, "method Category not implemented")
 	return nil
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

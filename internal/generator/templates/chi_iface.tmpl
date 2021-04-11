@@ -16,6 +16,8 @@ type {{.TypeName}} interface {
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(http.ResponseWriter, *http.Request){{else}}    {{.MethodName}}(http.ResponseWriter, *http.Request){{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to chi
@@ -45,15 +47,16 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func (*{{$unimplementedServant}}){{.Chain}}() chi.Middlewares {
+func ({{$unimplementedServant}}){{.Chain}}() chi.Middlewares {
     return nil
 }
 
 {{end}}
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request) {
+func ({{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request) {
     rw.WriteHeader(http.StatusNotImplemented)
     rw.Write([]byte("method {{.MethodName}} not implemented"))
 }
 
 {{end}}
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

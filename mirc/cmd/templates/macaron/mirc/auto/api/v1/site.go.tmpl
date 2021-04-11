@@ -14,6 +14,8 @@ type Site interface {
 
 	Index(*macaron.Context)
 	Articles(*macaron.Context)
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to macaron
@@ -30,16 +32,18 @@ func RegisterSiteServant(m *macaron.Macaron, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Chain() []macaron.Handler {
+func (UnimplementedSiteServant) Chain() []macaron.Handler {
 	return nil
 }
 
-func (*UnimplementedSiteServant) Index(c *macaron.Context) {
+func (UnimplementedSiteServant) Index(c *macaron.Context) {
 	c.Resp.WriteHeader(http.StatusNotImplemented)
 	c.Resp.Write([]byte("method Index not implemented"))
 }
 
-func (*UnimplementedSiteServant) Articles(c *macaron.Context) {
+func (UnimplementedSiteServant) Articles(c *macaron.Context) {
 	c.Resp.WriteHeader(http.StatusNotImplemented)
 	c.Resp.Write([]byte("method Articles not implemented"))
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

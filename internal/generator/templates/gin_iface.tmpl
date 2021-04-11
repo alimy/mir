@@ -16,6 +16,8 @@ type {{.TypeName}} interface {
 {{range .Fields}}{{if notEmptyStr .Comment }}    // {{.Comment}}
     {{.MethodName}}(*gin.Context){{else}}    {{.MethodName}}(*gin.Context){{end}}
 {{end}}
+
+    mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
@@ -35,14 +37,15 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func (*{{$unimplementedServant}}){{.Chain}}() gin.HandlersChain {
+func ({{$unimplementedServant}}){{.Chain}}() gin.HandlersChain {
     return nil
 }
 
 {{end}}
 {{range .Fields}}
-func (*{{$unimplementedServant}}){{.MethodName}}(c *gin.Context) {
+func ({{$unimplementedServant}}){{.MethodName}}(c *gin.Context) {
     c.String(http.StatusNotImplemented, "method {{.MethodName}} not implemented")
 }
 
 {{end}}
+func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}

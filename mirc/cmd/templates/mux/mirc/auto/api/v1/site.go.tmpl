@@ -19,6 +19,8 @@ type Site interface {
 
 	Index(http.ResponseWriter, *http.Request)
 	Articles(http.ResponseWriter, *http.Request)
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to mux
@@ -41,16 +43,18 @@ func RegisterSiteServant(r *mux.Router, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Chain() []mux.MiddlewareFunc {
+func (UnimplementedSiteServant) Chain() []mux.MiddlewareFunc {
 	return nil
 }
 
-func (*UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request) {
+func (UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Index not implemented"))
 }
 
-func (*UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request) {
+func (UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Articles not implemented"))
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

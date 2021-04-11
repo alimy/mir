@@ -3,7 +3,7 @@ module {{ .PkgName }}
 go 1.16
 
 require (
-	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.0" }}
+	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.1" }}
 	github.com/labstack/echo/v4 {{ .VersionOfEngine "v4.1.17" }}
 )
 {{if notEmptyStr .MirPkgName }}

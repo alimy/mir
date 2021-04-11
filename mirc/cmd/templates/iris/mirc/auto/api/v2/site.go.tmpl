@@ -14,6 +14,8 @@ type Site interface {
 	Index(context.Context)
 	Articles(context.Context)
 	Category(context.Context)
+
+    mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to iris
@@ -30,17 +32,19 @@ func RegisterSiteServant(app *iris.Application, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Index(c context.Context) {
+func (UnimplementedSiteServant) Index(c context.Context) {
 	c.StatusCode(http.StatusNotImplemented)
 	c.WriteString("method Index not implemented")
 }
 
-func (*UnimplementedSiteServant) Articles(c context.Context) {
+func (UnimplementedSiteServant) Articles(c context.Context) {
 	c.StatusCode(http.StatusNotImplemented)
 	c.WriteString("method Articles not implemented")
 }
 
-func (*UnimplementedSiteServant) Category(c context.Context) {
+func (UnimplementedSiteServant) Category(c context.Context) {
 	c.StatusCode(http.StatusNotImplemented)
 	c.WriteString("method Category not implemented")
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
