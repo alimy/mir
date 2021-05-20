@@ -1,0 +1,21 @@
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"{{ .PkgName }}/servants"
+	"github.com/go-chi/chi/v5"
+)
+
+func main() {
+	r := chi.NewRouter()
+
+	// register servants to chi
+	servants.RegisterServants(r)
+
+	// start servant service
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		log.Fatal(err)
+	}
+}

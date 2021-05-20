@@ -15,6 +15,8 @@ import (
 var (
 	//go:embed chi
 	//go:embed chi/.gitignore.tmpl
+	//go:embed chi-v5
+	//go:embed chi-v5/.gitignore.tmpl
 	//go:embed echo
 	//go:embed echo/.gitignore.tmpl
 	//go:embed fiber
@@ -64,6 +66,14 @@ func init() {
 		}},
 		{ts{"chi"}, &tmplInfo{
 			target: "chi",
+			files:  levelStar(5),
+		}},
+		{ts{"chi-v5"}, &tmplInfo{
+			target: "chi-v5",
+			files:  levelStar(5),
+		}},
+		{ts{"chi", "v5"}, &tmplInfo{
+			target: "chi-v5",
 			files:  levelStar(5),
 		}},
 		{ts{"echo"}, &tmplInfo{

@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.2" }}
-	github.com/gorilla/mux {{ .VersionOfEngine "v1.8.0" }}
+	github.com/go-chi/chi/v5 {{ .VersionOfEngine "v5.0.3" }}
 )
 {{if notEmptyStr .MirPkgName }}
 replace (

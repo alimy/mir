@@ -9,8 +9,8 @@ import (
 )
 
 func TestGenerate(t *testing.T) {
-	if err := Generate(nil, nil); err != nil {
-		t.Error("don't want an error but not")
+	if err := Generate(nil, nil); err == nil {
+		t.Error("want an error but not")
 	}
 	AddEntry(nil)
 	AddEntries(nil, nil)

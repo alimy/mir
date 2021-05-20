@@ -3,7 +3,7 @@ module {{ .PkgName }}
 go 1.16
 
 require (
-	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.1" }}
+	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.2" }}
 	github.com/go-chi/chi {{ .VersionOfEngine "v4.1.2+incompatible" }}
 )
 {{if notEmptyStr .MirPkgName }}
