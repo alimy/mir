@@ -17,6 +17,7 @@ func main() {
 	opts := Options{
 		RunMode(InSerialMode),
 		GeneratorName(GeneratorChi),
+        EnginePkgName("github.com/go-chi/chi/v5"),
 		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
