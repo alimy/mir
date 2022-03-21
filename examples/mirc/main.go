@@ -1,7 +1,3 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
-// Use of this source code is governed by Apache License 2.0 that
-// can be found in the LICENSE file.
-
 package main
 
 import (
@@ -10,16 +6,16 @@ import (
 	. "github.com/alimy/mir/v2/core"
 	. "github.com/alimy/mir/v2/engine"
 
-	_ "github.com/alimy/mir/v2/examples/mirc/routes"
-	_ "github.com/alimy/mir/v2/examples/mirc/routes/v1"
-	_ "github.com/alimy/mir/v2/examples/mirc/routes/v2"
+	_ "github.com/alimy/mir-example/mirc/routes"
+	_ "github.com/alimy/mir-example/mirc/routes/v1"
+	_ "github.com/alimy/mir-example/mirc/routes/v2"
 )
 
 //go:generate go run main.go
 func main() {
 	log.Println("generate code start")
 	opts := Options{
-		RunMode(InSerialDebugMode),
+		RunMode(InSerialMode),
 		GeneratorName(GeneratorGin),
 		SinkPath("auto"),
 	}

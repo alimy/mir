@@ -17,4 +17,6 @@ tmp.out
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-/mir-examples
+# GoLand project files
+.idea/
+*.iml

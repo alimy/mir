@@ -1,20 +1,16 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
-// Use of this source code is governed by Apache License 2.0 that
-// can be found in the LICENSE file.
-
 package main
 
 import (
 	"log"
 
-	"github.com/alimy/mir/v2/examples/servants"
+	"github.com/alimy/mir-example/servants"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	e := gin.New()
+	e := gin.Default()
 
-	// register servants to engine
+	// register servants to gin
 	servants.RegisterServants(e)
 
 	// start servant service

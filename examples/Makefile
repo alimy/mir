@@ -1,14 +1,12 @@
 GOFMT ?= gofmt -s -w
 GOFILES := $(shell find . -name "*.go" -type f)
 
-TARGET := mir-examples
-
 .PHONY: default
 default: run
 
 .PHONY: build
 build: fmt
-	go build -o ${TARGET} main.go
+	go build -o mir-examples main.go
 
 .PHONY: build
 run: fmt

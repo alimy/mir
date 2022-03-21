@@ -12,6 +12,8 @@ type Site interface {
 	Index(*gin.Context)
 	Articles(*gin.Context)
 	Category(*gin.Context)
+
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to gin
@@ -28,14 +30,16 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 type UnimplementedSiteServant struct {
 }
 
-func (*UnimplementedSiteServant) Index(c *gin.Context) {
+func (UnimplementedSiteServant) Index(c *gin.Context) {
 	c.String(http.StatusNotImplemented, "method Index not implemented")
 }
 
-func (*UnimplementedSiteServant) Articles(c *gin.Context) {
+func (UnimplementedSiteServant) Articles(c *gin.Context) {
 	c.String(http.StatusNotImplemented, "method Articles not implemented")
 }
 
-func (*UnimplementedSiteServant) Category(c *gin.Context) {
+func (UnimplementedSiteServant) Category(c *gin.Context) {
 	c.String(http.StatusNotImplemented, "method Category not implemented")
 }
+
+func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
