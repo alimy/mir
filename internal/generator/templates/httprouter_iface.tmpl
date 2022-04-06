@@ -20,7 +20,7 @@ type {{.TypeName}} interface {
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
 func Register{{.TypeName}}Servant(r *httprouter.Router, s {{.TypeName}}) {
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    r.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", s.{{.MethodName}}){{else}}    r.Handle(http.MethodGet, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
+{{range .Fields}}{{if .NotHttpAny }}    r.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", s.{{.MethodName}}){{else if .JustHttpAny}}    r.Handle(http.MethodGet, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodPut, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodPost, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodDelete, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
@@ -28,7 +28,8 @@ func Register{{.TypeName}}Servant(r *httprouter.Router, s {{.TypeName}}) {
     r.Handle(http.MethodPatch, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodOptions, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
     r.Handle(http.MethodConnect, "{{joinPath $.Group .Path}}", s.{{.MethodName}})
-    r.Handle(http.MethodTrace, "{{joinPath $.Group .Path}}", s.{{.MethodName}}){{end}}
+    r.Handle(http.MethodTrace, "{{joinPath $.Group .Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    r.Handle("{{.}}", "{{joinPath $.Group $field.Path}}", s.{{$field.MethodName}})
+{{end}}{{end}}
 {{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}

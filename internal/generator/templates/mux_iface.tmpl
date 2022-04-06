@@ -5,13 +5,8 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v2"
-
     mux "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gorilla/mux{{end}}"
 )
-
-// just use for mir.Any method to register
-var httpMethods = mir.HttpMethods
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
@@ -35,11 +30,11 @@ func Register{{.TypeName}}Servant(r *mux.Router, s {{.TypeName}}) {
 {{end}}
 
     // register routes info to router
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
+{{range .Fields}}{{if .NotHttpAny }}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
         Methods("{{.HttpMethod}}"){{if notEmptyStr .Host}}.
         Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
         Queries({{inflateQuery .Queries}}){{end}}{{else}}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
-        Methods(httpMethods...){{if notEmptyStr .Host}}.
+        Methods({{.HttpMethodArgs}}){{if notEmptyStr .Host}}.
         Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
         Queries({{inflateQuery .Queries}}){{end}}{{end}}
 {{end}}}

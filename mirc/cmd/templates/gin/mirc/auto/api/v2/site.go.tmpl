@@ -13,7 +13,7 @@ type Site interface {
 	Articles(*gin.Context)
 	Category(*gin.Context)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to gin

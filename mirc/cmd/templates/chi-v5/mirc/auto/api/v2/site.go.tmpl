@@ -13,7 +13,7 @@ type Site interface {
 	Articles(http.ResponseWriter, *http.Request)
 	Category(http.ResponseWriter, *http.Request)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to chi

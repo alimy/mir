@@ -28,7 +28,8 @@ func Register{{.TypeName}}Servant(e *echo.Echo, s {{.TypeName}}) {
     g.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    g.Add("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    g.Any("{{.Path}}", s.{{.MethodName}}){{end}}
+{{range .Fields}}{{if .NotHttpAny }}    g.Add("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else if .JustHttpAny}}    g.Any("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    g.Add("{{.}}", "{{$field.Path}}", s.{{$field.MethodName}})
+{{end}}{{end}}
 {{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}

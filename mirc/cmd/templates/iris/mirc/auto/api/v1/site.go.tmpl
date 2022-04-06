@@ -17,7 +17,7 @@ type Site interface {
 	Index(context.Context)
 	Articles(context.Context)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to iris

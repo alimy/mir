@@ -8,6 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v2/internal/utils"
 )
 
 // EngineInfo Engine information
@@ -96,4 +99,37 @@ func (d Descriptors) keyFrom(s string) string {
 // SetPkgName set package name
 func (d *IfaceDescriptor) SetPkgName(name string) {
 	d.PkgName = name
+}
+
+// NotHttpAny not just http any method
+func (f *FieldDescriptor) NotHttpAny() bool {
+	return !strings.HasPrefix(f.HttpMethod, mir.MethodAny)
+}
+
+// JustHttpAny not just http any method
+func (f *FieldDescriptor) JustHttpAny() bool {
+	return f.HttpMethod == mir.MethodAny
+}
+
+// AnyHttpMethods return methods in HttpMethods
+// Note this is assumed HttpMethods like ANY:POST,GET,HEAD
+func (f *FieldDescriptor) AnyHttpMethods() []string {
+	methods := strings.Split(f.HttpMethod, ":")
+	if len(methods) > 1 {
+		return strings.Split(methods[1], ",")
+	}
+	return nil
+}
+
+// HttpMethodArgs return http method as argument like "POST","GET","HEAD"
+// Note this is assumed HttpMethods like ANY:POST,GET,HEAD
+func (f *FieldDescriptor) HttpMethodArgs() string {
+	httpMthods := mir.HttpMethods
+	if strings.HasPrefix(f.HttpMethod, mir.MethodAny) {
+		methods := strings.Split(f.HttpMethod, ":")
+		if len(methods) > 1 {
+			httpMthods = strings.Split(methods[1], ",")
+		}
+	}
+	return utils.QuoteJoin(httpMthods, ",")
 }

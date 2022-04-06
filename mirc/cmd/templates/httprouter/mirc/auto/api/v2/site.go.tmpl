@@ -11,16 +11,53 @@ import (
 type Site interface {
 	Index(http.ResponseWriter, *http.Request, httprouter.Params)
 	Articles(http.ResponseWriter, *http.Request, httprouter.Params)
-	Category(http.ResponseWriter, *http.Request, httprouter.Params)
+	Login(http.ResponseWriter, *http.Request, httprouter.Params)
+	Logout(http.ResponseWriter, *http.Request, httprouter.Params)
+	Assets(http.ResponseWriter, *http.Request, httprouter.Params)
+	Others(http.ResponseWriter, *http.Request, httprouter.Params)
+	Logs(http.ResponseWriter, *http.Request, httprouter.Params)
+	Status(http.ResponseWriter, *http.Request, httprouter.Params)
+	Admin(http.ResponseWriter, *http.Request, httprouter.Params)
+	Dashboard(http.ResponseWriter, *http.Request, httprouter.Params)
+	HomePage(http.ResponseWriter, *http.Request, httprouter.Params)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to httprouter
 func RegisterSiteServant(r *httprouter.Router, s Site) {
 	r.Handle("GET", "/v2/index/", s.Index)
 	r.Handle("GET", "/v2/articles/:category/", s.Articles)
-	r.Handle("GET", "/v2/category/", s.Category)
+	r.Handle("POST", "/v2/login", s.Login)
+	r.Handle("POST", "/v2/logout", s.Logout)
+	r.Handle("HEAD", "/v2/assets", s.Assets)
+	r.Handle("GET", "/v2/assets", s.Assets)
+
+	r.Handle(http.MethodGet, "/v2/others", s.Others)
+	r.Handle(http.MethodPut, "/v2/others", s.Others)
+	r.Handle(http.MethodPost, "/v2/others", s.Others)
+	r.Handle(http.MethodDelete, "/v2/others", s.Others)
+	r.Handle(http.MethodHead, "/v2/others", s.Others)
+	r.Handle(http.MethodPatch, "/v2/others", s.Others)
+	r.Handle(http.MethodOptions, "/v2/others", s.Others)
+	r.Handle(http.MethodConnect, "/v2/others", s.Others)
+	r.Handle(http.MethodTrace, "/v2/others", s.Others)
+	r.Handle(http.MethodGet, "/v2/logs", s.Logs)
+	r.Handle(http.MethodPut, "/v2/logs", s.Logs)
+	r.Handle(http.MethodPost, "/v2/logs", s.Logs)
+	r.Handle(http.MethodDelete, "/v2/logs", s.Logs)
+	r.Handle(http.MethodHead, "/v2/logs", s.Logs)
+	r.Handle(http.MethodPatch, "/v2/logs", s.Logs)
+	r.Handle(http.MethodOptions, "/v2/logs", s.Logs)
+	r.Handle(http.MethodConnect, "/v2/logs", s.Logs)
+	r.Handle(http.MethodTrace, "/v2/logs", s.Logs)
+	r.Handle("GET", "/v2/Status", s.Status)
+	r.Handle("POST", "/v2/Status", s.Status)
+	r.Handle("HEAD", "/v2/Status", s.Status)
+
+	r.Handle("GET", "/v2/admin", s.Admin)
+	r.Handle("GET", "/v2/dashboard", s.Dashboard)
+	r.Handle("GET", "/v2/home", s.HomePage)
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.
@@ -37,9 +74,49 @@ func (UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request
 	rw.Write([]byte("method Articles not implemented"))
 }
 
-func (UnimplementedSiteServant) Category(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (UnimplementedSiteServant) Login(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	rw.WriteHeader(http.StatusNotImplemented)
-	rw.Write([]byte("method Category not implemented"))
+	rw.Write([]byte("method Login not implemented"))
+}
+
+func (UnimplementedSiteServant) Logout(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Logout not implemented"))
+}
+
+func (UnimplementedSiteServant) Assets(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Assets not implemented"))
+}
+
+func (UnimplementedSiteServant) Others(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Others not implemented"))
+}
+
+func (UnimplementedSiteServant) Logs(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Logs not implemented"))
+}
+
+func (UnimplementedSiteServant) Status(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Status not implemented"))
+}
+
+func (UnimplementedSiteServant) Admin(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Admin not implemented"))
+}
+
+func (UnimplementedSiteServant) Dashboard(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Dashboard not implemented"))
+}
+
+func (UnimplementedSiteServant) HomePage(rw http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method HomePage not implemented"))
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

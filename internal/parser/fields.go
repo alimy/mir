@@ -5,12 +5,13 @@
 package parser
 
 import (
+	"errors"
+	"net/http"
 	"reflect"
 	"strings"
-	"unicode"
-	"unicode/utf8"
 
 	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v2/internal/utils"
 )
 
 var (
@@ -23,7 +24,8 @@ var (
 	errMultChainInfo tagError = "multiple chain info in struct defined"
 
 	// defaultTag indicate default mir's struct tag name
-	defaultTag = "mir"
+	defaultTag       = "mir"
+	defautlMethodTag = "method"
 )
 
 // tagError indicate error information
@@ -36,7 +38,7 @@ func (e tagError) Error() string {
 
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
-	Method    string   // Method indicate method information in struct tag string
+	Method    string   // Method indicate methods information in struct tag string
 	Host      string   // Host indicate host information in struct tag string
 	Path      string   // Path indicate path information in struct tag string
 	Queries   []string // Queries indicate path information in struct tag string
@@ -95,7 +97,15 @@ func (r *reflex) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 	case "Connect":
 		info.Method = mir.MethodConnect
 	case "Any":
-		info.Method = "ANY"
+		if methodTag, exist := field.Tag.Lookup(defautlMethodTag); exist {
+			if methods, ok := r.anyMethodsFromTag(methodTag); ok {
+				info.Method = mir.MethodAny + ":" + strings.Join(methods, ",")
+				break
+			}
+		}
+		info.Method = mir.MethodAny
+	default:
+		return nil, errors.New("not supported filed type")
 	}
 
 	// host info
@@ -156,20 +166,36 @@ func (r *reflex) tagInfoFrom(field reflect.StructField) (*tagInfo, error) {
 
 	// check handler if not group field
 	if info.handler == "" {
-		firstRune, size := utf8.DecodeRuneInString(field.Name)
-		upperFirst := unicode.ToUpper(firstRune)
-
-		// encode upperFirst to []byte,use max byte for contain unicode
-		methoName := make([]byte, 4)
-		number := utf8.EncodeRune(methoName, upperFirst)
-		methoName = methoName[:number]
-		methoName = append(methoName, field.Name[size:]...)
-
 		// assign handler name
-		info.handler = string(methoName)
+		info.handler = utils.UpperFirst(field.Name)
 	}
 
 	return info, nil
+}
+
+func (r *reflex) anyMethodsFromTag(value string) ([]string, bool) {
+	anyMethod := strings.TrimSpace(value)
+	methods := strings.Split(anyMethod, ",")
+	res := make([]string, 0, len(methods))
+	for _, method := range methods {
+		method = strings.ToUpper(strings.TrimSpace(method))
+		switch method {
+		case http.MethodGet,
+			http.MethodHead,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodConnect,
+			http.MethodOptions,
+			http.MethodTrace:
+			res = append(res, method)
+		}
+	}
+	if len(res) > 0 {
+		return res, true
+	}
+	return nil, false
 }
 
 func (r *reflex) inflateQuery(qs string) []string {

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/alimy/mir/v2"
 	"github.com/alimy/mir/v2/core"
+	"github.com/alimy/mir/v2/internal/utils"
 )
 
 //go:embed templates
@@ -40,11 +40,11 @@ func templateFrom(name string) (*template.Template, error) {
 		return nil, err
 	}
 	t := template.New("mir").Funcs(template.FuncMap{
-		"notEmptyStr":  notEmptyStr,
-		"notHttpAny":   notHttpAny,
-		"joinPath":     joinPath,
-		"valideQuery":  valideQuery,
-		"inflateQuery": inflateQuery,
+		"notEmptyStr":    notEmptyStr,
+		"joinPath":       joinPath,
+		"valideQuery":    valideQuery,
+		"inflateQuery":   inflateQuery,
+		"upperFirstName": upperFirstName,
 	})
 	if tmpl, err := t.Parse(string(data)); err == nil {
 		return tmpl, nil
@@ -55,10 +55,6 @@ func templateFrom(name string) (*template.Template, error) {
 
 func notEmptyStr(s string) bool {
 	return s != ""
-}
-
-func notHttpAny(m string) bool {
-	return m != mir.MethodAny
 }
 
 func joinPath(group, subpath string) string {
@@ -92,4 +88,8 @@ func inflateQuery(qs []string) string {
 		b.WriteString(`",`)
 	}
 	return strings.TrimRight(b.String(), ",")
+}
+
+func upperFirstName(name string) string {
+	return utils.UpperFirst(strings.ToLower(name))
 }

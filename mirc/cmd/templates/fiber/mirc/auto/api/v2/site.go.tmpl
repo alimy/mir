@@ -11,9 +11,17 @@ import (
 type Site interface {
 	Index(c *fiber.Ctx)
 	Articles(c *fiber.Ctx)
-	Category(c *fiber.Ctx)
+	Login(c *fiber.Ctx)
+	Logout(c *fiber.Ctx)
+	Assets(c *fiber.Ctx)
+	Others(c *fiber.Ctx)
+	Logs(c *fiber.Ctx)
+	Status(c *fiber.Ctx)
+	Admin(c *fiber.Ctx)
+	Dashboard(c *fiber.Ctx)
+	HomePage(c *fiber.Ctx)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to fiber
@@ -21,9 +29,22 @@ func RegisterSiteServant(app *fiber.App, s Site) {
 	router := app.Group("v2")
 
 	// register routes info to router
-	router.Get("/index/", s.Index)
-	router.Get("/articles/:category?", s.Articles)
-	router.Get("/category/", s.Category)
+	router.Add("GET", "/index/", s.Index)
+	router.Add("GET", "/articles/:category/", s.Articles)
+	router.Add("POST", "/login", s.Login)
+	router.Add("POST", "/logout", s.Logout)
+	router.Add("HEAD", "/assets", s.Assets)
+	router.Add("GET", "/assets", s.Assets)
+
+	router.All("/others", s.Others)
+	router.All("/logs", s.Logs)
+	router.Add("GET", "/Status", s.Status)
+	router.Add("POST", "/Status", s.Status)
+	router.Add("HEAD", "/Status", s.Status)
+
+	router.Add("GET", "/admin", s.Admin)
+	router.Add("GET", "/dashboard", s.Dashboard)
+	router.Add("GET", "/home", s.HomePage)
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.
@@ -40,9 +61,49 @@ func (UnimplementedSiteServant) Articles(c *fiber.Ctx) {
 	c.Write([]byte("method Articles not implemented"))
 }
 
-func (UnimplementedSiteServant) Category(c *fiber.Ctx) {
+func (UnimplementedSiteServant) Login(c *fiber.Ctx) {
 	c.Status(http.StatusNotImplemented)
-	c.Write([]byte("method Category not implemented"))
+	c.Write([]byte("method Login not implemented"))
+}
+
+func (UnimplementedSiteServant) Logout(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Logout not implemented"))
+}
+
+func (UnimplementedSiteServant) Assets(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Assets not implemented"))
+}
+
+func (UnimplementedSiteServant) Others(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Others not implemented"))
+}
+
+func (UnimplementedSiteServant) Logs(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Logs not implemented"))
+}
+
+func (UnimplementedSiteServant) Status(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Status not implemented"))
+}
+
+func (UnimplementedSiteServant) Admin(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Admin not implemented"))
+}
+
+func (UnimplementedSiteServant) Dashboard(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method Dashboard not implemented"))
+}
+
+func (UnimplementedSiteServant) HomePage(c *fiber.Ctx) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method HomePage not implemented"))
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

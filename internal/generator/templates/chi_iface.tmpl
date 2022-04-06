@@ -30,7 +30,7 @@ func Register{{.TypeName}}Servant(r chi.Router, s {{.TypeName}}) {
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.MethodFunc("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    router.Head("{{.Path}}", s.{{.MethodName}})
+{{range .Fields}}{{if .NotHttpAny}}    router.MethodFunc("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else if .JustHttpAny}}    router.Head("{{.Path}}", s.{{.MethodName}})
     router.Get("{{.Path}}", s.{{.MethodName}})
     router.Post("{{.Path}}", s.{{.MethodName}})
     router.Put("{{.Path}}", s.{{.MethodName}})
@@ -38,7 +38,8 @@ func Register{{.TypeName}}Servant(r chi.Router, s {{.TypeName}}) {
     router.Patch("{{.Path}}", s.{{.MethodName}})
     router.Options("{{.Path}}", s.{{.MethodName}})
     router.Connect("{{.Path}}", s.{{.MethodName}})
-    router.Trace("{{.Path}}", s.{{.MethodName}}){{end}}
+    router.Trace("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    router.MethodFunc("{{.}}", "{{$field.Path}}", s.{{$field.MethodName}})
+{{end}}{{end}}
 {{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}

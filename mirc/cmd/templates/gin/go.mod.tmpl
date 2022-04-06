@@ -3,8 +3,9 @@ module {{ .PkgName }}
 go 1.16
 
 require (
-    github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.2" }}
+    github.com/alimy/mir/v2 {{ .VersionOfMir "v2.8.0" }}
     github.com/gin-gonic/gin {{ .VersionOfEngine "v1.7.7" }}
+    golang.org/x/sys v0.0.0-20220405210540-1e041c57c461 // indirect
 )
 {{if notEmptyStr .MirPkgName }}
 replace (

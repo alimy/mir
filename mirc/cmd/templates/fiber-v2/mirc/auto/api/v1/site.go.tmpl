@@ -17,7 +17,7 @@ type Site interface {
 	Index(c *fiber.Ctx) error
 	Articles(c *fiber.Ctx) error
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to fiber
@@ -28,8 +28,8 @@ func RegisterSiteServant(app *fiber.App, s Site) {
 	router.Use(middlewares...)
 
 	// register routes info to router
-	router.Get("/index/", s.Index)
-	router.Get("/articles/:category/", s.Articles)
+	router.Add("GET", "/index/", s.Index)
+	router.Add("GET", "/articles/:category/", s.Articles)
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.

@@ -30,7 +30,8 @@ func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}) {
     p.Use(middlewares...)
 {{end}}
     // register routes info to party
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    p.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    p.Any("{{.Path}}", s.{{.MethodName}}){{end}}
+{{range .Fields}}{{if .NotHttpAny}}    p.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else if .JustHttpAny}}    p.Any("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    p.Handle("{{.}}", "{{$field.Path}}", s.{{$field.MethodName}})
+{{end}}{{end}}
 {{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}

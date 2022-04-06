@@ -15,7 +15,7 @@ type Site interface {
 	Index(*macaron.Context)
 	Articles(*macaron.Context)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to macaron

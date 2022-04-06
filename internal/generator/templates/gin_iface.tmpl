@@ -28,7 +28,8 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}) {
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else}}    router.Any("{{.Path}}", s.{{.MethodName}}){{end}}
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", s.{{.MethodName}}){{else if .JustHttpAny}}    router.Any("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    router.Handle("{{.}}", "{{$field.Path}}", s.{{$field.MethodName}})
+{{end}}{{end}}
 {{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}

@@ -3,7 +3,7 @@ module {{ .PkgName }}
 go 1.16
 
 require (
-	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.7.2" }}
+	github.com/alimy/mir/v2 {{ .VersionOfMir "v2.8.0" }}
 	github.com/julienschmidt/httprouter {{ .VersionOfEngine "v1.3.0" }}
 )
 {{if notEmptyStr .MirPkgName }}

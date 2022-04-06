@@ -12,8 +12,17 @@ type Site interface {
 	Index(echo.Context) error
 	Articles(echo.Context) error
 	Category(echo.Context) error
+	Login(echo.Context) error
+	Logout(echo.Context) error
+	Assets(echo.Context) error
+	Others(echo.Context) error
+	Logs(echo.Context) error
+	Status(echo.Context) error
+	Admin(echo.Context) error
+	Dashboard(echo.Context) error
+	HomePage(echo.Context) error
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to echo
@@ -24,6 +33,20 @@ func RegisterSiteServant(e *echo.Echo, s Site) {
 	g.Add("GET", "/index/", s.Index)
 	g.Add("GET", "/articles/:category/", s.Articles)
 	g.Add("GET", "/category/", s.Category)
+	g.Add("POST", "/login", s.Login)
+	g.Add("POST", "/logout", s.Logout)
+	g.Add("HEAD", "/assets", s.Assets)
+	g.Add("GET", "/assets", s.Assets)
+
+	g.Any("/others", s.Others)
+	g.Any("/logs", s.Logs)
+	g.Add("GET", "/Status", s.Status)
+	g.Add("POST", "/Status", s.Status)
+	g.Add("HEAD", "/Status", s.Status)
+
+	g.Add("GET", "/admin", s.Admin)
+	g.Add("GET", "/dashboard", s.Dashboard)
+	g.Add("GET", "/home", s.HomePage)
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.
@@ -42,6 +65,51 @@ func (UnimplementedSiteServant) Articles(c echo.Context) error {
 
 func (UnimplementedSiteServant) Category(c echo.Context) error {
 	c.String(http.StatusNotImplemented, "method Category not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Login(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Login not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Logout(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Logout not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Assets(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Assets not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Others(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Others not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Logs(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Logs not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Status(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Status not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Admin(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Admin not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) Dashboard(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method Dashboard not implemented")
+	return nil
+}
+
+func (UnimplementedSiteServant) HomePage(c echo.Context) error {
+	c.String(http.StatusNotImplemented, "method HomePage not implemented")
 	return nil
 }
 

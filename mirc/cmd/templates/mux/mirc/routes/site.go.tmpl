@@ -11,7 +11,16 @@ func init() {
 
 // Site site interface info
 type Site struct {
-	Chain    Chain `mir:"-"`
-	Index    Get   `mir:"/index/"`
-	Articles Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
+	Chain     Chain `mir:"-"`
+	Index     Get   `mir:"/index/"`
+	Articles  Get   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
+	Login     Post  `mir:"/login"`
+	Logout    Post  `mir:"/logout"`
+	Assets    Any   `mir:"/assets" method:"Head,Get"`
+	Others    Any   `mir:"/others"`
+	Logs      Any   `mir:"/logs"`
+	Status    Any   `mir:"/Status" method:"Get,Post,Head"`
+	Admin     Get   `mir:"/admin""`
+	Dashboard Get   `mir:"/dashboard"`
+	HomePage  Get   `mir:"/home"`
 }

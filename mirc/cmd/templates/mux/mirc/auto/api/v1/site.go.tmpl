@@ -5,13 +5,8 @@ package v1
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v2"
-
 	mux "github.com/gorilla/mux"
 )
-
-// just use for mir.Any method to register
-var httpMethods = mir.HttpMethods
 
 type Site interface {
 	// Chain provide middlewares for mux
@@ -20,7 +15,7 @@ type Site interface {
 	Index(http.ResponseWriter, *http.Request)
 	Articles(http.ResponseWriter, *http.Request)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to mux

@@ -11,9 +11,17 @@ import (
 type Site interface {
 	Index(*macaron.Context)
 	Articles(*macaron.Context)
-	Category(*macaron.Context)
+	Login(*macaron.Context)
+	Logout(*macaron.Context)
+	Assets(*macaron.Context)
+	Others(*macaron.Context)
+	Logs(*macaron.Context)
+	Status(*macaron.Context)
+	Admin(*macaron.Context)
+	Dashboard(*macaron.Context)
+	HomePage(*macaron.Context)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to macaron
@@ -21,7 +29,20 @@ func RegisterSiteServant(m *macaron.Macaron, s Site) {
 	m.Group("v2", func() {
 		m.Handle("GET", "/index/", []macaron.Handler{s.Index})
 		m.Handle("GET", "/articles/:category/", []macaron.Handler{s.Articles})
-		m.Handle("GET", "/category/", []macaron.Handler{s.Category})
+		m.Handle("POST", "/login", []macaron.Handler{s.Login})
+		m.Handle("POST", "/logout", []macaron.Handler{s.Logout})
+		m.Handle("HEAD", "/assets", []macaron.Handler{s.Assets})
+		m.Handle("GET", "/assets", []macaron.Handler{s.Assets})
+
+		m.Any("/others", s.Others)
+		m.Any("/logs", s.Logs)
+		m.Handle("GET", "/Status", []macaron.Handler{s.Status})
+		m.Handle("POST", "/Status", []macaron.Handler{s.Status})
+		m.Handle("HEAD", "/Status", []macaron.Handler{s.Status})
+
+		m.Handle("GET", "/admin", []macaron.Handler{s.Admin})
+		m.Handle("GET", "/dashboard", []macaron.Handler{s.Dashboard})
+		m.Handle("GET", "/home", []macaron.Handler{s.HomePage})
 	})
 }
 
@@ -39,9 +60,49 @@ func (UnimplementedSiteServant) Articles(c *macaron.Context) {
 	c.Resp.Write([]byte("method Articles not implemented"))
 }
 
-func (UnimplementedSiteServant) Category(c *macaron.Context) {
+func (UnimplementedSiteServant) Login(c *macaron.Context) {
 	c.Resp.WriteHeader(http.StatusNotImplemented)
-	c.Resp.Write([]byte("method Category not implemented"))
+	c.Resp.Write([]byte("method Login not implemented"))
+}
+
+func (UnimplementedSiteServant) Logout(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Logout not implemented"))
+}
+
+func (UnimplementedSiteServant) Assets(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Assets not implemented"))
+}
+
+func (UnimplementedSiteServant) Others(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Others not implemented"))
+}
+
+func (UnimplementedSiteServant) Logs(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Logs not implemented"))
+}
+
+func (UnimplementedSiteServant) Status(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Status not implemented"))
+}
+
+func (UnimplementedSiteServant) Admin(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Admin not implemented"))
+}
+
+func (UnimplementedSiteServant) Dashboard(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method Dashboard not implemented"))
+}
+
+func (UnimplementedSiteServant) HomePage(c *macaron.Context) {
+	c.Resp.WriteHeader(http.StatusNotImplemented)
+	c.Resp.Write([]byte("method HomePage not implemented"))
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

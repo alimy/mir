@@ -4,7 +4,11 @@
 
 package core
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/alimy/mir/v2"
+)
 
 func TestDescriptors(t *testing.T) {
 	d := make(Descriptors)
@@ -19,7 +23,7 @@ func TestDescriptors(t *testing.T) {
 				Host:       "",
 				Path:       "/",
 				Queries:    nil,
-				HttpMethod: "GET",
+				HttpMethod: mir.MethodGet,
 				MethodName: "Index",
 				Comment:    "",
 			},

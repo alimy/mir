@@ -12,7 +12,7 @@ type Site interface {
 	Index(http.ResponseWriter, *http.Request, httprouter.Params)
 	Articles(http.ResponseWriter, *http.Request, httprouter.Params)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to httprouter

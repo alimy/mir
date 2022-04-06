@@ -25,15 +25,18 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 {{if notEmptyStr .Group }}{{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
     m.Group("{{.Group}}", func() {
-{{range .Fields}}{{if notHttpAny .HttpMethod }}        m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else}}        m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{end}}
+{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else if .JustHttpAny}}    m.Any("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{s.{{$field.MethodName}}})
+{{end}}{{end}}
 {{end}}}, middlewares...){{else}} m.Group("{{.Group}}", func() {
-{{range .Fields}}{{if notHttpAny .HttpMethod }}        m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else}}        m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{end}}
+{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else if .JustHttpAny}}    m.Any("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{s.{{$field.MethodName}}})
+{{end}}{{end}}
 {{end}}}){{end}}{{else}}{{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
     for _, middleware := range middlewares {
         m.Use(middleware)
     }{{end}}
-{{range .Fields}}{{if notHttpAny .HttpMethod }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else}}    m.Any("{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{end}}
+{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{s.{{.MethodName}}}){{else if .JustHttpAny}}    m.Any("{{.Path}}", s.{{.MethodName}}){{else}}{{$field := .}}{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{s.{{$field.MethodName}}})
+{{end}}{{end}}
 {{end}}{{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}

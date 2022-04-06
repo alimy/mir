@@ -5,13 +5,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v2"
-
 	mux "github.com/gorilla/mux"
 )
-
-// just use for mir.Any method to register
-var httpMethods = mir.HttpMethods
 
 type Site interface {
 	// Chain provide middlewares for mux
@@ -19,8 +14,17 @@ type Site interface {
 
 	Index(http.ResponseWriter, *http.Request)
 	Articles(http.ResponseWriter, *http.Request)
+	Login(http.ResponseWriter, *http.Request)
+	Logout(http.ResponseWriter, *http.Request)
+	Assets(http.ResponseWriter, *http.Request)
+	Others(http.ResponseWriter, *http.Request)
+	Logs(http.ResponseWriter, *http.Request)
+	Status(http.ResponseWriter, *http.Request)
+	Admin(http.ResponseWriter, *http.Request)
+	Dashboard(http.ResponseWriter, *http.Request)
+	HomePage(http.ResponseWriter, *http.Request)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to mux
@@ -38,6 +42,24 @@ func RegisterSiteServant(r *mux.Router, s Site) {
 		Methods("GET").
 		Host("{subdomain}.example.com").
 		Queries("filter", "{filter}", "foo", "bar", "id", "{id:[0-9]+}")
+	router.HandleFunc("/login", s.Login).
+		Methods("POST")
+	router.HandleFunc("/logout", s.Logout).
+		Methods("POST")
+	router.HandleFunc("/assets", s.Assets).
+		Methods("HEAD", "GET")
+	router.HandleFunc("/others", s.Others).
+		Methods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "CONNECT", "OPTIONS", "TRACE")
+	router.HandleFunc("/logs", s.Logs).
+		Methods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "CONNECT", "OPTIONS", "TRACE")
+	router.HandleFunc("/Status", s.Status).
+		Methods("GET", "POST", "HEAD")
+	router.HandleFunc("/admin", s.Admin).
+		Methods("GET")
+	router.HandleFunc("/dashboard", s.Dashboard).
+		Methods("GET")
+	router.HandleFunc("/home", s.HomePage).
+		Methods("GET")
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.
@@ -56,6 +78,51 @@ func (UnimplementedSiteServant) Index(rw http.ResponseWriter, r *http.Request) {
 func (UnimplementedSiteServant) Articles(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusNotImplemented)
 	rw.Write([]byte("method Articles not implemented"))
+}
+
+func (UnimplementedSiteServant) Login(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Login not implemented"))
+}
+
+func (UnimplementedSiteServant) Logout(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Logout not implemented"))
+}
+
+func (UnimplementedSiteServant) Assets(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Assets not implemented"))
+}
+
+func (UnimplementedSiteServant) Others(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Others not implemented"))
+}
+
+func (UnimplementedSiteServant) Logs(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Logs not implemented"))
+}
+
+func (UnimplementedSiteServant) Status(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Status not implemented"))
+}
+
+func (UnimplementedSiteServant) Admin(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Admin not implemented"))
+}
+
+func (UnimplementedSiteServant) Dashboard(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method Dashboard not implemented"))
+}
+
+func (UnimplementedSiteServant) HomePage(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusNotImplemented)
+	rw.Write([]byte("method HomePage not implemented"))
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}

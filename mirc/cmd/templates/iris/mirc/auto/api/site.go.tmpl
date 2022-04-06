@@ -16,8 +16,17 @@ type Site interface {
 
 	Index(context.Context)
 	Articles(context.Context)
+	Login(context.Context)
+	Logout(context.Context)
+	Assets(context.Context)
+	Others(context.Context)
+	Logs(context.Context)
+	Status(context.Context)
+	Admin(context.Context)
+	Dashboard(context.Context)
+	HomePage(context.Context)
 
-    mustEmbedUnimplementedSiteServant()
+	mustEmbedUnimplementedSiteServant()
 }
 
 // RegisterSiteServant register Site servant to iris
@@ -30,6 +39,20 @@ func RegisterSiteServant(app *iris.Application, s Site) {
 	// register routes info to party
 	p.Handle("GET", "/index/", s.Index)
 	p.Handle("GET", "/articles/{category:string}", s.Articles)
+	p.Handle("POST", "/login", s.Login)
+	p.Handle("POST", "/logout", s.Logout)
+	p.Handle("HEAD", "/assets", s.Assets)
+	p.Handle("GET", "/assets", s.Assets)
+
+	p.Any("/others", s.Others)
+	p.Any("/logs", s.Logs)
+	p.Handle("GET", "/Status", s.Status)
+	p.Handle("POST", "/Status", s.Status)
+	p.Handle("HEAD", "/Status", s.Status)
+
+	p.Handle("GET", "/admin", s.Admin)
+	p.Handle("GET", "/dashboard", s.Dashboard)
+	p.Handle("GET", "/home", s.HomePage)
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.
@@ -48,6 +71,51 @@ func (UnimplementedSiteServant) Index(c context.Context) {
 func (UnimplementedSiteServant) Articles(c context.Context) {
 	c.StatusCode(http.StatusNotImplemented)
 	c.WriteString("method Articles not implemented")
+}
+
+func (UnimplementedSiteServant) Login(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Login not implemented")
+}
+
+func (UnimplementedSiteServant) Logout(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Logout not implemented")
+}
+
+func (UnimplementedSiteServant) Assets(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Assets not implemented")
+}
+
+func (UnimplementedSiteServant) Others(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Others not implemented")
+}
+
+func (UnimplementedSiteServant) Logs(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Logs not implemented")
+}
+
+func (UnimplementedSiteServant) Status(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Status not implemented")
+}
+
+func (UnimplementedSiteServant) Admin(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Admin not implemented")
+}
+
+func (UnimplementedSiteServant) Dashboard(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method Dashboard not implemented")
+}
+
+func (UnimplementedSiteServant) HomePage(c context.Context) {
+	c.StatusCode(http.StatusNotImplemented)
+	c.WriteString("method HomePage not implemented")
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
