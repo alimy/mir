@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	. "github.com/alimy/mir/v2/core"
-	. "github.com/alimy/mir/v2/engine"
+	. "github.com/alimy/mir/v3/core"
+	. "github.com/alimy/mir/v3/engine"
 
 	_ "github.com/alimy/mir-example/mirc/routes"
 	_ "github.com/alimy/mir-example/mirc/routes/v1"

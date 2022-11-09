@@ -7,7 +7,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v3"
 )
 
 type site struct {

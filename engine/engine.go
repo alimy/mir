@@ -10,8 +10,8 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/alimy/mir/v2/core"
-	"github.com/alimy/mir/v2/internal"
+	"github.com/alimy/mir/v3/core"
+	"github.com/alimy/mir/v3/internal"
 )
 
 var (

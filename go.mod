@@ -1,3 +1,3 @@
-module github.com/alimy/mir/v2
+module github.com/alimy/mir/v3
 
-go 1.16
+go 1.18

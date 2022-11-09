@@ -10,8 +10,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/alimy/mir/v2/core"
-	"github.com/alimy/mir/v2/internal/utils"
+	"github.com/alimy/mir/v3/core"
+	"github.com/alimy/mir/v3/internal/utils"
 )
 
 //go:embed templates

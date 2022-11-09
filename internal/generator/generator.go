@@ -12,9 +12,9 @@ import (
 	"sync"
 	"text/template"
 
-	"github.com/alimy/mir/v2/core"
-	"github.com/alimy/mir/v2/internal/container"
-	"github.com/alimy/mir/v2/internal/naming"
+	"github.com/alimy/mir/v3/core"
+	"github.com/alimy/mir/v3/internal/container"
+	"github.com/alimy/mir/v3/internal/naming"
 )
 
 func init() {

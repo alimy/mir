@@ -20,3 +20,6 @@ tmp.out
 # GoLand project files
 .idea/
 *.iml
+
+# VS Code
+.vscode

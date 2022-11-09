@@ -1,7 +1,7 @@
 # Mir
 [![Build Status](https://api.travis-ci.com/alimy/mir.svg?branch=master)](https://travis-ci.com/alimy/mir)
 [![codecov](https://codecov.io/gh/alimy/mir/branch/master/graph/badge.svg)](https://codecov.io/gh/alimy/mir)
-[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v2)
+[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v3)
 [![sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
 Mir is used for register handler to http router(eg: [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter))
@@ -54,8 +54,8 @@ mir-examples
 package v1
 
 import (
-	. "github.com/alimy/mir/v2"
-	. "github.com/alimy/mir/v2/engine"
+	. "github.com/alimy/mir/v3"
+	. "github.com/alimy/mir/v3/engine"
 )
 
 func init() {
@@ -80,12 +80,12 @@ package main
 import (
 	"log"
 
-	. "github.com/alimy/mir/v2/core"
-	. "github.com/alimy/mir/v2/engine"
+	. "github.com/alimy/mir/v3/core"
+	. "github.com/alimy/mir/v3/engine"
 
-	_ "github.com/alimy/mir/v2/examples/mirc/routes"
-	_ "github.com/alimy/mir/v2/examples/mirc/routes/v1"
-	_ "github.com/alimy/mir/v2/examples/mirc/routes/v2"
+	_ "github.com/alimy/mir/v3/examples/mirc/routes"
+	_ "github.com/alimy/mir/v3/examples/mirc/routes/v1"
+	_ "github.com/alimy/mir/v3/examples/mirc/routes/v2"
 )
 
 //go:generate go run main.go
@@ -147,7 +147,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	api "github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
+	api "github.com/alimy/mir/v3/examples/mirc/gen/api/v1"
 )
 
 var _ api.Site = EmptySiteV1{}
@@ -178,10 +178,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/alimy/mir/v2/examples/mirc/gen/api"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v1"
-	"github.com/alimy/mir/v2/examples/mirc/gen/api/v2"
-	"github.com/alimy/mir/v2/examples/servants"
+	"github.com/alimy/mir/v3/examples/mirc/gen/api"
+	"github.com/alimy/mir/v3/examples/mirc/gen/api/v1"
+	"github.com/alimy/mir/v3/examples/mirc/gen/api/v2"
+	"github.com/alimy/mir/v3/examples/servants"
 )
 
 func main() {

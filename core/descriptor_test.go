@@ -7,7 +7,7 @@ package core
 import (
 	"testing"
 
-	"github.com/alimy/mir/v2"
+	"github.com/alimy/mir/v3"
 )
 
 func TestDescriptors(t *testing.T) {

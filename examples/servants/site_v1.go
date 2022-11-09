@@ -1,13 +1,29 @@
 package servants
 
 import (
-	v1 "github.com/alimy/mir-example/mirc/auto/api/v1"
+	api "github.com/alimy/mir-example/mirc/auto/api/v1"
 )
 
 type siteV1Srv struct {
-	v1.UnimplementedSiteServant
+	api.UnimplementedSiteServant
 }
 
-func newSiteV1Srv() v1.Site {
+type siteV1Binding struct {
+	api.UnimplementedSiteBinding
+}
+
+type siteV1Render struct {
+	api.UnimplementedSiteRender
+}
+
+func newSiteV1Srv() api.Site {
 	return &siteV1Srv{}
+}
+
+func newSiteV1Binding() api.SiteBinding {
+	return &siteV1Binding{}
+}
+
+func newSiteV1Render() api.SiteRender {
+	return &siteV1Render{}
 }

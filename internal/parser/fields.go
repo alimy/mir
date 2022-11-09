@@ -10,8 +10,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v2"
-	"github.com/alimy/mir/v2/internal/utils"
+	"github.com/alimy/mir/v3"
+	"github.com/alimy/mir/v3/internal/utils"
 )
 
 var (

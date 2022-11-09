@@ -23,3 +23,5 @@ tmp.out
 
 .vscode
 /mir
+/go.work
+/go.work.sum
