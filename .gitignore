@@ -21,4 +21,5 @@ tmp.out
 .idea/
 *.iml
 
+.vscode
 /mir
