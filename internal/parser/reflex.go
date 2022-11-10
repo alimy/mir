@@ -5,6 +5,8 @@
 package parser
 
 import (
+	"errors"
+	"github.com/alimy/mir/v3/internal/utils"
 	"reflect"
 	"strings"
 
@@ -77,9 +79,10 @@ func (r *reflex) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 		Fields:     make([]*core.FieldDescriptor, 0),
 	}
 	var groupSetuped, chainSetuped bool
-	for i := 0; i < entryType.NumField(); i++ {
+	pkgPath := entryType.PkgPath()
+	for i := entryType.NumField() - 1; i >= 0; i-- {
 		field := entryType.Field(i)
-		switch tagInfo, err := r.tagInfoFrom(field); err {
+		switch tagInfo, err := r.tagInfoFrom(field, pkgPath); err {
 		case nil:
 			// group field so just parse group info.group info only have one field
 			if tagInfo.isGroup {
@@ -114,11 +117,7 @@ func (r *reflex) ifaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 // inflateGroupInfo setup tag group info to TagMir instance
 func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *tagInfo) {
 	// group field value assign to m.group first or tag group string info assigned
-	if group := v.FieldByName(t.fieldName).String(); group != "" {
-		d.Group = group
-	} else {
-		d.Group = t.group
-	}
+	d.Group = t.group
 	if d.Group != "" {
 		names := strings.Split(d.Group, "/")
 		pkgName := r.ns.Naming(names[len(names)-1])
@@ -129,11 +128,14 @@ func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *t
 // fieldFrom build tagField from entry and tagInfo
 func (r *reflex) fieldFrom(t *tagInfo) *core.FieldDescriptor {
 	return &core.FieldDescriptor{
-		HttpMethod: t.Method,
-		Host:       t.Host,
-		Path:       t.Path,
-		Queries:    t.Queries,
-		MethodName: t.fieldName,
+		HttpMethods: t.Methods.List(),
+		In:          t.in,
+		Out:         t.out,
+		InOuts:      t.inOuts,
+		Host:        t.Host,
+		Path:        t.Path,
+		Queries:     t.Queries,
+		MethodName:  t.fieldName,
 	}
 }
 
@@ -144,4 +146,38 @@ func newReflex(info *core.EngineInfo, tagName string, noneQuery bool) *reflex {
 		tagName:    tagName,
 		noneQuery:  noneQuery,
 	}
+}
+
+// checkStruct check struct type is in pkgPath and return other struct type field's
+// type that contained in type.
+// st must struct kind
+func checkStruct(st reflect.Type, pkgPath string) ([]reflect.Type, error) {
+	sts := []reflect.Type{st}
+	fields := utils.Set{}
+	fields.Add(st.PkgPath() + "." + st.Name())
+	for i := 0; i < len(sts); i++ {
+		st := sts[i]
+		if st.PkgPath() != pkgPath {
+			return nil, errors.New("pkgPath need in same path")
+		}
+		for i := st.NumField() - 1; i >= 0; i-- {
+			sf := st.Field(i)
+			ft := sf.Type
+			for ft.Kind() == reflect.Pointer {
+				ft = ft.Elem()
+			}
+			if ft.Kind() == reflect.Struct {
+				if ft.PkgPath() != pkgPath {
+					return nil, errors.New("struct field must in same path")
+				}
+				fn := ft.PkgPath() + "." + ft.Name()
+				if fields.Exist(fn) {
+					return nil, errors.New("struct field may be cycle depentends")
+				}
+				fields.Add(fn)
+				sts = append(sts, ft)
+			}
+		}
+	}
+	return sts, nil
 }

@@ -7,6 +7,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/alimy/mir/v3"
@@ -21,12 +22,15 @@ type EngineInfo struct {
 
 // FieldDescriptor field Descriptor info
 type FieldDescriptor struct {
-	Host       string
-	Path       string
-	Queries    []string
-	HttpMethod string
-	MethodName string
-	Comment    string // not support now so always empty
+	Host        string
+	Path        string
+	Queries     []string
+	HttpMethods []string
+	In          reflect.Type
+	Out         reflect.Type
+	InOuts      []reflect.Type
+	MethodName  string
+	Comment     string // not support now so always empty
 }
 
 // IfaceDescriptor interface Descriptor info
@@ -103,21 +107,21 @@ func (d *IfaceDescriptor) SetPkgName(name string) {
 
 // NotHttpAny not just http any method
 func (f *FieldDescriptor) NotHttpAny() bool {
-	return !strings.HasPrefix(f.HttpMethod, mir.MethodAny)
+	return true
 }
 
 // JustHttpAny not just http any method
 func (f *FieldDescriptor) JustHttpAny() bool {
-	return f.HttpMethod == mir.MethodAny
+	return true
 }
 
 // AnyHttpMethods return methods in HttpMethods
 // Note this is assumed HttpMethods like ANY:POST,GET,HEAD
 func (f *FieldDescriptor) AnyHttpMethods() []string {
-	methods := strings.Split(f.HttpMethod, ":")
-	if len(methods) > 1 {
-		return strings.Split(methods[1], ",")
-	}
+	//methods := strings.Split(f.HttpMethod, ":")
+	//if len(methods) > 1 {
+	//	return strings.Split(methods[1], ",")
+	//}
 	return nil
 }
 
@@ -125,11 +129,11 @@ func (f *FieldDescriptor) AnyHttpMethods() []string {
 // Note this is assumed HttpMethods like ANY:POST,GET,HEAD
 func (f *FieldDescriptor) HttpMethodArgs() string {
 	httpMthods := mir.HttpMethods
-	if strings.HasPrefix(f.HttpMethod, mir.MethodAny) {
-		methods := strings.Split(f.HttpMethod, ":")
-		if len(methods) > 1 {
-			httpMthods = strings.Split(methods[1], ",")
-		}
-	}
+	//if strings.HasPrefix(f.HttpMethod, mir.MethodAny) {
+	//	methods := strings.Split(f.HttpMethod, ":")
+	//	if len(methods) > 1 {
+	//		httpMthods = strings.Split(methods[1], ",")
+	//	}
+	//}
 	return utils.QuoteJoin(httpMthods, ",")
 }
