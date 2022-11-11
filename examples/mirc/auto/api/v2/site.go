@@ -50,6 +50,7 @@ type SiteBinding interface {
 }
 
 type SiteRender interface {
+	RenderAny(c *gin.Context, data any, err error)
 	RenderIndex(c *gin.Context, err error)
 	RenderArticles(c *gin.Context, err error)
 	RenderLogin(c *gin.Context, data *LoginResp, err error)
@@ -119,20 +120,24 @@ func (UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
 
 func (UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
 
-func (UnimplementedSiteRender) RenderIndex(c *gin.Context, err error) {
+func (r UnimplementedSiteRender) RenderAny(c *gin.Context, data any, err error) {
 	c.String(http.StatusInternalServerError, "method RenderLogout not implemented")
 }
 
-func (UnimplementedSiteRender) RenderArticles(c *gin.Context, err error) {
-	c.String(http.StatusInternalServerError, "method RenderLogout not implemented")
+func (r UnimplementedSiteRender) RenderIndex(c *gin.Context, err error) {
+	r.RenderAny(c, nil, err)
 }
 
-func (UnimplementedSiteRender) RenderLogin(c *gin.Context, data *LoginResp, err error) {
-	c.String(http.StatusInternalServerError, "method RenderLogin not implemented")
+func (r UnimplementedSiteRender) RenderArticles(c *gin.Context, err error) {
+	r.RenderAny(c, nil, err)
 }
 
-func (UnimplementedSiteRender) RenderLogout(c *gin.Context, err error) {
-	c.String(http.StatusInternalServerError, "method RenderLogout not implemented")
+func (r UnimplementedSiteRender) RenderLogin(c *gin.Context, data *LoginResp, err error) {
+	r.RenderAny(c, data, err)
+}
+
+func (r UnimplementedSiteRender) RenderLogout(c *gin.Context, err error) {
+	r.RenderAny(c, nil, err)
 }
 
 func (UnimplementedSiteRender) mustEmbedUnimplementedSiteRender() {}
