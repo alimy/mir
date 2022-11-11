@@ -44,6 +44,7 @@ type Site interface {
 }
 
 type SiteBinding interface {
+	BindAny(c *gin.Context, obj any) error
 	BindLogin(c *gin.Context) (*LoginReq, error)
 
 	mustEmbedUnimplementedSiteBinding()
@@ -114,14 +115,20 @@ func (UnimplementedSiteServant) Logout(c *gin.Context) error {
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
 
-func (UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
-	return nil, errors.New("method BindLogin not implemented")
+func (b UnimplementedSiteBinding) BindAny(c *gin.Context, obj any) error {
+	return errors.New("method BindAny not implemented")
 }
 
-func (UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
+func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
+	obj := new(LoginReq)
+	err := b.BindAny(c, obj)
+	return obj, err
+}
+
+func (b UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
 
 func (r UnimplementedSiteRender) RenderAny(c *gin.Context, data any, err error) {
-	c.String(http.StatusInternalServerError, "method RenderLogout not implemented")
+	c.String(http.StatusInternalServerError, "method RenderAny not implemented")
 }
 
 func (r UnimplementedSiteRender) RenderIndex(c *gin.Context, err error) {
@@ -140,4 +147,4 @@ func (r UnimplementedSiteRender) RenderLogout(c *gin.Context, err error) {
 	r.RenderAny(c, nil, err)
 }
 
-func (UnimplementedSiteRender) mustEmbedUnimplementedSiteRender() {}
+func (r UnimplementedSiteRender) mustEmbedUnimplementedSiteRender() {}
