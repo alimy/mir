@@ -44,14 +44,12 @@ type Site interface {
 }
 
 type SiteBinding interface {
-	BindAny(c *gin.Context, obj any) error
 	BindLogin(c *gin.Context) (*LoginReq, error)
 
 	mustEmbedUnimplementedSiteBinding()
 }
 
 type SiteRender interface {
-	RenderAny(c *gin.Context, data any, err error)
 	RenderIndex(c *gin.Context, err error)
 	RenderArticles(c *gin.Context, err error)
 	RenderLogin(c *gin.Context, data *LoginResp, err error)
@@ -88,10 +86,14 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 type UnimplementedSiteServant struct{}
 
 // UnimplementedSiteBinding can be embedded to have forward compatible implementations.
-type UnimplementedSiteBinding struct{}
+type UnimplementedSiteBinding struct {
+	BindAny func(*gin.Context, any) error
+}
 
 // UnimplementedSiteRender can be embedded to have forward compatible implementations.
-type UnimplementedSiteRender struct{}
+type UnimplementedSiteRender struct {
+	RenderAny func(*gin.Context, any, error)
+}
 
 func (UnimplementedSiteServant) Chain() gin.HandlersChain {
 	return nil
@@ -115,10 +117,6 @@ func (UnimplementedSiteServant) Logout(c *gin.Context) error {
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
 
-func (b UnimplementedSiteBinding) BindAny(c *gin.Context, obj any) error {
-	return errors.New("method BindAny not implemented")
-}
-
 func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
 	obj := new(LoginReq)
 	err := b.BindAny(c, obj)
@@ -126,10 +124,6 @@ func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
 }
 
 func (b UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
-
-func (r UnimplementedSiteRender) RenderAny(c *gin.Context, data any, err error) {
-	c.String(http.StatusInternalServerError, "method RenderAny not implemented")
-}
 
 func (r UnimplementedSiteRender) RenderIndex(c *gin.Context, err error) {
 	r.RenderAny(c, nil, err)
