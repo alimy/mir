@@ -9,11 +9,11 @@ type siteV1Srv struct {
 }
 
 type siteV1Binding struct {
-	api.UnimplementedSiteBinding
+	*api.UnimplementedSiteBinding
 }
 
 type siteV1Render struct {
-	api.UnimplementedSiteRender
+	*api.UnimplementedSiteRender
 }
 
 func newSiteV1Srv() api.Site {
@@ -21,9 +21,17 @@ func newSiteV1Srv() api.Site {
 }
 
 func newSiteV1Binding() api.SiteBinding {
-	return &siteV1Binding{}
+	return &siteV1Binding{
+		UnimplementedSiteBinding: &api.UnimplementedSiteBinding{
+			BindAny: bindAny,
+		},
+	}
 }
 
 func newSiteV1Render() api.SiteRender {
-	return &siteV1Render{}
+	return &siteV1Render{
+		UnimplementedSiteRender: &api.UnimplementedSiteRender{
+			RenderAny: renderAny,
+		},
+	}
 }
