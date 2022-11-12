@@ -4,7 +4,6 @@ package v2
 
 import (
 	"errors"
-	"net/http"
 
 	gin "github.com/gin-gonic/gin"
 )
