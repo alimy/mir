@@ -34,30 +34,3 @@ var HttpMethods = []string{
 	http.MethodOptions,
 	http.MethodTrace,
 }
-
-type MethodSet map[string]struct{}
-
-func (s MethodSet) Add(methods ...string) {
-	for _, method := range methods {
-		switch method {
-		case http.MethodGet,
-			http.MethodHead,
-			http.MethodPost,
-			http.MethodPut,
-			http.MethodPatch,
-			http.MethodDelete,
-			http.MethodConnect,
-			http.MethodOptions,
-			http.MethodTrace:
-			s[method] = struct{}{}
-		}
-	}
-}
-
-func (s MethodSet) List() []string {
-	methods := make([]string, 0, len(s))
-	for m := range s {
-		methods = append(methods, m)
-	}
-	return methods
-}

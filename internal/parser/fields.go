@@ -7,6 +7,7 @@ package parser
 import (
 	"errors"
 	"github.com/alimy/mir/v3"
+	"github.com/alimy/mir/v3/internal/container"
 	"net/http"
 	"reflect"
 	"strings"
@@ -38,16 +39,16 @@ func (e tagError) Error() string {
 
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
-	Methods   mir.MethodSet // Method indicate methods information in struct tag string
-	Host      string        // Host indicate host information in struct tag string
-	Path      string        // Path indicate path information in struct tag string
-	Queries   []string      // Queries indicate path information in struct tag string
-	isGroup   bool          // indicate whether a group field
-	isChain   bool          // indicate whether a chain field
-	group     string        // indicate group information in struct tag string
-	chainFunc string        // indicate chain function information in struct tag string
-	handler   string        // indicate handler information in struct tag string
-	fieldName string        // indicate field name
+	Methods   container.HttpMethodSet // Method indicate methods information in struct tag string
+	Host      string                  // Host indicate host information in struct tag string
+	Path      string                  // Path indicate path information in struct tag string
+	Queries   []string                // Queries indicate path information in struct tag string
+	isGroup   bool                    // indicate whether a group field
+	isChain   bool                    // indicate whether a chain field
+	group     string                  // indicate group information in struct tag string
+	chainFunc string                  // indicate chain function information in struct tag string
+	handler   string                  // indicate handler information in struct tag string
+	fieldName string                  // indicate field name
 	in        reflect.Type
 	out       reflect.Type
 	inOuts    []reflect.Type
@@ -57,7 +58,7 @@ type tagInfo struct {
 // tagInfoFrom build tagInfo from field
 func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInfo, error) {
 	info := &tagInfo{
-		Methods: make(mir.MethodSet, 1),
+		Methods: make(container.HttpMethodSet, 1),
 	}
 
 	// lookup mir tag info from struct field

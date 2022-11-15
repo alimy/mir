@@ -20,12 +20,12 @@ func TestDescriptors(t *testing.T) {
 		Comment:  "",
 		Fields: []*FieldDescriptor{
 			{
-				Host:       "",
-				Path:       "/",
-				Queries:    nil,
-				HttpMethod: mir.MethodGet,
-				MethodName: "Index",
-				Comment:    "",
+				Host:        "",
+				Path:        "/",
+				Queries:     nil,
+				HttpMethods: []string{mir.MethodGet},
+				MethodName:  "Index",
+				Comment:     "",
 			},
 		},
 	}); err != nil {

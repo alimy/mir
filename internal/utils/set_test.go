@@ -18,14 +18,14 @@ func TestMethodSet(t *testing.T) {
 		},
 		{
 			input:  []string{"others"},
-			expect: []string{"ohters"},
+			expect: []string{"others"},
 			exist:  "others",
 		},
 	} {
 		s := Set{}
 		s.Add(data.input...)
 
-		if s.Exist(data.exist) {
+		if !s.Exist(data.exist) {
 			t.Errorf("want exist %s but not", data.exist)
 		}
 

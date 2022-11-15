@@ -3,9 +3,10 @@
 package v2
 
 import (
-	"errors"
+	"net/http"
 
-	gin "github.com/gin-gonic/gin"
+	"github.com/alimy/mir/v3"
+	"github.com/gin-gonic/gin"
 )
 
 type AgentInfo struct {
@@ -34,25 +35,25 @@ type LoginResp struct {
 }
 
 type Site interface {
-	Index(c *gin.Context) error
-	Articles(c *gin.Context) error
-	Login(c *gin.Context, req *LoginReq) (*LoginResp, error)
-	Logout(c *gin.Context) error
+	Index(c *gin.Context) mir.Error
+	Articles(c *gin.Context) mir.Error
+	Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error)
+	Logout(c *gin.Context) mir.Error
 
 	mustEmbedUnimplementedSiteServant()
 }
 
 type SiteBinding interface {
-	BindLogin(c *gin.Context) (*LoginReq, error)
+	BindLogin(c *gin.Context) (*LoginReq, mir.Error)
 
 	mustEmbedUnimplementedSiteBinding()
 }
 
 type SiteRender interface {
-	RenderIndex(c *gin.Context, err error)
-	RenderArticles(c *gin.Context, err error)
-	RenderLogin(c *gin.Context, data *LoginResp, err error)
-	RenderLogout(c *gin.Context, err error)
+	RenderIndex(c *gin.Context, err mir.Error)
+	RenderArticles(c *gin.Context, err mir.Error)
+	RenderLogin(c *gin.Context, data *LoginResp, err mir.Error)
+	RenderLogout(c *gin.Context, err mir.Error)
 
 	mustEmbedUnimplementedSiteRender()
 }
@@ -86,37 +87,37 @@ type UnimplementedSiteServant struct{}
 
 // UnimplementedSiteBinding can be embedded to have forward compatible implementations.
 type UnimplementedSiteBinding struct {
-	BindAny func(*gin.Context, any) error
+	BindAny func(*gin.Context, any) mir.Error
 }
 
 // UnimplementedSiteRender can be embedded to have forward compatible implementations.
 type UnimplementedSiteRender struct {
-	RenderAny func(*gin.Context, any, error)
+	RenderAny func(*gin.Context, any, mir.Error)
 }
 
 func (UnimplementedSiteServant) Chain() gin.HandlersChain {
 	return nil
 }
 
-func (UnimplementedSiteServant) Index(c *gin.Context) error {
-	return errors.New("method Index not implemented")
+func (UnimplementedSiteServant) Index(c *gin.Context) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Articles(c *gin.Context) error {
-	return errors.New("method Index not implemented")
+func (UnimplementedSiteServant) Articles(c *gin.Context) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Login(c *gin.Context, req *LoginReq) (*LoginResp, error) {
-	return nil, errors.New("method Login not implemented")
+func (UnimplementedSiteServant) Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error) {
+	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Logout(c *gin.Context) error {
-	return errors.New("method Logout not implemented")
+func (UnimplementedSiteServant) Logout(c *gin.Context) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
 
-func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
+func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, mir.Error) {
 	obj := new(LoginReq)
 	err := b.BindAny(c, obj)
 	return obj, err
@@ -124,19 +125,19 @@ func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, error) {
 
 func (b UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
 
-func (r UnimplementedSiteRender) RenderIndex(c *gin.Context, err error) {
+func (r UnimplementedSiteRender) RenderIndex(c *gin.Context, err mir.Error) {
 	r.RenderAny(c, nil, err)
 }
 
-func (r UnimplementedSiteRender) RenderArticles(c *gin.Context, err error) {
+func (r UnimplementedSiteRender) RenderArticles(c *gin.Context, err mir.Error) {
 	r.RenderAny(c, nil, err)
 }
 
-func (r UnimplementedSiteRender) RenderLogin(c *gin.Context, data *LoginResp, err error) {
+func (r UnimplementedSiteRender) RenderLogin(c *gin.Context, data *LoginResp, err mir.Error) {
 	r.RenderAny(c, data, err)
 }
 
-func (r UnimplementedSiteRender) RenderLogout(c *gin.Context, err error) {
+func (r UnimplementedSiteRender) RenderLogout(c *gin.Context, err mir.Error) {
 	r.RenderAny(c, nil, err)
 }
 

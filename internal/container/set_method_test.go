@@ -1,4 +1,4 @@
-package mir
+package container
 
 import (
 	"net/http"
@@ -19,10 +19,6 @@ func TestMethodSet_Add_List(t *testing.T) {
 			expect: []string{},
 		},
 		{
-			input:  HttpMethods,
-			expect: HttpMethods,
-		},
-		{
 			input: []string{
 				http.MethodGet,
 				http.MethodHead,
@@ -36,10 +32,20 @@ func TestMethodSet_Add_List(t *testing.T) {
 				"others",
 				"notbeincludes",
 			},
-			expect: HttpMethods,
+			expect: []string{
+				http.MethodGet,
+				http.MethodHead,
+				http.MethodPost,
+				http.MethodPut,
+				http.MethodPatch,
+				http.MethodDelete,
+				http.MethodConnect,
+				http.MethodOptions,
+				http.MethodTrace,
+			},
 		},
 	} {
-		ms := MethodSet{}
+		ms := HttpMethodSet{}
 		ms.Add(data.input...)
 		list := ms.List()
 		if len(list) != len(data.expect) {

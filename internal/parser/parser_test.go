@@ -7,27 +7,57 @@ package parser
 import (
 	"testing"
 
-	"github.com/alimy/mir/v3"
+	. "github.com/alimy/mir/v3"
 )
 
+type AgentInfo struct {
+	Platform  string `json:"platform"`
+	UserAgent string `json:"user_agent"`
+}
+
+type ServerInfo struct {
+	ApiVer string `json:"api_ver"`
+}
+
+type UserInfo struct {
+	Name string `json:"name"`
+}
+
+type LoginReq struct {
+	AgentInfo AgentInfo `json:"agent_info"`
+	Name      string    `json:"name"`
+	Passwd    string    `json:"passwd"`
+}
+
+type LoginResp struct {
+	UserInfo
+	ServerInfo ServerInfo `json:"server_info"`
+	JwtToken   string     `json:"jwt_token"`
+}
+
 type site struct {
-	Chain    mir.Chain `mir:"-"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
+	Chain    Chain                          `mir:"-"`
+	Index    func(Get)                      `mir:"/index/"`
+	Articles func(Get)                      `mir:"/articles/:category/"`
+	Login    func(Post, LoginReq) LoginResp `mir:"/user/login/"`
+	Logout   func(Post)                     `mir:"/user/logout/"`
 }
 
 type siteV1 struct {
-	Chain    mir.Chain `mir:"-"`
-	Group    mir.Group `mir:"v1"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
+	Chain    Chain                          `mir:"-"`
+	Group    Group                          `mir:"v1"`
+	Index    func(Get)                      `mir:"/index/"`
+	Articles func(Get)                      `mir:"/articles/:category/"`
+	Login    func(Post, LoginReq) LoginResp `mir:"/user/login/"`
+	Logout   func(Post)                     `mir:"/user/logout/"`
 }
 
 type siteV2 struct {
-	Group    mir.Group `mir:"v2"`
-	Index    mir.Get   `mir:"/index/"`
-	Articles mir.Get   `mir:"/articles/:category/"`
-	Category mir.Get   `mir:"/category/"`
+	Group    Group                          `mir:"v2"`
+	Index    func(Get)                      `mir:"/index/"`
+	Articles func(Get)                      `mir:"/articles/:category/"`
+	Login    func(Post, LoginReq) LoginResp `mir:"/user/login/"`
+	Logout   func(Post)                     `mir:"/user/logout/"`
 }
 
 func TestMirParser_Parse(t *testing.T) {
@@ -40,10 +70,10 @@ func TestMirParser_Parse(t *testing.T) {
 	}
 	ds, err := p.Parse(entries)
 	if err != nil {
-		t.Error("want nil error but not")
+		t.Errorf("want nil error but got: %s", err)
 	}
 	if len(ds) != 3 {
-		t.Fatal("want 3 item but not")
+		t.Errorf("want 3 item but got: %d", len(ds))
 	}
 
 	iface, exist := ds.Get("")
