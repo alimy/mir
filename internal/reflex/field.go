@@ -2,16 +2,15 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package parser
+package reflex
 
 import (
 	"errors"
-	"github.com/alimy/mir/v3"
-	"github.com/alimy/mir/v3/internal/container"
 	"net/http"
 	"reflect"
 	"strings"
 
+	"github.com/alimy/mir/v3"
 	"github.com/alimy/mir/v3/internal/utils"
 )
 
@@ -23,10 +22,10 @@ var (
 	errNotValideType tagError = "not valide type, just struct and struct ptr is avalibale"
 	errMultGroupInfo tagError = "multiple group info in struct defined"
 	errMultChainInfo tagError = "multiple chain info in struct defined"
+)
 
-	// defaultTag indicate default mir's struct tag name
-	defaultTag       = "mir"
-	defautlMethodTag = "method"
+const (
+	mirPkgName = "github.com/alimy/mir/v3"
 )
 
 // tagError indicate error information
@@ -39,26 +38,27 @@ func (e tagError) Error() string {
 
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
-	Methods   container.HttpMethodSet // Method indicate methods information in struct tag string
-	Host      string                  // Host indicate host information in struct tag string
-	Path      string                  // Path indicate path information in struct tag string
-	Queries   []string                // Queries indicate path information in struct tag string
-	isGroup   bool                    // indicate whether a group field
-	isChain   bool                    // indicate whether a chain field
-	group     string                  // indicate group information in struct tag string
-	chainFunc string                  // indicate chain function information in struct tag string
-	handler   string                  // indicate handler information in struct tag string
-	fieldName string                  // indicate field name
-	in        reflect.Type
-	out       reflect.Type
-	inOuts    []reflect.Type
-	comment   string // indicate comment info (not support now)
+	isAnyMethod bool                // isAnyMethod indicate whether method is Any
+	methods     utils.HttpMethodSet // method indicate methods information in struct tag string
+	host        string              // host indicate host information in struct tag string
+	path        string              // path indicate path information in struct tag string
+	queries     []string            // queries indicate path information in struct tag string
+	isGroup     bool                // indicate whether a group field
+	isChain     bool                // indicate whether a chain field
+	group       string              // indicate group information in struct tag string
+	chainFunc   string              // indicate chain function information in struct tag string
+	handler     string              // indicate handler information in struct tag string
+	fieldName   string              // indicate field name
+	in          reflect.Type
+	out         reflect.Type
+	inOuts      []reflect.Type
+	comment     string // indicate comment info (not support now)
 }
 
 // tagInfoFrom build tagInfo from field
 func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInfo, error) {
 	info := &tagInfo{
-		Methods: make(container.HttpMethodSet, 1),
+		methods: make(utils.HttpMethodSet, 1),
 	}
 
 	// lookup mir tag info from struct field
@@ -78,7 +78,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 	info.fieldName = field.Name
 	switch field.Type.Kind() {
 	case reflect.Interface:
-		if field.Type.PkgPath() != "github.com/alimy/mir/v3" {
+		if field.Type.PkgPath() != mirPkgName {
 			return nil, errors.New("not supported filed type")
 		}
 		switch field.Type.Name() {
@@ -103,7 +103,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 		// request type in latest in argument if declared
 		it := ft.In(numIn - 1)
 		if it.Kind() == reflect.Struct {
-			cts, err := checkStruct(it, pkgPath)
+			cts, err := CheckStruct(it, pkgPath)
 			if err != nil {
 				return nil, err
 			}
@@ -117,30 +117,31 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 		// process other in argument
 		for i := numIn - 1; i >= 0; i-- {
 			it = ft.In(i)
-			if it.PkgPath() != "github.com/alimy/mir/v3" {
+			if it.PkgPath() != mirPkgName {
 				continue
 			}
 			switch it.Name() {
 			case "Get":
-				info.Methods.Add(mir.MethodGet)
+				info.methods.Add(mir.MethodGet)
 			case "Put":
-				info.Methods.Add(mir.MethodPut)
+				info.methods.Add(mir.MethodPut)
 			case "Post":
-				info.Methods.Add(mir.MethodPost)
+				info.methods.Add(mir.MethodPost)
 			case "Delete":
-				info.Methods.Add(mir.MethodDelete)
+				info.methods.Add(mir.MethodDelete)
 			case "Head":
-				info.Methods.Add(mir.MethodHead)
+				info.methods.Add(mir.MethodHead)
 			case "Options":
-				info.Methods.Add(mir.MethodOptions)
+				info.methods.Add(mir.MethodOptions)
 			case "Patch":
-				info.Methods.Add(mir.MethodPatch)
+				info.methods.Add(mir.MethodPatch)
 			case "Trace":
-				info.Methods.Add(mir.MethodTrace)
+				info.methods.Add(mir.MethodTrace)
 			case "Connect":
-				info.Methods.Add(mir.MethodConnect)
+				info.methods.Add(mir.MethodConnect)
 			case "Any":
-				info.Methods.Add(mir.HttpMethods...)
+				info.isAnyMethod = true
+				info.methods.Add(mir.HttpMethods...)
 			}
 		}
 		if numOut == 1 {
@@ -148,7 +149,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 			if ot.Kind() != reflect.Struct {
 				return nil, errors.New("func field must return value is need struct type")
 			}
-			cts, err := checkStruct(ot, pkgPath)
+			cts, err := CheckStruct(ot, pkgPath)
 			if err != nil {
 				return nil, err
 			}
@@ -165,7 +166,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 		for i < len(tag) && tag[i] != '/' {
 			i++
 		}
-		info.Host = tag[2:i]
+		info.host = tag[2:i]
 		tag = tag[i:]
 	}
 
@@ -178,7 +179,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 			break
 		}
 	}
-	info.Path = tag[0:i]
+	info.path = tag[0:i]
 	tag = tag[i:]
 
 	// queries and handler info
@@ -209,7 +210,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 			}
 			queryStr := tag[1:i]
 			if queryStr != "" {
-				info.Queries = r.inflateQuery(queryStr)
+				info.queries = r.inflateQuery(queryStr)
 			}
 			tag = tag[i:]
 		}

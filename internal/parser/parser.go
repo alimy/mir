@@ -9,7 +9,14 @@ import (
 	"sync"
 
 	"github.com/alimy/mir/v3/core"
-	"github.com/alimy/mir/v3/internal/container"
+	"github.com/alimy/mir/v3/internal/reflex"
+	"github.com/alimy/mir/v3/internal/utils"
+)
+
+var (
+	// defaultTag indicate default mir's struct tag name
+	defaultTag       = "mir"
+	defautlMethodTag = "method"
 )
 
 func init() {
@@ -51,14 +58,14 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
-	r := newReflex(p.engineInfo, p.tagName, p.noneQuery)
-	return r.parse(entries)
+	r := reflex.NewReflex(p.engineInfo, p.tagName, p.noneQuery)
+	return r.Parse(entries)
 }
 
 // ParseContext concurrent parse interface defined object entries
 func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 	_, ifaceSink := ctx.Pipe()
-	muxSet := container.NewMuxSet()
+	muxSet := utils.NewMuxSet()
 
 	wg := &sync.WaitGroup{}
 	for _, entry := range entries {
@@ -66,8 +73,8 @@ func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, entry interface{}) {
 			defer wg.Done()
 
-			r := newReflex(p.engineInfo, p.tagName, p.noneQuery)
-			iface, err := r.ifaceFrom(entry)
+			r := reflex.NewReflex(p.engineInfo, p.tagName, p.noneQuery)
+			iface, err := r.IfaceFrom(entry)
 			if err != nil {
 				ctx.Cancel(err)
 				return

@@ -8,6 +8,8 @@ import (
     gin "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gin-gonic/gin{{end}}"
 )
 
+{{ declareTypes .InOuts }}
+
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for gin

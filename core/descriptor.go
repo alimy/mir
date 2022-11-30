@@ -26,6 +26,7 @@ type FieldDescriptor struct {
 	Path        string
 	Queries     []string
 	HttpMethods []string
+	IsAnyMethod bool
 	In          reflect.Type
 	Out         reflect.Type
 	InOuts      []reflect.Type
@@ -40,6 +41,7 @@ type IfaceDescriptor struct {
 	PkgName    string
 	TypeName   string
 	Comment    string // not support now so always empty
+	InOuts     []reflect.Type
 	Fields     []*FieldDescriptor
 	EngineInfo *EngineInfo
 }
@@ -105,35 +107,59 @@ func (d *IfaceDescriptor) SetPkgName(name string) {
 	d.PkgName = name
 }
 
-// NotHttpAny not just http any method
-func (f *FieldDescriptor) NotHttpAny() bool {
-	return true
+// SetInnerInOuts set inner InOuts for defined
+func (d *IfaceDescriptor) SetInnerInOuts(inOuts []reflect.Type) {
+	d.InOuts = inOuts
 }
 
-// JustHttpAny not just http any method
+// AllInOuts return all InOuts from Fileds
+func (d *IfaceDescriptor) AllInOuts() []reflect.Type {
+	tyns := utils.NewStrSet()
+	var inouts []reflect.Type
+	for _, f := range d.Fields {
+		for _, t := range f.InOuts {
+			if !tyns.Exist(t.Name()) {
+				inouts = append(inouts, t)
+				tyns.Add(t.Name())
+			}
+		}
+	}
+	return inouts
+}
+
+// NotHttpAny not just http any method
+func (f *FieldDescriptor) NotHttpAny() bool {
+	return !f.IsAnyMethod && len(f.HttpMethods) == 1
+}
+
+// JustHttpAny just http any method
 func (f *FieldDescriptor) JustHttpAny() bool {
-	return true
+	return f.IsAnyMethod
 }
 
 // AnyHttpMethods return methods in HttpMethods
-// Note this is assumed HttpMethods like ANY:POST,GET,HEAD
 func (f *FieldDescriptor) AnyHttpMethods() []string {
-	//methods := strings.Split(f.HttpMethod, ":")
-	//if len(methods) > 1 {
-	//	return strings.Split(methods[1], ",")
-	//}
-	return nil
+	return f.HttpMethods
 }
 
 // HttpMethodArgs return http method as argument like "POST","GET","HEAD"
-// Note this is assumed HttpMethods like ANY:POST,GET,HEAD
 func (f *FieldDescriptor) HttpMethodArgs() string {
 	httpMthods := mir.HttpMethods
-	//if strings.HasPrefix(f.HttpMethod, mir.MethodAny) {
-	//	methods := strings.Split(f.HttpMethod, ":")
-	//	if len(methods) > 1 {
-	//		httpMthods = strings.Split(methods[1], ",")
-	//	}
-	//}
 	return utils.QuoteJoin(httpMthods, ",")
+}
+
+// InName return In type name
+func (f *FieldDescriptor) InName() string {
+	if f.In != nil {
+		return f.In.Name()
+	}
+	return ""
+}
+
+// OutName return Out type name
+func (f *FieldDescriptor) OutName() string {
+	if f.Out != nil {
+		return f.OutName()
+	}
+	return ""
 }

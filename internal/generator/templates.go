@@ -5,12 +5,15 @@
 package generator
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
+	"reflect"
 	"strings"
 	"text/template"
 
 	"github.com/alimy/mir/v3/core"
+	"github.com/alimy/mir/v3/internal/reflex"
 	"github.com/alimy/mir/v3/internal/utils"
 )
 
@@ -40,6 +43,7 @@ func templateFrom(name string) (*template.Template, error) {
 		return nil, err
 	}
 	t := template.New("mir").Funcs(template.FuncMap{
+		"declareTypes":   declareTypes,
 		"notEmptyStr":    notEmptyStr,
 		"joinPath":       joinPath,
 		"valideQuery":    valideQuery,
@@ -92,4 +96,29 @@ func inflateQuery(qs []string) string {
 
 func upperFirstName(name string) string {
 	return utils.UpperFirst(strings.ToLower(name))
+}
+
+func declareTypes(inOuts []reflect.Type) string {
+	if len(inOuts) == 0 {
+		return ""
+	}
+	var err error
+
+	// write types that in inOuts to buffer
+	indent := "    "
+	buf := &bytes.Buffer{}
+	for _, t := range inOuts {
+		err := reflex.WriteStruct(buf, t, indent)
+		if err != nil {
+			break
+		}
+		if _, err = buf.WriteString("\n"); err != nil {
+			break
+		}
+	}
+	if err != nil {
+		core.Logus("write declare types error: %s", err)
+		return ""
+	}
+	return buf.String()
 }

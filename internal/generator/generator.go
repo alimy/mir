@@ -9,12 +9,13 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"sync"
 	"text/template"
 
 	"github.com/alimy/mir/v3/core"
-	"github.com/alimy/mir/v3/internal/container"
 	"github.com/alimy/mir/v3/internal/naming"
+	"github.com/alimy/mir/v3/internal/utils"
 )
 
 func init() {
@@ -88,7 +89,7 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 	}
 	apiPath := filepath.Join(g.sinkPath, "api")
 	ifaceSource, _ := ctx.Pipe()
-	onceSet := container.NewOnceSet(func(path string) error {
+	onceSet := utils.NewOnceSet(func(path string) error {
 		return os.MkdirAll(path, 0755)
 	})
 
@@ -98,6 +99,7 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 	var t *template.Template
 	wg := &sync.WaitGroup{}
 	ns := naming.NewSnakeNamingStrategy()
+	inOutsMap := make(map[string]utils.Set)
 	for iface := range ifaceSource {
 		dirPath := filepath.Join(apiPath, iface.Group)
 		if err = onceSet.Add(dirPath); err != nil {
@@ -106,6 +108,21 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 		if t, err = tmpl.Clone(); err != nil {
 			goto FuckErr
 		}
+
+		// setup inOuts for IfaceDescriptor
+		filter, exist := inOutsMap[iface.Group]
+		if !exist {
+			filter := utils.NewStrSet()
+			inOutsMap[iface.Group] = filter
+		}
+		var inouts []reflect.Type
+		for _, typ := range iface.AllInOuts() {
+			if err := filter.Add(typ.Name()); err == nil {
+				inouts = append(inouts, typ)
+			}
+		}
+		iface.SetInnerInOuts(inouts)
+
 		writer := &mirWriter{tmpl: t, ns: ns}
 		wg.Add(1)
 		go func(ctx core.MirCtx, wg *sync.WaitGroup, writer *mirWriter, iface *core.IfaceDescriptor) {
@@ -160,7 +177,15 @@ FuckErr:
 		if err = os.MkdirAll(dirPath, 0755); err != nil {
 			break
 		}
+		filter := utils.NewStrSet()
 		for _, iface := range ifaces {
+			var inouts []reflect.Type
+			for _, typ := range iface.AllInOuts() {
+				if err := filter.Add(typ.Name()); err == nil {
+					inouts = append(inouts, typ)
+				}
+			}
+			iface.SetInnerInOuts(inouts)
 			if err = writer.Write(dirPath, iface); err != nil {
 				break FuckErr
 			}
