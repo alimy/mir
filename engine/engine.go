@@ -57,7 +57,7 @@ func Generate(opts core.Options, entries ...interface{}) (err error) {
 
 	g := core.GeneratorByName(initOpts.GeneratorName)
 	if g == nil {
-		return fmt.Errorf("unknow generators that name %s", initOpts.GeneratorName)
+		return fmt.Errorf("unknow or yet not supported generator that name of %s", initOpts.GeneratorName)
 	}
 	if err = g.Init(initOpts.GeneratorOpts()); err != nil {
 		return

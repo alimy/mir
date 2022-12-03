@@ -21,14 +21,14 @@ import (
 func init() {
 	core.RegisterGenerators(
 		&mirGenerator{name: core.GeneratorGin},
-		&mirGenerator{name: core.GeneratorChi},
-		&mirGenerator{name: core.GeneratorMux},
-		&mirGenerator{name: core.GeneratorEcho},
-		&mirGenerator{name: core.GeneratorIris},
-		&mirGenerator{name: core.GeneratorFiber},
-		&mirGenerator{name: core.GeneratorFiberV2},
-		&mirGenerator{name: core.GeneratorMacaron},
-		&mirGenerator{name: core.GeneratorHttpRouter},
+		// &mirGenerator{name: core.GeneratorChi},
+		// &mirGenerator{name: core.GeneratorMux},
+		// &mirGenerator{name: core.GeneratorEcho},
+		// &mirGenerator{name: core.GeneratorIris},
+		// &mirGenerator{name: core.GeneratorFiber},
+		// &mirGenerator{name: core.GeneratorFiberV2},
+		// &mirGenerator{name: core.GeneratorMacaron},
+		// &mirGenerator{name: core.GeneratorHttpRouter},
 	)
 }
 
