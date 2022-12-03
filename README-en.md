@@ -1,5 +1,5 @@
 ## Mir
-[![GitHub Workflow Status](https://img.shields.io/github/checks-status/alimy/mir/main?logo=github)](https://github.com/alimy/mir/actions?query=branch%3Amain)
+[![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
 [![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v3)
 [![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
