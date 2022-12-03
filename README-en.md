@@ -24,7 +24,7 @@ Flags:
   -d, --dst string     genereted destination target directory (default ".")
   -h, --help           help for new
       --mir string     mir replace package name or place
-  -p, --pkg string     project's package name (default "github.com/alimy/mir-example")
+  -p, --pkg string     project's package name (default "github.com/alimy/mir-example/v3")
   -s, --style string   generated engine style eg: gin,chi,mux,echo,iris,fiber,macaron,httprouter (default "gin")
 
 % mirc new -s gin -d mir-examples

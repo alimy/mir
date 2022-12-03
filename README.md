@@ -165,7 +165,7 @@ func (r UnimplementedUserRender) mustEmbedUnimplementedUserRender() {}
 package servants
 
 import (
-	"github.com/alimy/mir-example/mirc/auto/api"
+	"github.com/alimy/mir-example/v3/mirc/auto/api"
 )
 
 type userSrv struct {
@@ -223,7 +223,7 @@ func renderAny(c *gin.Context, data any, err mir.Error) {
 package servants
 
 import (
-	"github.com/alimy/mir-example/mirc/auto/api"
+	"github.com/alimy/mir-example/v3/mirc/auto/api"
 	"github.com/gin-gonic/gin"
 )
 

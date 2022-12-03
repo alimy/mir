@@ -1,7 +1,7 @@
 package servants
 
 import (
-	api "github.com/alimy/mir-example/mirc/auto/api/v1"
+	api "github.com/alimy/mir-example/v3/mirc/auto/api/v1"
 )
 
 type siteV1Srv struct {

@@ -6,9 +6,9 @@ import (
 	. "github.com/alimy/mir/v3/core"
 	. "github.com/alimy/mir/v3/engine"
 
-	_ "github.com/alimy/mir-example/mirc/routes"
-	_ "github.com/alimy/mir-example/mirc/routes/v1"
-	_ "github.com/alimy/mir-example/mirc/routes/v2"
+	_ "github.com/alimy/mir-example/v3/mirc/routes"
+	_ "github.com/alimy/mir-example/v3/mirc/routes/v1"
+	_ "github.com/alimy/mir-example/v3/mirc/routes/v2"
 )
 
 //go:generate go run main.go

@@ -1,4 +1,4 @@
-module github.com/alimy/mir-example
+module github.com/alimy/mir-example/v3
 
 go 1.18
 
@@ -28,4 +28,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/alimy/mir/v3 => ../
+replace github.com/alimy/mir/v3 v3.0.0 => ../
