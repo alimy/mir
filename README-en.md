@@ -3,13 +3,13 @@
 [![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v3)
 [![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
-Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端开发脚手架，适配多种HTTP框架，包括 [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
+Mir is a toolkit to develop RESTful API backend service like develop service of gRPC. It adapt some HTTP framework sush as [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
 
  ![](docs/.assets/mir-arc-adapter.png) 
  
- ## 使用说明
+ ## Tutorials
  
- RESTful接口定义:
+ RESTful API define:
 ```go
 // file: mirc/routes.go
 
@@ -42,7 +42,7 @@ type User struct {
 }
 ```
 
-代码生成:
+Stub source code generatee automatic:
 ```go
 // file: mirc/auto/api/routes.go
 
@@ -157,7 +157,7 @@ func (r UnimplementedUserRender) mustEmbedUnimplementedUserRender() {}
 
 ```
 
-接口实现:   
+API interface implement:   
 ```go
 // file: servants/user.go
 
@@ -215,7 +215,7 @@ func renderAny(c *gin.Context, data any, err mir.Error) {
 }
 ```
 
-服务注册:  
+Service register:  
 ```go
 // file: servants/servants.go
 
@@ -234,7 +234,6 @@ func RegisterServants(e *gin.Engine) {
 }
 ```
 
-## 使用[go-mir](https://github.com/alimy/mir)的项目
+## Projects that used [go-mir](https://github.com/alimy/mir) 
  * [examples](examples)  
-[go-mir](https://github.com/alimy/mir)项目自带的demo，主要演示了如何使用[Mir](https://github.com/alimy/mir)快速进行RESTful API的后端开发.
- 
+[go-mir](https://github.com/alimy/mir)'s demo example to describe how to use [Mir](https://github.com/alimy/mir) to develop RESTful API backend service quickly.
