@@ -30,9 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: latest
           args: --timeout=30m
@@ -46,18 +46,13 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Run tests with coverage
-        run: go test -v -race -coverprofile=coverage -covermode=atomic ./...
-      - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v1.5.0
-        with:
-          file: ./coverage
-          flags: unittests
+        uses: actions/checkout@v3
+      - name: Run tests
+        run: go test -v -race ./...
       
   # Running tests with race detection consumes too much memory on Windows,
   # see https://github.com/golang/go/issues/46099 for details.
@@ -70,15 +65,10 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run tests with coverage
-        run: go test -v -coverprofile=coverage -covermode=atomic ./...
-      - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v1.5.0
-        with:
-          file: ./coverage
-          flags: unittests
+        run: go test -v ./...
