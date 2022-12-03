@@ -1,6 +1,5 @@
 ## Mir
-[![Build Status](https://api.travis-ci.com/alimy/mir.svg?branch=master)](https://travis-ci.com/alimy/mir)
-[![codecov](https://codecov.io/gh/alimy/mir/branch/master/graph/badge.svg)](https://codecov.io/gh/alimy/mir)
+[![GitHub Workflow Status](https://img.shields.io/github/checks-status/alimy/mir/main?logo=github&style=for-the-badge)](https://github.com/alimy/mir/actions?query=branch%3Amain)
 [![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v3)
 [![sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
