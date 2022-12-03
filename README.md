@@ -1,7 +1,7 @@
 ## Mir
-[![GitHub Workflow Status](https://img.shields.io/github/checks-status/alimy/mir/main?logo=github&style=for-the-badge)](https://github.com/alimy/mir/actions?query=branch%3Amain)
+[![GitHub Workflow Status](https://img.shields.io/github/checks-status/alimy/mir/main?logo=github)](https://github.com/alimy/mir/actions?query=branch%3Amain)
 [![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v3)
-[![sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
+[![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
 Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端开发脚手架，适配多种HTTP框架，包括 [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
 
