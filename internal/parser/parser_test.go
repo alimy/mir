@@ -81,7 +81,7 @@ func TestMirParser_Parse(t *testing.T) {
 		t.Error("want a correct iface but not")
 	}
 	site := iface["site"]
-	if site == nil || len(site.Fields) != 2 {
+	if site == nil || len(site.Fields) != 4 {
 		t.Error("want a correct iface but not")
 	}
 
@@ -90,7 +90,7 @@ func TestMirParser_Parse(t *testing.T) {
 		t.Error("want a correct iface but not")
 	}
 	site = iface["siteV1"]
-	if site == nil || len(site.Fields) != 2 {
+	if site == nil || len(site.Fields) != 4 {
 		t.Error("want a correct iface but not")
 	}
 
@@ -99,7 +99,7 @@ func TestMirParser_Parse(t *testing.T) {
 		t.Error("want a correct iface but not")
 	}
 	site = iface["siteV2"]
-	if site == nil || len(site.Fields) != 3 {
+	if site == nil || len(site.Fields) != 4 {
 		t.Error("want a correct iface but not")
 	}
 }

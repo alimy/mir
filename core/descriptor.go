@@ -127,6 +127,16 @@ func (d *IfaceDescriptor) AllInOuts() []reflect.Type {
 	return inouts
 }
 
+// IsUseBinding return whether use binding interface
+func (d *IfaceDescriptor) IsUseBinding() bool {
+	for _, f := range d.Fields {
+		if f.In != nil {
+			return true
+		}
+	}
+	return false
+}
+
 // NotHttpAny not just http any method
 func (f *FieldDescriptor) NotHttpAny() bool {
 	return !f.IsAnyMethod && len(f.HttpMethods) == 1
