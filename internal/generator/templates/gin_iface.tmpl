@@ -6,7 +6,7 @@ import (
     "net/http"
 
     "github.com/alimy/mir/v3"
-    gin "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gin-gonic/gin{{end}}"
+    {{if notEmptyStr .EngineInfo.PkgName }}gin "{{ .EngineInfo.PkgName }}{{else}}"github.com/gin-gonic/gin{{end}}"
 )
 
 {{ declareTypes .InOuts }}

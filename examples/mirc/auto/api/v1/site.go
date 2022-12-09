@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/alimy/mir/v3"
-	gin "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 type Site interface {
@@ -38,9 +38,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, r SiteRender) {
 		h := func(c *gin.Context) {
 			r.RenderArticles(c, s.Articles(c))
 		}
+		router.Handle("HEAD", "/articles/:category/", h)
 		router.Handle("POST", "/articles/:category/", h)
 		router.Handle("GET", "/articles/:category/", h)
-		router.Handle("HEAD", "/articles/:category/", h)
 	}
 
 	router.Handle("GET", "/index/", func(c *gin.Context) {
