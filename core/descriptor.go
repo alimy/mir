@@ -137,6 +137,14 @@ func (d *IfaceDescriptor) IsUseBinding() bool {
 	return false
 }
 
+// HttpMethod return http method when f.NotHttpAny() is true
+func (f *FieldDescriptor) HttpMethod() string {
+	if len(f.HttpMethods) == 1 {
+		return f.HttpMethods[0]
+	}
+	return ""
+}
+
 // NotHttpAny not just http any method
 func (f *FieldDescriptor) NotHttpAny() bool {
 	return !f.IsAnyMethod && len(f.HttpMethods) == 1
@@ -169,7 +177,7 @@ func (f *FieldDescriptor) InName() string {
 // OutName return Out type name
 func (f *FieldDescriptor) OutName() string {
 	if f.Out != nil {
-		return f.OutName()
+		return f.Out.Name()
 	}
 	return ""
 }

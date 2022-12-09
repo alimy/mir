@@ -6,12 +6,24 @@ import (
 	"net/http"
 
 	"github.com/alimy/mir/v3"
-	"github.com/gin-gonic/gin"
+	gin "github.com/gin-gonic/gin"
 )
+
+type LoginReq struct {
+	AgentInfo AgentInfo `json:"agent_info"`
+	Name      string    `json:"name"`
+	Passwd    string    `json:"passwd"`
+}
 
 type AgentInfo struct {
 	Platform  string `json:"platform"`
 	UserAgent string `json:"user_agent"`
+}
+
+type LoginResp struct {
+	UserInfo
+	ServerInfo ServerInfo `json:"server_info"`
+	JwtToken   string     `json:"jwt_token"`
 }
 
 type ServerInfo struct {
@@ -22,38 +34,46 @@ type UserInfo struct {
 	Name string `json:"name"`
 }
 
-type LoginReq struct {
-	AgentInfo AgentInfo `json:"agent_info"`
-	Name      string    `json:"name"`
-	Passwd    string    `json:"passwd"`
+type TweetsReq struct {
+	Date string `json:"date"`
 }
 
-type LoginResp struct {
-	UserInfo
-	ServerInfo ServerInfo `json:"server_info"`
-	JwtToken   string     `json:"jwt_token"`
+type TweetsResp struct {
+	Tweets []Tweet `json:"tweets"`
+	Total  uint32  `json:"total"`
+}
+
+type Tweet struct {
+	Type    string `json:"type"`
+	Content string `json:"content"`
 }
 
 type Site interface {
-	Index(c *gin.Context) mir.Error
-	Articles(c *gin.Context) mir.Error
-	Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error)
 	Logout(c *gin.Context) mir.Error
+	Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error)
+	PrevTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error)
+	NextTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error)
+	Articles(c *gin.Context) mir.Error
+	Index(c *gin.Context) mir.Error
 
 	mustEmbedUnimplementedSiteServant()
 }
 
 type SiteBinding interface {
 	BindLogin(c *gin.Context) (*LoginReq, mir.Error)
+	BindPrevTweets(c *gin.Context) (*TweetsReq, mir.Error)
+	BindNextTweets(c *gin.Context) (*TweetsReq, mir.Error)
 
 	mustEmbedUnimplementedSiteBinding()
 }
 
 type SiteRender interface {
-	RenderIndex(c *gin.Context, err mir.Error)
-	RenderArticles(c *gin.Context, err mir.Error)
-	RenderLogin(c *gin.Context, data *LoginResp, err mir.Error)
 	RenderLogout(c *gin.Context, err mir.Error)
+	RenderLogin(c *gin.Context, data *LoginResp, err mir.Error)
+	RenderPrevTweets(c *gin.Context, data *TweetsResp, err mir.Error)
+	RenderNextTweets(c *gin.Context, data *TweetsResp, err mir.Error)
+	RenderArticles(c *gin.Context, err mir.Error)
+	RenderIndex(c *gin.Context, err mir.Error)
 
 	mustEmbedUnimplementedSiteRender()
 }
@@ -63,12 +83,10 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 	router := e.Group("v2")
 
 	// register routes info to router
-	router.Handle("GET", "/index/", func(c *gin.Context) {
-		r.RenderIndex(c, s.Index(c))
+	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
+		r.RenderLogout(c, s.Logout(c))
 	})
-	router.Handle("GET", "/articles/:category/", func(c *gin.Context) {
-		r.RenderArticles(c, s.Articles(c))
-	})
+
 	router.Handle("POST", "/user/login/", func(c *gin.Context) {
 		req, err := b.BindLogin(c)
 		if err != nil {
@@ -77,33 +95,45 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		resp, err := s.Login(c, req)
 		r.RenderLogin(c, resp, err)
 	})
-	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
-		r.RenderLogout(c, s.Logout(c))
+
+	{
+		h := func(c *gin.Context) {
+			req, err := b.BindPrevTweets(c)
+			if err != nil {
+				r.RenderPrevTweets(c, nil, err)
+			}
+			resp, err := s.PrevTweets(c, req)
+			r.RenderPrevTweets(c, resp, err)
+		}
+		router.Handle("HEAD", "/tweets/prev", h)
+		router.Handle("GET", "/tweets/prev", h)
+		router.Handle("POST", "/tweets/prev", h)
+	}
+
+	router.Any("/tweets/next", func(c *gin.Context) {
+		req, err := b.BindNextTweets(c)
+		if err != nil {
+			r.RenderNextTweets(c, nil, err)
+		}
+		resp, err := s.NextTweets(c, req)
+		r.RenderNextTweets(c, resp, err)
 	})
+
+	router.Handle("GET", "/articles/:category/", func(c *gin.Context) {
+		r.RenderArticles(c, s.Articles(c))
+	})
+
+	router.Handle("GET", "/index/", func(c *gin.Context) {
+		r.RenderIndex(c, s.Index(c))
+	})
+
 }
 
 // UnimplementedSiteServant can be embedded to have forward compatible implementations.
-type UnimplementedSiteServant struct{}
-
-// UnimplementedSiteBinding can be embedded to have forward compatible implementations.
-type UnimplementedSiteBinding struct {
-	BindAny func(*gin.Context, any) mir.Error
+type UnimplementedSiteServant struct {
 }
 
-// UnimplementedSiteRender can be embedded to have forward compatible implementations.
-type UnimplementedSiteRender struct {
-	RenderAny func(*gin.Context, any, mir.Error)
-}
-
-func (UnimplementedSiteServant) Chain() gin.HandlersChain {
-	return nil
-}
-
-func (UnimplementedSiteServant) Index(c *gin.Context) mir.Error {
-	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
-}
-
-func (UnimplementedSiteServant) Articles(c *gin.Context) mir.Error {
+func (UnimplementedSiteServant) Logout(c *gin.Context) mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
@@ -111,34 +141,76 @@ func (UnimplementedSiteServant) Login(c *gin.Context, req *LoginReq) (*LoginResp
 	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Logout(c *gin.Context) mir.Error {
+func (UnimplementedSiteServant) PrevTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error) {
+	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+}
+
+func (UnimplementedSiteServant) NextTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error) {
+	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+}
+
+func (UnimplementedSiteServant) Articles(c *gin.Context) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+}
+
+func (UnimplementedSiteServant) Index(c *gin.Context) mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
 func (UnimplementedSiteServant) mustEmbedUnimplementedSiteServant() {}
 
-func (b UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, mir.Error) {
+// UnimplementedSiteRender can be embedded to have forward compatible implementations.
+type UnimplementedSiteRender struct {
+	RenderAny func(*gin.Context, any, mir.Error)
+}
+
+func (r *UnimplementedSiteRender) RenderLogout(c *gin.Context, err mir.Error) {
+	r.RenderAny(c, nil, err)
+}
+
+func (r *UnimplementedSiteRender) RenderLogin(c *gin.Context, data *LoginResp, err mir.Error) {
+	r.RenderAny(c, data, err)
+}
+
+func (r *UnimplementedSiteRender) RenderPrevTweets(c *gin.Context, data *TweetsResp, err mir.Error) {
+	r.RenderAny(c, data, err)
+}
+
+func (r *UnimplementedSiteRender) RenderNextTweets(c *gin.Context, data *TweetsResp, err mir.Error) {
+	r.RenderAny(c, data, err)
+}
+
+func (r *UnimplementedSiteRender) RenderArticles(c *gin.Context, err mir.Error) {
+	r.RenderAny(c, nil, err)
+}
+
+func (r *UnimplementedSiteRender) RenderIndex(c *gin.Context, err mir.Error) {
+	r.RenderAny(c, nil, err)
+}
+
+func (r *UnimplementedSiteRender) mustEmbedUnimplementedSiteRender() {}
+
+// UnimplementedSiteBinding can be embedded to have forward compatible implementations.
+type UnimplementedSiteBinding struct {
+	BindAny func(*gin.Context, any) mir.Error
+}
+
+func (b *UnimplementedSiteBinding) BindLogin(c *gin.Context) (*LoginReq, mir.Error) {
 	obj := new(LoginReq)
 	err := b.BindAny(c, obj)
 	return obj, err
 }
 
-func (b UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
-
-func (r UnimplementedSiteRender) RenderIndex(c *gin.Context, err mir.Error) {
-	r.RenderAny(c, nil, err)
+func (b *UnimplementedSiteBinding) BindPrevTweets(c *gin.Context) (*TweetsReq, mir.Error) {
+	obj := new(TweetsReq)
+	err := b.BindAny(c, obj)
+	return obj, err
 }
 
-func (r UnimplementedSiteRender) RenderArticles(c *gin.Context, err mir.Error) {
-	r.RenderAny(c, nil, err)
+func (b *UnimplementedSiteBinding) BindNextTweets(c *gin.Context) (*TweetsReq, mir.Error) {
+	obj := new(TweetsReq)
+	err := b.BindAny(c, obj)
+	return obj, err
 }
 
-func (r UnimplementedSiteRender) RenderLogin(c *gin.Context, data *LoginResp, err mir.Error) {
-	r.RenderAny(c, data, err)
-}
-
-func (r UnimplementedSiteRender) RenderLogout(c *gin.Context, err mir.Error) {
-	r.RenderAny(c, nil, err)
-}
-
-func (r UnimplementedSiteRender) mustEmbedUnimplementedSiteRender() {}
+func (b *UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}

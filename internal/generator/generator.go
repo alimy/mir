@@ -112,7 +112,7 @@ func (g *mirGenerator) GenerateContext(ctx core.MirCtx) {
 		// setup inOuts for IfaceDescriptor
 		filter, exist := inOutsMap[iface.Group]
 		if !exist {
-			filter := utils.NewStrSet()
+			filter = utils.NewStrSet()
 			inOutsMap[iface.Group] = filter
 		}
 		var inouts []reflect.Type

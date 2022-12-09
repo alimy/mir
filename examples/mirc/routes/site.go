@@ -28,17 +28,38 @@ type LoginReq struct {
 	Passwd    string    `json:"passwd"`
 }
 
+type LogoutReq struct {
+	AgentInfo AgentInfo `json:"agent_info"`
+	Name      string    `json:"name"`
+}
+
 type LoginResp struct {
 	UserInfo
 	ServerInfo ServerInfo `json:"server_info"`
 	JwtToken   string     `json:"jwt_token"`
 }
 
+type TweetsReq struct {
+	Date string `json:"date"`
+}
+
+type TweetsResp struct {
+	Tweets []Tweet `json:"tweets"`
+	Total  uint32  `json:"total"`
+}
+
+type Tweet struct {
+	Type    string `json:"type"`
+	Content string `json:"content"`
+}
+
 // Site site interface info
 type Site struct {
-	Chain    Chain                          `mir:"-"`
-	Index    func(Get)                      `mir:"/index/"`
-	Articles func(Get)                      `mir:"/articles/:category/"`
-	Login    func(Post, LoginReq) LoginResp `mir:"/user/login/"`
-	Logout   func(Post)                     `mir:"/user/logout/"`
+	Chain      Chain                                       `mir:"-"`
+	Index      func(Get)                                   `mir:"/index/"`
+	Articles   func(Get)                                   `mir:"/articles/:category/"`
+	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`
+	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev"`
+	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
+	Logout     func(Post, LogoutReq)                       `mir:"/user/logout/"`
 }

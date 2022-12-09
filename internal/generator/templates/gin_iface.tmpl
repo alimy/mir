@@ -16,16 +16,14 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for gin
     {{.Chain}}() gin.HandlersChain
 {{end}}
-{{range .Fields}}
-    {{.MethodName}}(c *gin.Context{{if notEmptyStr .InName }}, req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
+{{range .Fields}}    {{.MethodName}}(c *gin.Context{{if notEmptyStr .InName }}, req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
 }
 {{if .IsUseBinding }}
 type {{.TypeName}}Binding interface {
-{{range .Fields}}
-    {{if notEmptyStr .InName }}Bind{{.MethodName}}(c *gin.Context) (*{{ .InName }}, mir.Error){{end}}
+{{range .Fields}}    {{if notEmptyStr .InName }}Bind{{.MethodName}}(c *gin.Context) (*{{ .InName }}, mir.Error){{end}}
 {{end}}
 
 	mustEmbedUnimplemented{{.TypeName}}Binding()
@@ -33,15 +31,14 @@ type {{.TypeName}}Binding interface {
 {{end}}
 
 type {{.TypeName}}Render interface {
-{{range .Fields}}
-    {{if notEmptyStr .OutName }}Render{{.MethodName}}(c *gin.Context, data *{{ .OutName }}, err mir.Error){{else}}Render{{.MethodName}}(c *gin.Context, err mir.Error){{end}}
+{{range .Fields}}    {{if notEmptyStr .OutName }}Render{{.MethodName}}(c *gin.Context, data *{{ .OutName }}, err mir.Error){{else}}Render{{.MethodName}}(c *gin.Context, err mir.Error){{end}}
 {{end}}
 	
 	mustEmbedUnimplemented{{.TypeName}}Render()
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
-func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
+func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
 {{if notEmptyStr .Group }}    router := e.Group("{{.Group}}"){{else}}    router := e{{end}}
 {{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
@@ -56,7 +53,8 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if IsUseBindin
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c, req)
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(c, req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c)
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(c)){{end}}{{end}}
-	}){{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c *gin.Context) {
+	})
+	{{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c *gin.Context) {
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
@@ -64,7 +62,9 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if IsUseBindin
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c, req)
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(c, req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c)
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(c)){{end}}{{end}}
-	}){{else}}{{$field := .}}    { h := func(c *gin.Context) {
+	})
+	{{else}}{{$field := .}}    {
+        h := func(c *gin.Context) {
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
@@ -72,8 +72,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if IsUseBindin
 		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c, req)
 		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(c, req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c)
 		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(c)){{end}}{{end}}
-	}){{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h)
-{{end}}    }{{end}}
+	    }
+		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h)
+		{{end}}    }
+	{{end}}
 {{end}}}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
@@ -89,7 +91,7 @@ func ({{$unimplementedServant}}){{.Chain}}() gin.HandlersChain {
 {{end}}
 {{range .Fields}}
 func ({{$unimplementedServant}}){{.MethodName}}(c *gin.Context{{if notEmptyStr .InName }}, req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
-	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+	return {{if notEmptyStr .OutName }}nil, {{end}}mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
 {{end}}
@@ -102,12 +104,12 @@ type {{$unimplementedRender}} struct {
 }
 
 {{range .Fields}}
-func (r {{$unimplementedRender}}) Render{{.MethodName}}(c *gin.Context{{if notEmptyStr .OutName }}, data *{{ .OutName }}{{end}}, err mir.Error) {
+func (r *{{$unimplementedRender}}) Render{{.MethodName}}(c *gin.Context{{if notEmptyStr .OutName }}, data *{{ .OutName }}{{end}}, err mir.Error) {
 	{{if notEmptyStr .OutName}}r.RenderAny(c, data, err){{else}}r.RenderAny(c, nil, err){{end}}
 }
 
 {{end}}
-func (r {{$unimplementedRender}})mustEmbedUnimplemented{{.TypeName}}Render() {}
+func (r *{{$unimplementedRender}})mustEmbedUnimplemented{{.TypeName}}Render() {}
 {{if .IsUseBinding }}
 {{ $unimplementedBinding := print "Unimplemented" .TypeName "Binding" }}
 // {{$unimplementedBinding}} can be embedded to have forward compatible implementations.
@@ -115,13 +117,12 @@ type {{$unimplementedBinding}} struct {
 	BindAny func(*gin.Context, any) mir.Error
 }
 
-{{range .Fields}}
-func (b {{$unimplementedBinding}}) Bind{{.MethodName}}(c *gin.Context) (*{{ .InName }}, mir.Error) {
+{{range .Fields}}{{if notEmptyStr .InName }}func (b *{{$unimplementedBinding}}) Bind{{.MethodName}}(c *gin.Context) (*{{ .InName }}, mir.Error) {
 	obj := new({{ .InName }})
 	err := b.BindAny(c, obj)
 	return obj, err
 }
-
 {{end}}
-func (b {{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
+{{end}}
+func (b *{{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
 {{end}}
