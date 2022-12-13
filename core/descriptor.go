@@ -10,7 +10,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v3"
 	"github.com/alimy/mir/v3/internal/utils"
 )
 
@@ -162,8 +161,7 @@ func (f *FieldDescriptor) AnyHttpMethods() []string {
 
 // HttpMethodArgs return http method as argument like "POST","GET","HEAD"
 func (f *FieldDescriptor) HttpMethodArgs() string {
-	httpMthods := mir.HttpMethods
-	return utils.QuoteJoin(httpMthods, ",")
+	return utils.QuoteJoin(f.HttpMethods, ",")
 }
 
 // InName return In type name
