@@ -28,7 +28,7 @@ func init() {
 		// &mirGenerator{name: core.GeneratorFiber},
 		// &mirGenerator{name: core.GeneratorFiberV2},
 		// &mirGenerator{name: core.GeneratorMacaron},
-		// &mirGenerator{name: core.GeneratorHttpRouter},
+		&mirGenerator{name: core.GeneratorHttpRouter},
 	)
 }
 
