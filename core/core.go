@@ -20,6 +20,7 @@ const (
 	GeneratorGin        = "gin"
 	GeneratorChi        = "chi"
 	GeneratorMux        = "mux"
+	GeneratorHertz      = "hertz"
 	GeneratorEcho       = "echo"
 	GeneratorIris       = "iris"
 	GeneratorFiber      = "fiber"

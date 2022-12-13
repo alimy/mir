@@ -25,6 +25,7 @@ var tmplInfos = map[string]string{
 	core.GeneratorGin:        "templates/gin_iface.tmpl",
 	core.GeneratorChi:        "templates/chi_iface.tmpl",
 	core.GeneratorMux:        "templates/mux_iface.tmpl",
+	core.GeneratorHertz:      "templates/hertz_iface.tmpl",
 	core.GeneratorEcho:       "templates/echo_iface.tmpl",
 	core.GeneratorIris:       "templates/iris_iface.tmpl",
 	core.GeneratorFiber:      "templates/fiber_iface.tmpl",
