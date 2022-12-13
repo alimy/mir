@@ -13,15 +13,15 @@ type Site interface {
 	// Chain provide handlers chain for gin
 	Chain() gin.HandlersChain
 
-	Articles(c *gin.Context) mir.Error
-	Index(c *gin.Context) mir.Error
+	Articles() mir.Error
+	Index() mir.Error
 
 	mustEmbedUnimplementedSiteServant()
 }
 
 type SiteRender interface {
-	RenderArticles(c *gin.Context, err mir.Error)
-	RenderIndex(c *gin.Context, err mir.Error)
+	RenderArticles(*gin.Context, mir.Error)
+	RenderIndex(*gin.Context, mir.Error)
 
 	mustEmbedUnimplementedSiteRender()
 }
@@ -36,15 +36,15 @@ func RegisterSiteServant(e *gin.Engine, s Site, r SiteRender) {
 	// register routes info to router
 	{
 		h := func(c *gin.Context) {
-			r.RenderArticles(c, s.Articles(c))
+			r.RenderArticles(c, s.Articles())
 		}
-		router.Handle("HEAD", "/articles/:category/", h)
 		router.Handle("POST", "/articles/:category/", h)
 		router.Handle("GET", "/articles/:category/", h)
+		router.Handle("HEAD", "/articles/:category/", h)
 	}
 
 	router.Handle("GET", "/index/", func(c *gin.Context) {
-		r.RenderIndex(c, s.Index(c))
+		r.RenderIndex(c, s.Index())
 	})
 
 }
@@ -57,11 +57,11 @@ func (UnimplementedSiteServant) Chain() gin.HandlersChain {
 	return nil
 }
 
-func (UnimplementedSiteServant) Articles(c *gin.Context) mir.Error {
+func (UnimplementedSiteServant) Articles() mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Index(c *gin.Context) mir.Error {
+func (UnimplementedSiteServant) Index() mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 

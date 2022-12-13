@@ -57,32 +57,32 @@ type Site interface {
 	// Chain provide handlers chain for gin
 	Chain() gin.HandlersChain
 
-	Logout(c *gin.Context, req *LogoutReq) mir.Error
-	Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error)
-	PrevTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error)
-	NextTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error)
-	Articles(c *gin.Context) mir.Error
-	Index(c *gin.Context) mir.Error
+	Logout(*LogoutReq) mir.Error
+	Login(*LoginReq) (*LoginResp, mir.Error)
+	PrevTweets(*TweetsReq) (*TweetsResp, mir.Error)
+	NextTweets(*TweetsReq) (*TweetsResp, mir.Error)
+	Articles() mir.Error
+	Index() mir.Error
 
 	mustEmbedUnimplementedSiteServant()
 }
 
 type SiteBinding interface {
-	BindLogout(c *gin.Context) (*LogoutReq, mir.Error)
-	BindLogin(c *gin.Context) (*LoginReq, mir.Error)
-	BindPrevTweets(c *gin.Context) (*TweetsReq, mir.Error)
-	BindNextTweets(c *gin.Context) (*TweetsReq, mir.Error)
+	BindLogout(*gin.Context) (*LogoutReq, mir.Error)
+	BindLogin(*gin.Context) (*LoginReq, mir.Error)
+	BindPrevTweets(*gin.Context) (*TweetsReq, mir.Error)
+	BindNextTweets(*gin.Context) (*TweetsReq, mir.Error)
 
 	mustEmbedUnimplementedSiteBinding()
 }
 
 type SiteRender interface {
-	RenderLogout(c *gin.Context, err mir.Error)
-	RenderLogin(c *gin.Context, data *LoginResp, err mir.Error)
-	RenderPrevTweets(c *gin.Context, data *TweetsResp, err mir.Error)
-	RenderNextTweets(c *gin.Context, data *TweetsResp, err mir.Error)
-	RenderArticles(c *gin.Context, err mir.Error)
-	RenderIndex(c *gin.Context, err mir.Error)
+	RenderLogout(*gin.Context, mir.Error)
+	RenderLogin(*gin.Context, *LoginResp, mir.Error)
+	RenderPrevTweets(*gin.Context, *TweetsResp, mir.Error)
+	RenderNextTweets(*gin.Context, *TweetsResp, mir.Error)
+	RenderArticles(*gin.Context, mir.Error)
+	RenderIndex(*gin.Context, mir.Error)
 
 	mustEmbedUnimplementedSiteRender()
 }
@@ -100,7 +100,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		if err != nil {
 			r.RenderLogout(c, err)
 		}
-		r.RenderLogout(c, s.Logout(c, req))
+		r.RenderLogout(c, s.Logout(req))
 	})
 
 	router.Handle("POST", "/user/login/", func(c *gin.Context) {
@@ -108,7 +108,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		if err != nil {
 			r.RenderLogin(c, nil, err)
 		}
-		resp, err := s.Login(c, req)
+		resp, err := s.Login(req)
 		r.RenderLogin(c, resp, err)
 	})
 
@@ -118,12 +118,12 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 			if err != nil {
 				r.RenderPrevTweets(c, nil, err)
 			}
-			resp, err := s.PrevTweets(c, req)
+			resp, err := s.PrevTweets(req)
 			r.RenderPrevTweets(c, resp, err)
 		}
-		router.Handle("HEAD", "/tweets/prev", h)
 		router.Handle("GET", "/tweets/prev", h)
 		router.Handle("POST", "/tweets/prev", h)
+		router.Handle("HEAD", "/tweets/prev", h)
 	}
 
 	router.Any("/tweets/next", func(c *gin.Context) {
@@ -131,16 +131,16 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		if err != nil {
 			r.RenderNextTweets(c, nil, err)
 		}
-		resp, err := s.NextTweets(c, req)
+		resp, err := s.NextTweets(req)
 		r.RenderNextTweets(c, resp, err)
 	})
 
 	router.Handle("GET", "/articles/:category/", func(c *gin.Context) {
-		r.RenderArticles(c, s.Articles(c))
+		r.RenderArticles(c, s.Articles())
 	})
 
 	router.Handle("GET", "/index/", func(c *gin.Context) {
-		r.RenderIndex(c, s.Index(c))
+		r.RenderIndex(c, s.Index())
 	})
 
 }
@@ -153,27 +153,27 @@ func (UnimplementedSiteServant) Chain() gin.HandlersChain {
 	return nil
 }
 
-func (UnimplementedSiteServant) Logout(c *gin.Context, req *LogoutReq) mir.Error {
+func (UnimplementedSiteServant) Logout(req *LogoutReq) mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error) {
+func (UnimplementedSiteServant) Login(req *LoginReq) (*LoginResp, mir.Error) {
 	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) PrevTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error) {
+func (UnimplementedSiteServant) PrevTweets(req *TweetsReq) (*TweetsResp, mir.Error) {
 	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) NextTweets(c *gin.Context, req *TweetsReq) (*TweetsResp, mir.Error) {
+func (UnimplementedSiteServant) NextTweets(req *TweetsReq) (*TweetsResp, mir.Error) {
 	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Articles(c *gin.Context) mir.Error {
+func (UnimplementedSiteServant) Articles() mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Index(c *gin.Context) mir.Error {
+func (UnimplementedSiteServant) Index() mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
