@@ -21,7 +21,7 @@ import (
 func init() {
 	core.RegisterGenerators(
 		&mirGenerator{name: core.GeneratorGin},
-		// &mirGenerator{name: core.GeneratorChi},
+		&mirGenerator{name: core.GeneratorChi},
 		// &mirGenerator{name: core.GeneratorMux},
 		// &mirGenerator{name: core.GeneratorEcho},
 		// &mirGenerator{name: core.GeneratorIris},
