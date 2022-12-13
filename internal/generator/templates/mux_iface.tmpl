@@ -5,24 +5,41 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    mux "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/gorilla/mux{{end}}"
+    "github.com/alimy/mir/v3"
+    {{if notEmptyStr .EngineInfo.PkgName }}mux "{{ .EngineInfo.PkgName }}{{else}}"github.com/gorilla/mux{{end}}"
 )
+
+{{ declareTypes .InOuts }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
-{{if notEmptyStr .Chain }}   // Chain provide middlewares for mux
+{{if notEmptyStr .Chain }}    // Chain provide middlewares for mux
     {{.Chain}}() []mux.MiddlewareFunc
 {{end}}
-{{range .Fields}}{{if notEmptyStr .Comment }}   // {{.Comment}}
-    {{.MethodName}}(http.ResponseWriter, *http.Request){{else}} {{.MethodName}}(http.ResponseWriter, *http.Request){{end}}
+{{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
 }
+{{if .IsUseBinding }}
+type {{.TypeName}}Binding interface {
+{{range .Fields}}    {{if notEmptyStr .InName }}Bind{{.MethodName}}(*http.Request) (*{{ .InName }}, mir.Error){{end}}
+{{end}}
+
+	mustEmbedUnimplemented{{.TypeName}}Binding()
+}
+{{end}}
+
+type {{.TypeName}}Render interface {
+{{range .Fields}}    {{if notEmptyStr .OutName }}Render{{.MethodName}}(http.ResponseWriter, *{{ .OutName }}, mir.Error){{else}}Render{{.MethodName}}(http.ResponseWriter, mir.Error){{end}}
+{{end}}
+	
+	mustEmbedUnimplemented{{.TypeName}}Render()
+}
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to mux
-func Register{{.TypeName}}Servant(r *mux.Router, s {{.TypeName}}) {
-{{if notEmptyStr .Group }}    router := r.PathPrefix("{{.Group}}").Subrouter(){{else}}    router := r
+func Register{{.TypeName}}Servant(e *mux.Router, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
+{{if notEmptyStr .Group }}    router := e.PathPrefix("{{.Group}}").Subrouter(){{else}}    router := e
 {{end}}
 {{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
@@ -30,11 +47,26 @@ func Register{{.TypeName}}Servant(r *mux.Router, s {{.TypeName}}) {
 {{end}}
 
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
-        Methods("{{.HttpMethod}}"){{if notEmptyStr .Host}}.
+{{range .Fields}}
+{{if .NotHttpAny }}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
+		if err != nil {
+			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
+		}
+		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
+		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
+		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
+	}).Methods("{{.HttpMethod}}"){{if notEmptyStr .Host}}.
         Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
-        Queries({{inflateQuery .Queries}}){{end}}{{else}}    router.HandleFunc("{{.Path}}", s.{{.MethodName}}).
-        Methods({{.HttpMethodArgs}}){{if notEmptyStr .Host}}.
+        Queries({{inflateQuery .Queries}}){{end}}{{else}}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
+		if err != nil {
+			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
+		}
+		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
+		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
+		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
+	}).Methods({{.HttpMethodArgs}}){{if notEmptyStr .Host}}.
         Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
         Queries({{inflateQuery .Queries}}){{end}}{{end}}
 {{end}}}
@@ -51,10 +83,39 @@ func ({{$unimplementedServant}}){{.Chain}}() []mux.MiddlewareFunc {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{.MethodName}}(rw http.ResponseWriter, r *http.Request) {
-    rw.WriteHeader(http.StatusNotImplemented)
-    rw.Write([]byte("method {{.MethodName}} not implemented"))
+func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
+	return {{if notEmptyStr .OutName }}nil, {{end}}mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
 {{end}}
 func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}
+
+{{ $unimplementedRender := print "Unimplemented" .TypeName "Render" }}
+// {{$unimplementedRender}} can be embedded to have forward compatible implementations.
+type {{$unimplementedRender}} struct {
+	RenderAny func(http.ResponseWriter, any, mir.Error)
+}
+
+{{range .Fields}}
+func (r *{{$unimplementedRender}}) Render{{.MethodName}}(w http.ResponseWriter{{if notEmptyStr .OutName }}, data *{{ .OutName }}{{end}}, err mir.Error) {
+	{{if notEmptyStr .OutName}}r.RenderAny(w, data, err){{else}}r.RenderAny(w, nil, err){{end}}
+}
+
+{{end}}
+func (r *{{$unimplementedRender}})mustEmbedUnimplemented{{.TypeName}}Render() {}
+{{if .IsUseBinding }}
+{{ $unimplementedBinding := print "Unimplemented" .TypeName "Binding" }}
+// {{$unimplementedBinding}} can be embedded to have forward compatible implementations.
+type {{$unimplementedBinding}} struct {
+	BindAny func(*http.Request, any) mir.Error
+}
+
+{{range .Fields}}{{if notEmptyStr .InName }}func (b *{{$unimplementedBinding}}) Bind{{.MethodName}}(r *http.Request) (*{{ .InName }}, mir.Error) {
+	obj := new({{ .InName }})
+	err := b.BindAny(r, obj)
+	return obj, err
+}
+{{end}}
+{{end}}
+func (b *{{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
+{{end}}

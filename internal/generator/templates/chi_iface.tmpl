@@ -37,7 +37,7 @@ type {{.TypeName}}Render interface {
 	mustEmbedUnimplemented{{.TypeName}}Render()
 }
 
-// Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
+// Register{{.TypeName}}Servant register {{.TypeName}} servant to chi
 func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
 {{if notEmptyStr .Group }}    router := chi.NewRouter()
     e.Mount("{{.Group}}", router){{else}}    router := e{{end}}
