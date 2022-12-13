@@ -96,6 +96,12 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 
 	// register routes info to router
 	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		req, err := b.BindLogout(c)
 		if err != nil {
 			r.RenderLogout(c, err)
@@ -104,6 +110,12 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 	})
 
 	router.Handle("POST", "/user/login/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		req, err := b.BindLogin(c)
 		if err != nil {
 			r.RenderLogin(c, nil, err)
@@ -114,6 +126,12 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 
 	{
 		h := func(c *gin.Context) {
+			select {
+			case <-c.Request.Context().Done():
+				return
+			default:
+			}
+
 			req, err := b.BindPrevTweets(c)
 			if err != nil {
 				r.RenderPrevTweets(c, nil, err)
@@ -121,12 +139,18 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 			resp, err := s.PrevTweets(req)
 			r.RenderPrevTweets(c, resp, err)
 		}
+		router.Handle("HEAD", "/tweets/prev", h)
 		router.Handle("GET", "/tweets/prev", h)
 		router.Handle("POST", "/tweets/prev", h)
-		router.Handle("HEAD", "/tweets/prev", h)
 	}
 
 	router.Any("/tweets/next", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		req, err := b.BindNextTweets(c)
 		if err != nil {
 			r.RenderNextTweets(c, nil, err)
@@ -136,10 +160,22 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 	})
 
 	router.Handle("GET", "/articles/:category/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		r.RenderArticles(c, s.Articles())
 	})
 
 	router.Handle("GET", "/index/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		r.RenderIndex(c, s.Index())
 	})
 

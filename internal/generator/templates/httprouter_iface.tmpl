@@ -37,6 +37,12 @@ type {{.TypeName}}Render interface {
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
 func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
 {{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+		select {
+		case <-hr.Context().Done():
+			return
+		default:
+		}
+
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr, p)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -47,6 +53,12 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}{{if
 	})
 	{{else}}{{$field := .}}    {
         h := func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+			select {
+			case <-hr.Context().Done():
+				return
+			default:
+			}
+
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr, p)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}

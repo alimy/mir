@@ -48,6 +48,12 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 {{end}}
     // register routes info to router
 {{range .Fields}}{{if .NotHttpAny }}    router.MethodFunc("{{.HttpMethod}}", "{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+		select {
+		case <-hr.Context().Done():
+			return
+		default:
+		}
+
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -57,6 +63,12 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
 	})
 	{{else if .JustHttpAny}}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+		select {
+		case <-hr.Context().Done():
+			return
+		default:
+		}
+
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -67,6 +79,12 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 	})
 	{{else}}{{$field := .}}    {
         h := func(rw http.ResponseWriter, hr *http.Request) {
+			select {
+			case <-hr.Context().Done():
+				return
+			default:
+			}
+			
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}

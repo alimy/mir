@@ -36,6 +36,12 @@ func RegisterSiteServant(e *gin.Engine, s Site, r SiteRender) {
 	// register routes info to router
 	{
 		h := func(c *gin.Context) {
+			select {
+			case <-c.Request.Context().Done():
+				return
+			default:
+			}
+
 			r.RenderArticles(c, s.Articles())
 		}
 		router.Handle("POST", "/articles/:category/", h)
@@ -44,6 +50,12 @@ func RegisterSiteServant(e *gin.Engine, s Site, r SiteRender) {
 	}
 
 	router.Handle("GET", "/index/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		r.RenderIndex(c, s.Index())
 	})
 
