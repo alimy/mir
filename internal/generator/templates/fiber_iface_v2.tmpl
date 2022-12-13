@@ -38,7 +38,7 @@ type {{.TypeName}}Render interface {
 	mustEmbedUnimplemented{{.TypeName}}Render()
 }
 
-// Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
+// Register{{.TypeName}}Servant register {{.TypeName}} servant to fiber
 func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
 {{if notEmptyStr .Group }}    router := app.Group("{{.Group}}"){{else}}    router := app{{end}}
 {{if notEmptyStr .Chain }}    // use chain for router

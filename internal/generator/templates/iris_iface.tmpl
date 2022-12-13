@@ -38,7 +38,7 @@ type {{.TypeName}}Render interface {
 	mustEmbedUnimplemented{{.TypeName}}Render()
 }
 
-// Register{{.TypeName}}Servant register {{.TypeName}} servant to gin
+// Register{{.TypeName}}Servant register {{.TypeName}} servant to iris
 func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
 {{if notEmptyStr .Group }}    router := app.Party("{{.Group}}"){{else}}    router := app{{end}}
 {{if notEmptyStr .Chain }}    // use chain for party

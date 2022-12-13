@@ -24,7 +24,7 @@ func init() {
 		&mirGenerator{name: core.GeneratorChi},
 		&mirGenerator{name: core.GeneratorMux},
 		&mirGenerator{name: core.GeneratorHertz},
-		// &mirGenerator{name: core.GeneratorEcho},
+		&mirGenerator{name: core.GeneratorEcho},
 		&mirGenerator{name: core.GeneratorIris},
 		&mirGenerator{name: core.GeneratorFiber},
 		&mirGenerator{name: core.GeneratorFiberV2},
