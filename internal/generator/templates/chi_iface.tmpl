@@ -57,6 +57,7 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
+			return
 		}
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
@@ -72,6 +73,7 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
+			return
 		}
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(c)
@@ -84,10 +86,11 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 				return
 			default:
 			}
-			
+
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
+				return
 		    }
 		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		    r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()

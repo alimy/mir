@@ -57,6 +57,7 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBin
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(ctx)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(ctx, nil, err){{else}}r.Render{{.MethodName}}(ctx, err){{end}}
+			return
 		}
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
@@ -72,6 +73,7 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBin
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(ctx)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(ctx, nil, err){{else}}r.Render{{.MethodName}}(ctx, err){{end}}
+			return
 		}
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
@@ -88,6 +90,7 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBin
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(ctx)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(ctx, nil, err){{else}}r.Render{{.MethodName}}(ctx, err){{end}}
+				return
 		    }
 		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		    r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()

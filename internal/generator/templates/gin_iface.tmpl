@@ -55,6 +55,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseBindi
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
+			return
 		}
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
@@ -70,6 +71,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseBindi
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
+			return
 		}
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
@@ -82,10 +84,11 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseBindi
 				return
 			default:
 			}
-			
+
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
+				return
 		    }
 		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()

@@ -105,6 +105,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		req, err := b.BindLogout(c)
 		if err != nil {
 			r.RenderLogout(c, err)
+			return
 		}
 		r.RenderLogout(c, s.Logout(req))
 	})
@@ -119,6 +120,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		req, err := b.BindLogin(c)
 		if err != nil {
 			r.RenderLogin(c, nil, err)
+			return
 		}
 		resp, err := s.Login(req)
 		r.RenderLogin(c, resp, err)
@@ -135,6 +137,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 			req, err := b.BindPrevTweets(c)
 			if err != nil {
 				r.RenderPrevTweets(c, nil, err)
+				return
 			}
 			resp, err := s.PrevTweets(req)
 			r.RenderPrevTweets(c, resp, err)
@@ -154,6 +157,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 		req, err := b.BindNextTweets(c)
 		if err != nil {
 			r.RenderNextTweets(c, nil, err)
+			return
 		}
 		resp, err := s.NextTweets(req)
 		r.RenderNextTweets(c, resp, err)
