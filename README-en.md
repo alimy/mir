@@ -7,9 +7,60 @@ Mir is a toolkit to develop RESTful API backend service like develop service of 
 
  ![](docs/.assets/mir-arc-adapter.png) 
  
- ## Tutorials
+ ### Tutorials
+* Generate a simple template project
+```bash
+% go get github.com/alimy/mir/mirc/v3@latest
+% mirc new -h
+create template project
+
+Usage:
+  mirc new [flags]
+
+Flags:
+  -d, --dst string     genereted destination target directory (default ".")
+  -h, --help           help for new
+      --mir string     mir replace package name or place
+  -p, --pkg string     project's package name (default "github.com/alimy/mir-example")
+  -s, --style string   generated engine style eg: gin,chi,mux,hertz,echo,iris,fiber,fiber-v2,macaron,httprouter (default "gin")
+
+% mirc new -d example 
+% tree example
+example
+.
+|-- Makefile
+|-- README.md
+|-- go.mod
+|-- go.sum
+|-- main.go
+|-- mirc
+|   |-- auto
+|   |   `-- api
+|   |       |-- site.go
+|   |       |-- v1
+|   |       |   `-- site.go
+|   |       `-- v2
+|   |           `-- site.go
+|   |-- main.go
+|   `-- routes
+|       |-- site.go
+|       |-- v1
+|       |   `-- site.go
+|       `-- v2
+|           `-- site.go
+`-- servants
+    |-- core.go
+    |-- servants.go
+    |-- site.go
+    |-- site_v1.go
+    `-- site_v2.go
+
+% cd example
+% make generate
+% make build
+```
  
- RESTful API define:
+* RESTful API define:
 ```go
 // file: mirc/routes.go
 
@@ -42,7 +93,7 @@ type User struct {
 }
 ```
 
-Stub source code generatee automatic:
+* Stub source code generatee automatic:
 ```go
 // file: mirc/auto/api/routes.go
 
@@ -111,6 +162,12 @@ func RegisterUserServant(e *gin.Engine, s User, b UserBinding, r UserRender) {
 
 	// register routes info to router
 	router.Handle("POST", "/login/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		req, err := b.BindLogin(c)
 		if err != nil {
 			r.RenderLogin(c, nil, err)
@@ -119,6 +176,12 @@ func RegisterUserServant(e *gin.Engine, s User, b UserBinding, r UserRender) {
 		r.RenderLogin(c, resp, err)
 	})
 	router.Handle("POST", "/logout/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		
 		r.RenderLogout(c, s.Logout(c))
 	})
 }
@@ -157,7 +220,7 @@ func (r UnimplementedUserRender) mustEmbedUnimplementedUserRender() {}
 
 ```
 
-API interface implement:   
+* API interface implement:   
 ```go
 // file: servants/user.go
 
@@ -215,7 +278,7 @@ func renderAny(c *gin.Context, data any, err mir.Error) {
 }
 ```
 
-Service register:  
+* Service register:  
 ```go
 // file: servants/servants.go
 
@@ -234,6 +297,6 @@ func RegisterServants(e *gin.Engine) {
 }
 ```
 
-## Projects that used [go-mir](https://github.com/alimy/mir) 
+### Projects that used [go-mir](https://github.com/alimy/mir) 
  * [examples](examples)  
 [go-mir](https://github.com/alimy/mir)'s demo example to describe how to use [Mir](https://github.com/alimy/mir) to develop RESTful API backend service quickly.

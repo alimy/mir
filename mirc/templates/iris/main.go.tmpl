@@ -1,0 +1,20 @@
+package main
+
+import (
+	"log"
+
+	"{{ .PkgName }}/servants"
+	"github.com/kataras/iris/v12"
+)
+
+func main() {
+	app := iris.New()
+
+	// register servants to iris
+	servants.RegisterServants(app)
+
+	// start servant service
+	if err := app.Run(iris.Addr(":8013")); err != nil {
+		log.Fatal(err)
+	}
+}

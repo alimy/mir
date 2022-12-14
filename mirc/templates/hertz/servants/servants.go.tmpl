@@ -1,0 +1,15 @@
+package servants
+
+import (
+	"{{ .PkgName }}/mirc/auto/api"
+	v1 "{{ .PkgName }}/mirc/auto/api/v1"
+	v2 "{{ .PkgName }}/mirc/auto/api/v2"
+	"github.com/cloudwego/hertz/pkg/route"
+)
+
+// RegisterServants register all the servants to hertz
+func RegisterServants(e *route.Engine) {
+	api.RegisterSiteServant(e, newSiteSrv(), newSiteBinding(), newSiteRender())
+	v1.RegisterSiteServant(e, newSiteV1Srv(), newSiteV1Render())
+	v2.RegisterSiteServant(e, newSiteV2Srv(), newSiteV2Binding(), newSiteV2Render())
+}

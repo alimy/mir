@@ -1,0 +1,17 @@
+package servants
+
+import (
+	"errors"
+	"net/http"
+
+	"github.com/alimy/mir/v3"
+)
+
+func bindAny(r *http.Request, obj any) mir.Error {
+	return mir.NewError(http.StatusNotImplemented, errors.New("not implemented"))
+}
+
+func renderAny(w http.ResponseWriter, data any, err mir.Error) {
+	w.WriteHeader(http.StatusNotImplemented)
+	w.Write([]byte("method not implemented"))
+}

@@ -1,0 +1,21 @@
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"{{ .PkgName }}/servants"
+	"github.com/gorilla/mux"
+)
+
+func main() {
+	r := mux.NewRouter()
+
+	// register servants to chi
+	servants.RegisterServants(r)
+
+	// start servant service
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		log.Fatal(err)
+	}
+}

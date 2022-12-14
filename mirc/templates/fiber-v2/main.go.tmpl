@@ -1,0 +1,20 @@
+package main
+
+import (
+	"log"
+
+	"{{ .PkgName }}/servants"
+	"github.com/gofiber/fiber/v2"
+)
+
+func main() {
+	app := fiber.New()
+
+	// register servants to fiber
+	servants.RegisterServants(app)
+
+	// start servant service
+	if err := app.Listen(":3000"); err != nil {
+		log.Fatal(err)
+	}
+}

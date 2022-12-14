@@ -1,0 +1,37 @@
+package servants
+
+import (
+	api "{{ .PkgName }}/mirc/auto/api/v2"
+)
+
+type siteV2Srv struct {
+	api.UnimplementedSiteServant
+}
+
+type siteV2Binding struct {
+	*api.UnimplementedSiteBinding
+}
+
+type siteV2Render struct {
+	*api.UnimplementedSiteRender
+}
+
+func newSiteV2Srv() api.Site {
+	return &siteV2Srv{}
+}
+
+func newSiteV2Binding() api.SiteBinding {
+	return &siteV2Binding{
+		UnimplementedSiteBinding: &api.UnimplementedSiteBinding{
+			BindAny: bindAny,
+		},
+	}
+}
+
+func newSiteV2Render() api.SiteRender {
+	return &siteV2Render{
+		UnimplementedSiteRender: &api.UnimplementedSiteRender{
+			RenderAny: renderAny,
+		},
+	}
+}

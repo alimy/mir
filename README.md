@@ -8,8 +8,59 @@ Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端�
  ![](docs/.assets/mir-arc-adapter.png) 
  
  ## 使用说明
- 
- RESTful接口定义:
+* 生成样板项目
+```bash
+% go get github.com/alimy/mir/mirc/v3@latest
+% mirc new -h
+create template project
+
+Usage:
+  mirc new [flags]
+
+Flags:
+  -d, --dst string     genereted destination target directory (default ".")
+  -h, --help           help for new
+      --mir string     mir replace package name or place
+  -p, --pkg string     project's package name (default "github.com/alimy/mir-example")
+  -s, --style string   generated engine style eg: gin,chi,mux,hertz,echo,iris,fiber,fiber-v2,macaron,httprouter (default "gin")
+
+% mirc new -d example 
+% tree example
+example
+.
+|-- Makefile
+|-- README.md
+|-- go.mod
+|-- go.sum
+|-- main.go
+|-- mirc
+|   |-- auto
+|   |   `-- api
+|   |       |-- site.go
+|   |       |-- v1
+|   |       |   `-- site.go
+|   |       `-- v2
+|   |           `-- site.go
+|   |-- main.go
+|   `-- routes
+|       |-- site.go
+|       |-- v1
+|       |   `-- site.go
+|       `-- v2
+|           `-- site.go
+`-- servants
+    |-- core.go
+    |-- servants.go
+    |-- site.go
+    |-- site_v1.go
+    `-- site_v2.go
+
+% cd example
+% make generate
+% make build
+```
+
+ * RESTful接口定义:
 ```go
 // file: mirc/routes.go
 
@@ -42,7 +93,7 @@ type User struct {
 }
 ```
 
-代码生成:
+* 代码生成:
 ```go
 // file: mirc/auto/api/routes.go
 
@@ -111,6 +162,12 @@ func RegisterUserServant(e *gin.Engine, s User, b UserBinding, r UserRender) {
 
 	// register routes info to router
 	router.Handle("POST", "/login/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+
 		req, err := b.BindLogin(c)
 		if err != nil {
 			r.RenderLogin(c, nil, err)
@@ -119,6 +176,12 @@ func RegisterUserServant(e *gin.Engine, s User, b UserBinding, r UserRender) {
 		r.RenderLogin(c, resp, err)
 	})
 	router.Handle("POST", "/logout/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		
 		r.RenderLogout(c, s.Logout(c))
 	})
 }
@@ -157,7 +220,7 @@ func (r UnimplementedUserRender) mustEmbedUnimplementedUserRender() {}
 
 ```
 
-接口实现:   
+* 接口实现:   
 ```go
 // file: servants/user.go
 
@@ -215,7 +278,7 @@ func renderAny(c *gin.Context, data any, err mir.Error) {
 }
 ```
 
-服务注册:  
+* 服务注册:  
 ```go
 // file: servants/servants.go
 
@@ -234,7 +297,7 @@ func RegisterServants(e *gin.Engine) {
 }
 ```
 
-## 使用[go-mir](https://github.com/alimy/mir)的项目
+### 使用[go-mir](https://github.com/alimy/mir)的项目
  * [examples](examples)  
 [go-mir](https://github.com/alimy/mir)项目自带的demo，主要演示了如何使用[Mir](https://github.com/alimy/mir)快速进行RESTful API的后端开发.
  

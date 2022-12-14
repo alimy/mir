@@ -1,0 +1,22 @@
+package servants
+
+import (
+	"errors"
+	"net/http"
+
+	"github.com/alimy/mir/v3"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+)
+
+func bindAny(ctx *app.RequestContext, obj any) mir.Error {
+	return mir.NewError(http.StatusBadRequest, errors.New("method not implemented"))
+}
+
+func renderAny(ctx *app.RequestContext, data any, err mir.Error) {
+	if err == nil {
+		ctx.JSON(consts.StatusOK, data)
+	} else {
+		ctx.JSON(err.StatusCode(), err.Error())
+	}
+}

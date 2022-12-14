@@ -1,0 +1,13 @@
+module {{ .PkgName }}
+
+go 1.18
+
+require (
+	github.com/alimy/mir/v3 v3.0.0
+	github.com/gorilla/mux v1.8.0
+)
+{{if notEmptyStr .MirPkgName }}
+replace (
+    github.com/alimy/mir/v3 => {{ .MirPkgName }}
+)
+{{end}}

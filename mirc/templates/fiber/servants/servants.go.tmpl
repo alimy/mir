@@ -1,0 +1,15 @@
+package servants
+
+import (
+	"{{ .PkgName }}/mirc/auto/api"
+	v1 "{{ .PkgName }}/mirc/auto/api/v1"
+	v2 "{{ .PkgName }}/mirc/auto/api/v2"
+	"github.com/gofiber/fiber"
+)
+
+// RegisterServants register all the servants to fiber.App
+func RegisterServants(app *fiber.App) {
+	api.RegisterSiteServant(app, newSiteSrv(), newSiteBinding(), newSiteRender())
+	v1.RegisterSiteServant(app, newSiteV1Srv(), newSiteV1Render())
+	v2.RegisterSiteServant(app, newSiteV2Srv(), newSiteV2Binding(), newSiteV2Render())
+}

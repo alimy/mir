@@ -1,0 +1,18 @@
+package servants
+
+import (
+	"errors"
+	"net/http"
+
+	"github.com/alimy/mir/v3"
+	"github.com/gofiber/fiber"
+)
+
+func bindAny(c *fiber.Ctx, obj any) mir.Error {
+	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
+}
+
+func renderAny(c *fiber.Ctx, data any, err mir.Error) {
+	c.Status(http.StatusNotImplemented)
+	c.Write([]byte("method not implemented"))
+}

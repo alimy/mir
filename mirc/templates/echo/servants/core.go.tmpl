@@ -1,0 +1,17 @@
+package servants
+
+import (
+	"errors"
+	"net/http"
+
+	"github.com/alimy/mir/v3"
+	"github.com/labstack/echo/v4"
+)
+
+func bindAny(c echo.Context, obj any) mir.Error {
+	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
+}
+
+func renderAny(c echo.Context, data any, err mir.Error) {
+	c.String(http.StatusNotImplemented, "method not implemented")
+}
