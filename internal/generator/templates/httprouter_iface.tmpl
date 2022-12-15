@@ -36,13 +36,13 @@ type {{.TypeName}}Render interface {
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
 func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {{if $.WatchCtxDone }}{
 		select {
 		case <-hr.Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr, p)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -53,13 +53,13 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}{{if
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
 	})
 	{{else}}{{$field := .}}    {
-        h := func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+        h := func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {{if $.WatchCtxDone }}{
 			select {
 			case <-hr.Context().Done():
 				return
 			default:
 			}
-
+{{else}}{ {{end}}
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr, p)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}

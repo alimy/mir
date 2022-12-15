@@ -45,14 +45,14 @@ func Register{{.TypeName}}Servant(e *echo.Echo, s {{.TypeName}}{{if .IsUseBindin
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.Add("{{.HttpMethod}}", "{{.Path}}", func(c echo.Context) error {
+{{range .Fields}}{{if .NotHttpAny }}    router.Add("{{.HttpMethod}}", "{{.Path}}", func(c echo.Context) error {{if $.WatchCtxDone }}{
 		ctx := c.Request().Context()
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
@@ -63,14 +63,14 @@ func Register{{.TypeName}}Servant(e *echo.Echo, s {{.TypeName}}{{if .IsUseBindin
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
 		return nil
 	})
-	{{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c echo.Context) error {
+	{{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c echo.Context) error {{if $.WatchCtxDone }}{
 		ctx := c.Request().Context()
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
@@ -82,14 +82,14 @@ func Register{{.TypeName}}Servant(e *echo.Echo, s {{.TypeName}}{{if .IsUseBindin
 		return nil
 	})
 	{{else}}{{$field := .}}    {
-        h := func(c echo.Context) error {
+        	h := func(c echo.Context) error {{if $.WatchCtxDone }}{
 			ctx := c.Request().Context()
 			select {
 			case <-ctx.Done():
-				return ctx.Err()
+			return ctx.Err()
 			default:
 			}
-
+{{else}}{ {{end}}
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}

@@ -35,14 +35,15 @@ type FieldDescriptor struct {
 
 // IfaceDescriptor interface Descriptor info
 type IfaceDescriptor struct {
-	Group      string
-	Chain      string
-	PkgName    string
-	TypeName   string
-	Comment    string // not support now so always empty
-	InOuts     []reflect.Type
-	Fields     []*FieldDescriptor
-	EngineInfo *EngineInfo
+	Group        string
+	Chain        string
+	PkgName      string
+	TypeName     string
+	Comment      string // not support now so always empty
+	InOuts       []reflect.Type
+	Fields       []*FieldDescriptor
+	EngineInfo   *EngineInfo
+	WatchCtxDone bool
 }
 
 // IfaceDescriptors interface Descriptor map {TypeName:*IfaceDescriptor}

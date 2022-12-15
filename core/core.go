@@ -55,15 +55,17 @@ type InitOpts struct {
 	DefaultTag        string
 	EnginePkgName     string
 	EngineImportAlias string
+	WatchCtxDone      bool
 	NoneQuery         bool
 	Cleanup           bool
 }
 
 // ParserOpts used for initial parser
 type ParserOpts struct {
-	EngineInfo *EngineInfo
-	DefaultTag string
-	NoneQuery  bool
+	EngineInfo   *EngineInfo
+	DefaultTag   string
+	WatchCtxDone bool
+	NoneQuery    bool
 }
 
 // GeneratorOpts used for initial generator
@@ -92,8 +94,9 @@ func (opts Options) InitOpts() *InitOpts {
 // ParserOpts return a ParserOpts instance
 func (opts *InitOpts) ParserOpts() *ParserOpts {
 	return &ParserOpts{
-		DefaultTag: opts.DefaultTag,
-		NoneQuery:  opts.NoneQuery,
+		DefaultTag:   opts.DefaultTag,
+		WatchCtxDone: opts.WatchCtxDone,
+		NoneQuery:    opts.NoneQuery,
 		EngineInfo: &EngineInfo{
 			PkgName:     opts.EnginePkgName,
 			ImportAlias: opts.EngineImportAlias,
@@ -186,6 +189,14 @@ func ParserName(name string) Option {
 func SinkPath(path string) Option {
 	return optFunc(func(opts *InitOpts) {
 		opts.SinkPath = path
+	})
+}
+
+// WatchCtxDone set generator whether watch context done when Register Servants in
+// generated code. default watch context done.
+func WatchCtxDone(enable bool) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.WatchCtxDone = enable
 	})
 }
 
@@ -293,8 +304,9 @@ func defaultInitOpts() *InitOpts {
 		RunMode:       InSerialMode,
 		GeneratorName: GeneratorGin,
 		ParserName:    ParserStructTag,
-		SinkPath:      ".gen",
+		SinkPath:      ".auto",
 		DefaultTag:    "mir",
+		WatchCtxDone:  true,
 		Cleanup:       true,
 	}
 }

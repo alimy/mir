@@ -47,13 +47,13 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.MethodFunc("{{.HttpMethod}}", "{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+{{range .Fields}}{{if .NotHttpAny }}    router.MethodFunc("{{.HttpMethod}}", "{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {{if $.WatchCtxDone }}{
 		select {
-		case <-hr.Context().Done():
+		case <- hr.Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -63,13 +63,13 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
 	})
-	{{else if .JustHttpAny}}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+	{{else if .JustHttpAny}}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {{if $.WatchCtxDone }}{
 		select {
-		case <-hr.Context().Done():
+		case <- hr.Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -80,13 +80,13 @@ func Register{{.TypeName}}Servant(e chi.Router, s {{.TypeName}}{{if .IsUseBindin
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
 	})
 	{{else}}{{$field := .}}    {
-        h := func(rw http.ResponseWriter, hr *http.Request) {
+        	h := func(rw http.ResponseWriter, hr *http.Request) {{if $.WatchCtxDone }}{
 			select {
-			case <-hr.Context().Done():
+			case <- hr.Context().Done():
 				return
 			default:
 			}
-
+{{else}}{ {{end}}
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}

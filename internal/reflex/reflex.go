@@ -14,10 +14,11 @@ import (
 
 // reflex real parser
 type reflex struct {
-	engineInfo *core.EngineInfo
-	ns         naming.NamingStrategy
-	tagName    string
-	noneQuery  bool
+	engineInfo   *core.EngineInfo
+	ns           naming.NamingStrategy
+	tagName      string
+	watchCtxDone bool
+	noneQuery    bool
 }
 
 // Parse get Descriptors from parse entries
@@ -71,10 +72,11 @@ func (r *reflex) IfaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 
 	// get IfaceDescriptor from entryType and entryPtrType
 	iface := &core.IfaceDescriptor{
-		EngineInfo: r.engineInfo,
-		TypeName:   entryType.Name(),
-		PkgName:    "api", // set default pkg name
-		Fields:     make([]*core.FieldDescriptor, 0),
+		EngineInfo:   r.engineInfo,
+		TypeName:     entryType.Name(),
+		PkgName:      "api", // set default pkg name
+		Fields:       make([]*core.FieldDescriptor, 0),
+		WatchCtxDone: r.watchCtxDone,
 	}
 	var groupSetuped, chainSetuped bool
 	pkgPath := entryType.PkgPath()
@@ -138,11 +140,12 @@ func (r *reflex) fieldFrom(t *tagInfo) *core.FieldDescriptor {
 	}
 }
 
-func NewReflex(info *core.EngineInfo, tagName string, noneQuery bool) *reflex {
+func NewReflex(info *core.EngineInfo, tagName string, watchCtxDone bool, noneQuery bool) *reflex {
 	return &reflex{
-		engineInfo: info,
-		ns:         naming.NewSnakeNamingStrategy(),
-		tagName:    tagName,
-		noneQuery:  noneQuery,
+		engineInfo:   info,
+		ns:           naming.NewSnakeNamingStrategy(),
+		tagName:      tagName,
+		watchCtxDone: watchCtxDone,
+		noneQuery:    noneQuery,
 	}
 }

@@ -46,13 +46,13 @@ func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}{{if .Is
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", func(c context.Context) {
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", func(c context.Context) {{if $.WatchCtxDone }}{
 		select {
 		case <- c.Request().Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
@@ -62,13 +62,13 @@ func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}{{if .Is
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
 	})
-	{{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c context.Context) {
+	{{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c context.Context) {{if $.WatchCtxDone }}{
 		select {
 		case <- c.Request().Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
@@ -79,13 +79,13 @@ func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}{{if .Is
 		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
 	})
 	{{else}}{{$field := .}}    {
-        h := func(c context.Context) {
+        h := func(c context.Context) {{if $.WatchCtxDone }}{
 			select {
 			case <- c.Request().Context().Done():
 				return
 			default:
 			}
-
+{{else}}{ {{end}}
 		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
 		    if err != nil {
 			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}

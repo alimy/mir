@@ -48,13 +48,13 @@ func Register{{.TypeName}}Servant(e *mux.Router, s {{.TypeName}}{{if .IsUseBindi
 
     // register routes info to router
 {{range .Fields}}
-{{if .NotHttpAny }}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+{{if .NotHttpAny }}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {{if $.WatchCtxDone }}{
 		select {
 		case <-hr.Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
@@ -65,13 +65,13 @@ func Register{{.TypeName}}Servant(e *mux.Router, s {{.TypeName}}{{if .IsUseBindi
 		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
 	}).Methods("{{.HttpMethod}}"){{if notEmptyStr .Host}}.
         Host("{{.Host}}"){{end}}{{if valideQuery .Queries}}.
-        Queries({{inflateQuery .Queries}}){{end}}{{else}}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {
+        Queries({{inflateQuery .Queries}}){{end}}{{else}}    router.HandleFunc("{{.Path}}", func(rw http.ResponseWriter, hr *http.Request) {{if $.WatchCtxDone }}{
 		select {
 		case <-hr.Context().Done():
 			return
 		default:
 		}
-
+{{else}}{ {{end}}
 		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr)
 		if err != nil {
 			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
