@@ -44,6 +44,7 @@ func templateFrom(name string) (*template.Template, error) {
 		return nil, err
 	}
 	t := template.New("mir").Funcs(template.FuncMap{
+		"declareImports": declareImports,
 		"declareTypes":   declareTypes,
 		"notEmptyStr":    notEmptyStr,
 		"joinPath":       joinPath,
@@ -99,7 +100,23 @@ func upperFirstName(name string) string {
 	return utils.UpperFirst(strings.ToLower(name))
 }
 
-func declareTypes(inOuts []reflect.Type) string {
+func declareImports(imports map[string]string) string {
+	// write import declare to buffer
+	buf := &bytes.Buffer{}
+	for pkg, alias := range imports {
+		if alias != "" {
+			if _, err := buf.WriteString(alias + " "); err != nil {
+				break
+			}
+		}
+		if _, err := buf.WriteString(`"` + pkg + "\"\n"); err != nil {
+			break
+		}
+	}
+	return buf.String()
+}
+
+func declareTypes(inOuts []reflect.Type, pkgPath string, imports map[string]string) string {
 	if len(inOuts) == 0 {
 		return ""
 	}
@@ -109,7 +126,7 @@ func declareTypes(inOuts []reflect.Type) string {
 	indent := "    "
 	buf := &bytes.Buffer{}
 	for _, t := range inOuts {
-		err := reflex.WriteStruct(buf, t, indent)
+		err := reflex.WriteStruct(buf, t, pkgPath, imports, indent)
 		if err != nil {
 			break
 		}

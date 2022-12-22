@@ -21,6 +21,8 @@ type EngineInfo struct {
 
 // FieldDescriptor field Descriptor info
 type FieldDescriptor struct {
+	Imports     map[string]string
+	PkgPath     string
 	Host        string
 	Path        string
 	Queries     []string
@@ -37,6 +39,8 @@ type FieldDescriptor struct {
 type IfaceDescriptor struct {
 	Group        string
 	Chain        string
+	Imports      map[string]string
+	PkgPath      string
 	PkgName      string
 	TypeName     string
 	Comment      string // not support now so always empty
@@ -109,7 +113,40 @@ func (d *IfaceDescriptor) SetPkgName(name string) {
 
 // SetInnerInOuts set inner InOuts for defined
 func (d *IfaceDescriptor) SetInnerInOuts(inOuts []reflect.Type) {
-	d.InOuts = inOuts
+	var extSts []reflect.Type
+	for _, t := range inOuts {
+		if t.PkgPath() == d.PkgPath {
+			d.InOuts = append(d.InOuts, t)
+		} else {
+			extSts = append(extSts, t)
+		}
+	}
+	// to set fields pkg name alias map
+	pkgNames := utils.NewStrSet()
+	for _, t := range extSts {
+		pkgPath := t.PkgPath()
+		if pkgPath == "" {
+			continue
+		}
+		pkgs := strings.Split(pkgPath, "/")
+		pkgName := pkgs[len(pkgs)-1]
+		isAlias := false
+		for err := pkgNames.Add(pkgName); err != nil; err = pkgNames.Add(pkgName) {
+			isAlias = true
+			pkgName = pkgName + "_m"
+		}
+		if !isAlias {
+			pkgName = ""
+		}
+		d.Imports[pkgPath] = pkgName
+	}
+	d.setFiledImports()
+}
+
+func (d *IfaceDescriptor) setFiledImports() {
+	for _, f := range d.Fields {
+		f.Imports = d.Imports
+	}
 }
 
 // AllInOuts return all InOuts from Fileds
@@ -167,16 +204,32 @@ func (f *FieldDescriptor) HttpMethodArgs() string {
 
 // InName return In type name
 func (f *FieldDescriptor) InName() string {
-	if f.In != nil {
+	if f.In == nil {
+		return ""
+	}
+	pkgPath := f.In.PkgPath()
+	if pkgPath == f.PkgPath {
 		return f.In.Name()
 	}
-	return ""
+	return f.aliasPkgName(pkgPath) + "." + f.In.Name()
 }
 
 // OutName return Out type name
 func (f *FieldDescriptor) OutName() string {
-	if f.Out != nil {
+	if f.Out == nil {
+		return ""
+	}
+	pkgPath := f.Out.PkgPath()
+	if pkgPath == f.PkgPath {
 		return f.Out.Name()
 	}
-	return ""
+	return f.aliasPkgName(pkgPath) + "." + f.Out.Name()
+}
+
+func (f *FieldDescriptor) aliasPkgName(pkgPath string) string {
+	if alias := f.Imports[pkgPath]; alias != "" {
+		return alias
+	}
+	pkgs := strings.Split(pkgPath, "/")
+	return pkgs[len(pkgs)-1]
 }

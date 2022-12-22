@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/alimy/mir/v3/internal/utils"
 )
@@ -17,37 +18,86 @@ import (
 // type that contained in type.
 // st must struct kind
 func CheckStruct(st reflect.Type, pkgPath string) ([]reflect.Type, error) {
-	sts := []reflect.Type{st}
+	var (
+		innerSts []reflect.Type
+		outSts   []reflect.Type
+	)
+	// just return if type is out pkgPath struct
+	if st.PkgPath() != pkgPath {
+		return []reflect.Type{st}, nil
+	}
+	innerSts = append(innerSts, st)
+	// get all field struct type
 	fields := utils.NewStrSet()
 	fields.Add(st.PkgPath() + "." + st.Name())
-	for i := 0; i < len(sts); i++ {
-		st := sts[i]
-		if st.PkgPath() != pkgPath {
-			return nil, errors.New("pkgPath need in same path")
-		}
-		for i := st.NumField() - 1; i >= 0; i-- {
-			sf := st.Field(i)
+	for i := 0; i < len(innerSts); i++ {
+		ist := innerSts[i]
+		for i := ist.NumField() - 1; i >= 0; i-- {
+			sf := ist.Field(i)
 			ft := sf.Type
 			ok, wbsts := isWriteableField(ft)
 			if !ok {
 				return nil, fmt.Errorf("yet not support field %v", ft)
 			}
 			for _, t := range wbsts {
-				if t.PkgPath() != pkgPath {
-					return nil, errors.New("struct field must in same path")
-				}
-				fn := t.PkgPath() + "." + ft.Name()
-				if err := fields.Add(fn); err == nil {
-					sts = append(sts, t)
+				if t.PkgPath() == pkgPath {
+					fn := t.PkgPath() + "." + ft.Name()
+					if err := fields.Add(fn); err == nil {
+						innerSts = append(innerSts, t)
+					}
+				} else {
+					outSts = append(outSts, t)
 				}
 			}
 		}
 	}
-	return sts, nil
+	// collect all struct type
+	innerSts = append(innerSts, outSts...)
+	return innerSts, nil
+}
+
+// CheckExtStruct check external struct type is in pkgPath and return other struct type field's
+// type that contained in type.
+// st must struct kind
+func CheckExtStruct(st reflect.Type, pkgPath string) ([]reflect.Type, error) {
+	var (
+		innerSts []reflect.Type
+		outSts   []reflect.Type
+	)
+	// just return if type is out pkgPath struct
+	if st.PkgPath() != pkgPath {
+		return []reflect.Type{st}, nil
+	}
+	innerSts = append(innerSts, st)
+	// get all field struct type
+	fields := utils.NewStrSet()
+	fields.Add(st.PkgPath() + "." + st.Name())
+	for i := 0; i < len(innerSts); i++ {
+		ist := innerSts[i]
+		for i := ist.NumField() - 1; i >= 0; i-- {
+			sf := ist.Field(i)
+			ft := sf.Type
+			ok, wbsts := isWriteableField(ft)
+			if !ok {
+				return nil, fmt.Errorf("yet not support field %v", ft)
+			}
+			for _, t := range wbsts {
+				if t.PkgPath() == pkgPath {
+					fn := t.PkgPath() + "." + ft.Name()
+					if err := fields.Add(fn); err == nil {
+						innerSts = append(innerSts, t)
+					}
+				} else {
+					outSts = append(outSts, t)
+				}
+			}
+		}
+	}
+	return outSts, nil
 }
 
 // WriteStruct write struct type to *bytes.Buffer
-func WriteStruct(buf *bytes.Buffer, t reflect.Type, indent string) (err error) {
+func WriteStruct(buf *bytes.Buffer, t reflect.Type, pkgPath string, imports map[string]string, indent string) (err error) {
 	if buf == nil || t == nil {
 		return errors.New("buf or t of type is nil")
 	}
@@ -57,7 +107,7 @@ func WriteStruct(buf *bytes.Buffer, t reflect.Type, indent string) (err error) {
 	l := t.NumField()
 	for i := 0; i < l; i++ {
 		field := t.Field(i)
-		if err = writeStructField(buf, field, indent); err != nil {
+		if err = writeStructField(buf, field, pkgPath, imports, indent); err != nil {
 			return
 		}
 	}
@@ -65,7 +115,7 @@ func WriteStruct(buf *bytes.Buffer, t reflect.Type, indent string) (err error) {
 	return
 }
 
-func writeStructField(buf *bytes.Buffer, sf reflect.StructField, indent string) (err error) {
+func writeStructField(buf *bytes.Buffer, sf reflect.StructField, pkgPath string, imports map[string]string, indent string) (err error) {
 	if ok, _ := isWriteableField(sf.Type); !ok {
 		return
 	}
@@ -75,7 +125,7 @@ func writeStructField(buf *bytes.Buffer, sf reflect.StructField, indent string) 
 			return
 		}
 	}
-	if err = writeStructFieldType(buf, sf.Type); err != nil {
+	if err = writeStructFieldType(buf, sf.Type, pkgPath, imports); err != nil {
 		return
 	}
 	if len(sf.Tag) > 0 {
@@ -86,7 +136,7 @@ func writeStructField(buf *bytes.Buffer, sf reflect.StructField, indent string) 
 	return
 }
 
-func writeStructFieldType(buf *bytes.Buffer, t reflect.Type) (err error) {
+func writeStructFieldType(buf *bytes.Buffer, t reflect.Type, pkgPath string, imports map[string]string) (err error) {
 	ft := t
 	for ; ft.Kind() == reflect.Pointer; ft = ft.Elem() {
 		if err = buf.WriteByte('*'); err != nil {
@@ -107,7 +157,7 @@ func writeStructFieldType(buf *bytes.Buffer, t reflect.Type) (err error) {
 		if err != nil {
 			return
 		}
-		err = writeStructFieldType(buf, ft.Elem())
+		err = writeStructFieldType(buf, ft.Elem(), pkgPath, imports)
 		if err != nil {
 			return
 		}
@@ -115,24 +165,37 @@ func writeStructFieldType(buf *bytes.Buffer, t reflect.Type) (err error) {
 		if _, err = buf.WriteString("[]"); err != nil {
 			return
 		}
-		if err = writeStructFieldType(buf, ft.Elem()); err != nil {
+		if err = writeStructFieldType(buf, ft.Elem(), pkgPath, imports); err != nil {
 			return
 		}
 	case reflect.Map:
 		if _, err = buf.WriteString("map["); err != nil {
 			return
 		}
-		if err = writeStructFieldType(buf, ft.Key()); err != nil {
+		if err = writeStructFieldType(buf, ft.Key(), pkgPath, imports); err != nil {
 			return
 		}
 		if _, err = buf.WriteString("]"); err != nil {
 			return
 		}
-		if err = writeStructFieldType(buf, ft.Elem()); err != nil {
+		if err = writeStructFieldType(buf, ft.Elem(), pkgPath, imports); err != nil {
 			return
 		}
 	case reflect.Struct:
-		if _, err = buf.WriteString(ft.Name()); err != nil {
+		var typn string
+		ftPkgPath := ft.PkgPath()
+		if ftPkgPath == pkgPath {
+			typn = ft.Name()
+		} else if ftPkgPath == "" {
+			typn = ft.String()
+		} else {
+			typn = ft.String()
+			if alias := imports[ftPkgPath]; alias != "" {
+				pkgs := strings.Split(ftPkgPath, "/")
+				typn = strings.Replace(typn, pkgs[len(pkgs)-1]+".", alias, 1)
+			}
+		}
+		if _, err = buf.WriteString(typn); err != nil {
 			return
 		}
 	}

@@ -8,9 +8,10 @@ import (
     "github.com/alimy/mir/v3"
     {{if notEmptyStr .EngineInfo.PkgName }}fiber "{{ .EngineInfo.PkgName }}{{else}}"github.com/gofiber/fiber{{end}}"
 	{{if notEmptyStr .Chain }}"github.com/gofiber/fiber/middleware"{{end}}
+	{{ declareImports .Imports }}
 )
 
-{{ declareTypes .InOuts }}
+{{ declareTypes .InOuts .PkgPath .Imports }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {

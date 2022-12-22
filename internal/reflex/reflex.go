@@ -70,16 +70,18 @@ func (r *reflex) IfaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 		entryPtrValue = entryValue.Addr()
 	}
 
+	var groupSetuped, chainSetuped bool
+	pkgPath := entryType.PkgPath()
 	// get IfaceDescriptor from entryType and entryPtrType
 	iface := &core.IfaceDescriptor{
+		Imports:      make(map[string]string),
 		EngineInfo:   r.engineInfo,
 		TypeName:     entryType.Name(),
+		PkgPath:      pkgPath,
 		PkgName:      "api", // set default pkg name
 		Fields:       make([]*core.FieldDescriptor, 0),
 		WatchCtxDone: r.watchCtxDone,
 	}
-	var groupSetuped, chainSetuped bool
-	pkgPath := entryType.PkgPath()
 	for i := entryType.NumField() - 1; i >= 0; i-- {
 		field := entryType.Field(i)
 		switch tagInfo, err := r.tagInfoFrom(field, pkgPath); err {
@@ -104,7 +106,7 @@ func (r *reflex) IfaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 					return nil, errMultChainInfo
 				}
 			}
-			iface.Fields = append(iface.Fields, r.fieldFrom(tagInfo))
+			iface.Fields = append(iface.Fields, r.fieldFrom(tagInfo, pkgPath))
 		case errNotExist:
 			// normal field but had no mir tag info so just break to continue process next field
 		default:
@@ -126,8 +128,9 @@ func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *t
 }
 
 // fieldFrom build tagField from entry and tagInfo
-func (r *reflex) fieldFrom(t *tagInfo) *core.FieldDescriptor {
+func (r *reflex) fieldFrom(t *tagInfo, pkgPath string) *core.FieldDescriptor {
 	return &core.FieldDescriptor{
+		PkgPath:     pkgPath,
 		IsAnyMethod: t.isAnyMethod,
 		HttpMethods: t.methods.List(),
 		In:          t.in,

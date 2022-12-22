@@ -7,9 +7,10 @@ import (
 
     "github.com/alimy/mir/v3"
     {{if notEmptyStr .EngineInfo.PkgName }}echo "{{ .EngineInfo.PkgName }}{{else}}"github.com/labstack/echo/v4{{end}}"
+	{{ declareImports .Imports }}
 )
 
-{{ declareTypes .InOuts }}
+{{ declareTypes .InOuts .PkgPath .Imports }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {

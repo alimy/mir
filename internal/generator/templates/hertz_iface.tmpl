@@ -9,9 +9,10 @@ import (
     "github.com/alimy/mir/v3"
     "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/cloudwego/hertz{{end}}/pkg/app"
 	"{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/cloudwego/hertz{{end}}/pkg/route"
+	{{ declareImports .Imports }}
 )
 
-{{ declareTypes .InOuts }}
+{{ declareTypes .InOuts .PkgPath .Imports }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
