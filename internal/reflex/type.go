@@ -192,7 +192,7 @@ func writeStructFieldType(buf *bytes.Buffer, t reflect.Type, pkgPath string, imp
 			typn = ft.String()
 			if alias := imports[ftPkgPath]; alias != "" {
 				pkgs := strings.Split(ftPkgPath, "/")
-				typn = strings.Replace(typn, pkgs[len(pkgs)-1]+".", alias, 1)
+				typn = strings.Replace(typn, pkgs[len(pkgs)-1]+".", alias+".", 1)
 			}
 		}
 		if _, err = buf.WriteString(typn); err != nil {
