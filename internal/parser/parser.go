@@ -79,11 +79,17 @@ func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
 			r := reflex.NewReflex(p.engineInfo, p.tagName, p.watchCtxDone, p.noneQuery)
 			iface, err := r.IfaceFrom(entry)
 			if err != nil {
+				core.Logus("ifaceFrom error: %s", err)
 				ctx.Cancel(err)
 				return
 			}
+			// no actual fields so just continue
+			if len(iface.Fields) == 0 {
+				return
+			}
 			core.Logus("parsed iface: %s.%s", iface.PkgName, iface.TypeName)
-			if err = muxSet.Add(iface.PkgName + iface.TypeName); err != nil {
+			if err = muxSet.Add(iface.Group + iface.TypeName); err != nil {
+				core.Logus("muxSet.Add error: %s", err)
 				ctx.Cancel(err)
 				return
 			}
