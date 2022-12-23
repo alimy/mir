@@ -122,23 +122,30 @@ func (d *IfaceDescriptor) SetInnerInOuts(inOuts []reflect.Type) {
 		}
 	}
 	// to set fields pkg name alias map
-	pkgNames := utils.NewStrSet()
+	pkgNames := make(map[string]string)
 	for _, t := range extSts {
 		pkgPath := t.PkgPath()
 		if pkgPath == "" {
 			continue
 		}
+		// had import so no need process
+		if _, exist := d.Imports[pkgPath]; exist {
+			continue
+		}
+		// process alias if needed
 		pkgs := strings.Split(pkgPath, "/")
 		pkgName := pkgs[len(pkgs)-1]
-		isAlias := false
-		for err := pkgNames.Add(pkgName); err != nil; err = pkgNames.Add(pkgName) {
-			isAlias = true
-			pkgName = pkgName + "_m"
+		if pkg, exist := pkgNames[pkgName]; !exist {
+			pkgNames[pkgName] = pkgPath
+			d.Imports[pkgPath] = ""
+		} else {
+			for exist && pkg != pkgPath {
+				pkgName = pkgName + "_m"
+				pkg, exist = pkgNames[pkgName]
+			}
+			pkgNames[pkgName] = pkgPath
+			d.Imports[pkgPath] = pkgName
 		}
-		if !isAlias {
-			pkgName = ""
-		}
-		d.Imports[pkgPath] = pkgName
 	}
 	d.setFiledImports()
 }
