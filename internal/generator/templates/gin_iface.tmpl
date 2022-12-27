@@ -24,7 +24,7 @@ type {{.TypeName}} interface {
 }
 {{if .IsUseBinding }}
 type {{.TypeName}}Binding interface {
-{{range .Fields}}    {{if notEmptyStr .InName }}Bind{{.MethodName}}(*gin.Context) (*{{ .InName }}, mir.Error){{end}}
+{{range .BindingFields }}    Bind{{.MethodName}}(*gin.Context) (*{{ .InName }}, mir.Error)
 {{end}}
 
 	mustEmbedUnimplemented{{.TypeName}}Binding()

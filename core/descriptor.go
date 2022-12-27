@@ -181,6 +181,16 @@ func (d *IfaceDescriptor) IsUseBinding() bool {
 	return false
 }
 
+// BindingFields return Binding's fields
+func (d *IfaceDescriptor) BindingFields() (fields []*FieldDescriptor) {
+	for _, f := range d.Fields {
+		if f.In != nil {
+			fields = append(fields, f)
+		}
+	}
+	return
+}
+
 // HttpMethod return http method when f.NotHttpAny() is true
 func (f *FieldDescriptor) HttpMethod() string {
 	if len(f.HttpMethods) == 1 {
