@@ -186,7 +186,11 @@ FuckErr:
 		for _, iface := range ifaces {
 			var inouts []reflect.Type
 			for _, typ := range iface.AllInOuts() {
-				if err := filter.Add(typ.Name()); err == nil {
+				if typ.PkgPath() == iface.PkgPath {
+					if err := filter.Add(typ.Name()); err == nil {
+						inouts = append(inouts, typ)
+					}
+				} else {
 					inouts = append(inouts, typ)
 				}
 			}
