@@ -298,5 +298,5 @@ func RegisterServants(e *gin.Engine) {
 ```
 
 ### Projects that used [go-mir](https://github.com/alimy/mir) 
- * [examples](examples)  
-[go-mir](https://github.com/alimy/mir)'s demo example to describe how to use [Mir](https://github.com/alimy/mir) to develop RESTful API backend service quickly.
+ * [examples](examples) - a demo example to describe how to use [Mir](https://github.com/alimy/mir) to develop RESTful API backend service quickly.
+* [paopao-ce](https://github.com/rocboss/paopao-ce/tree/dev) - A artistic "twitter like" community built on gin+zinc+vue+ts.      
