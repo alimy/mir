@@ -54,7 +54,7 @@ check-debug-all:
 	@for target in $(STYLES); do \
 	  echo "==========[ processing $$target ]=========="; \
 	  rm -rf $$target; \
-	  ./mirc new --mir ../../ --style $$target --dst $$target; \
+	  ./mirc new --mir ../../ --style $$target --pkg github.com/alimy/mir-$$target --dst $$target; \
 	  cd $$target; \
 	  make mod-tidy; \
 	  cd -; \
@@ -66,7 +66,7 @@ check-release-all:
 	@for target in $(STYLES); do \
 	  echo "==========[ processing $$target ]=========="; \
 	  rm -rf $$target; \
-	  ./mirc new --style $$target --dst $$target; \
+	  ./mirc new --style $$target --pkg github.com/alimy/mir-$$target --dst $$target; \
 	  cd $$target; \
 	  make mod-tidy; \
 	  cd -; \
