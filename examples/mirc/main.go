@@ -11,7 +11,7 @@ import (
 	_ "github.com/alimy/mir-example/v3/mirc/routes/v2"
 )
 
-//go:generate go run main.go
+//go:generate go run $GOFILE
 func main() {
 	log.Println("generate code start")
 	opts := Options{
