@@ -76,6 +76,7 @@ func (r *reflex) IfaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
 	iface := &core.IfaceDescriptor{
 		Imports:      make(map[string]string),
 		EngineInfo:   r.engineInfo,
+		VerInfo:      core.VerInfo,
 		TypeName:     entryType.Name(),
 		PkgPath:      pkgPath,
 		PkgName:      "api", // set default pkg name

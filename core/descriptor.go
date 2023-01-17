@@ -13,10 +13,21 @@ import (
 	"github.com/alimy/mir/v3/internal/utils"
 )
 
+var (
+	VerInfo = &VersionInfo{
+		MirVer: "v3.0.1",
+	}
+)
+
 // EngineInfo Engine information
 type EngineInfo struct {
 	PkgName     string
 	ImportAlias string // import alias name
+}
+
+// VersionInfo mir version information
+type VersionInfo struct {
+	MirVer string
 }
 
 // FieldDescriptor field Descriptor info
@@ -47,6 +58,7 @@ type IfaceDescriptor struct {
 	InOuts       []reflect.Type
 	Fields       []*FieldDescriptor
 	EngineInfo   *EngineInfo
+	VerInfo      *VersionInfo
 	WatchCtxDone bool
 }
 
