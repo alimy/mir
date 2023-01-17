@@ -1,3 +1,10 @@
+// Copyright 2023 Michael Li <alimy@gility.net>. All rights reserved.
+// Use of this source code is governed by Apache License 2.0 that
+// can be found in the LICENSE file.
+
+//go:build generate
+// +build generate
+
 package main
 
 import (
@@ -17,6 +24,7 @@ func main() {
 	opts := Options{
 		RunMode(InSerialMode),
 		GeneratorName(GeneratorGin),
+		WatchCtxDone(true),
 		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {

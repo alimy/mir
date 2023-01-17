@@ -19,7 +19,7 @@ mod-tidy:
 
 .PHONY: generate
 generate:
-	@go generate mirc/main.go
+	@go generate mirc/gen.go
 	@$(GOFMT) ./
 
 .PHONY: fmt
