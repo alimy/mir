@@ -34,7 +34,7 @@ example
 |   |       |   `-- site.go
 |   |       `-- v2
 |   |           `-- site.go
-|   |-- main.go
+|   |-- gen.go
 |   `-- routes
 |       |-- site.go
 |       |-- v1
@@ -50,5 +50,5 @@ example
 
 % cd example
 % make generate
-% make build
+% make run
 ```
