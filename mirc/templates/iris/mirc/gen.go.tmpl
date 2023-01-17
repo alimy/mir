@@ -1,3 +1,6 @@
+//go:build generate
+// +build generate
+
 package main
 
 import (
@@ -16,8 +19,8 @@ func main() {
 	log.Println("generate code start")
 	opts := Options{
 		RunMode(InSerialMode),
-		GeneratorName(GeneratorFiber),
-		NoneQuery(true),
+		GeneratorName(GeneratorIris),
+		WatchCtxDone(true),
 		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {

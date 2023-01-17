@@ -1,3 +1,6 @@
+//go:build generate
+// +build generate
+
 package main
 
 import (
@@ -17,6 +20,7 @@ func main() {
 	opts := Options{
 		RunMode(InSerialMode),
 		GeneratorName(GeneratorChi),
+		WatchCtxDone(true),
 		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
