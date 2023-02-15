@@ -144,9 +144,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
 			resp, err := s.PrevTweets(req)
 			r.RenderPrevTweets(c, resp, err)
 		}
+		router.Handle("HEAD", "/tweets/prev", h)
 		router.Handle("GET", "/tweets/prev", h)
 		router.Handle("POST", "/tweets/prev", h)
-		router.Handle("HEAD", "/tweets/prev", h)
 	}
 
 	router.Any("/tweets/next", func(c *gin.Context) {
