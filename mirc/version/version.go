@@ -18,7 +18,7 @@ var (
 	BuildTime = ""
 
 	// AppVer version of Mirc
-	AppVer = semver.MustParse("v3.1.0")
+	AppVer = semver.MustParse("v3.1.1")
 )
 
 func ShowInfo() string {
