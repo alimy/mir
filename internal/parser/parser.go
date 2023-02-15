@@ -57,7 +57,7 @@ func (p *mirParser) Init(opts *core.ParserOpts) error {
 }
 
 // Parse serial parse interface defined object entries
-func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
+func (p *mirParser) Parse(entries []any) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
@@ -66,14 +66,14 @@ func (p *mirParser) Parse(entries []interface{}) (core.Descriptors, error) {
 }
 
 // ParseContext concurrent parse interface defined object entries
-func (p *mirParser) ParseContext(ctx core.MirCtx, entries []interface{}) {
+func (p *mirParser) ParseContext(ctx core.MirCtx, entries []any) {
 	_, ifaceSink := ctx.Pipe()
 	muxSet := utils.NewMuxSet()
 
 	wg := &sync.WaitGroup{}
 	for _, entry := range entries {
 		wg.Add(1)
-		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, entry interface{}) {
+		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, entry any) {
 			defer wg.Done()
 
 			r := reflex.NewReflex(p.engineInfo, p.tagName, p.watchCtxDone, p.noneQuery)

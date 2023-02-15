@@ -16,19 +16,20 @@ import (
 
 var (
 	mu         = &sync.Mutex{}
-	mirEntries = make([]interface{}, 0, 8)
+	mirEntries = make([]any, 0, 8)
 )
 
-// AddEntry add mir's entry
-func AddEntry(entry interface{}) {
+// AddEntry add mir's entry list.
+func AddEntry(entries ...any) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	mirEntries = append(mirEntries, entry)
+	addEntries(entries...)
 }
 
-// AddEntries add mir's entry list
-func AddEntries(entries ...interface{}) {
+// AddEntries add mir's entry list.
+// Deprecated use AddEntry(...) instead.
+func AddEntries(entries ...any) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -36,7 +37,7 @@ func AddEntries(entries ...interface{}) {
 }
 
 // Generate generate interface code from mir's iface entry
-func Generate(opts core.Options, entries ...interface{}) (err error) {
+func Generate(opts core.Options, entries ...any) (err error) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -73,11 +74,11 @@ func Generate(opts core.Options, entries ...interface{}) (err error) {
 	return err
 }
 
-func addEntries(entries ...interface{}) {
+func addEntries(entries ...any) {
 	mirEntries = append(mirEntries, entries...)
 }
 
-func doInSerial(p core.Parser, g core.Generator, entries []interface{}) error {
+func doInSerial(p core.Parser, g core.Generator, entries []any) error {
 	descriptors, err := p.Parse(entries)
 	if err == nil {
 		return g.Generate(descriptors)
@@ -85,7 +86,7 @@ func doInSerial(p core.Parser, g core.Generator, entries []interface{}) error {
 	return err
 }
 
-func doInConcurrent(p core.Parser, g core.Generator, entries []interface{}) error {
+func doInConcurrent(p core.Parser, g core.Generator, entries []any) error {
 	numCPU := runtime.NumCPU()
 	runtime.GOMAXPROCS(numCPU)
 	core.Logus("set GOMAXPROCS: %d", numCPU)

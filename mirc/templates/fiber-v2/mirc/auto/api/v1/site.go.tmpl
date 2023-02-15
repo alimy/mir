@@ -12,7 +12,7 @@ import (
 
 type Site interface {
 	// Chain provide handlers chain for fiber
-	Chain() []interface{}
+	Chain() []any
 
 	Articles() mir.Error
 	Index() mir.Error
@@ -56,8 +56,8 @@ func RegisterSiteServant(app *fiber.App, s Site, r SiteRender) {
 type UnimplementedSiteServant struct {
 }
 
-func (UnimplementedSiteServant) Chain() []interface{} {
-	return []interface{}{logger.New()}
+func (UnimplementedSiteServant) Chain() []any {
+	return []any{logger.New()}
 }
 
 func (UnimplementedSiteServant) Articles() mir.Error {

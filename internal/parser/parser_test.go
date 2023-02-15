@@ -63,7 +63,7 @@ type siteV2 struct {
 func TestMirParser_Parse(t *testing.T) {
 	p := &mirParser{tagName: defaultTag}
 
-	entries := []interface{}{
+	entries := []any{
 		new(site),
 		new(siteV1),
 		new(siteV2),

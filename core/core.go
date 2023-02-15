@@ -123,8 +123,8 @@ func (f optFunc) apply(opts *InitOpts) {
 type Parser interface {
 	Name() string
 	Init(opts *ParserOpts) error
-	Parse(entries []interface{}) (Descriptors, error)
-	ParseContext(ctx MirCtx, entries []interface{})
+	Parse(entries []any) (Descriptors, error)
+	ParseContext(ctx MirCtx, entries []any)
 	Clone() Parser
 }
 
@@ -274,7 +274,7 @@ func DefaultParser() Parser {
 }
 
 // Logus print log info
-func Logus(format string, v ...interface{}) {
+func Logus(format string, v ...any) {
 	if inDebug {
 		log.Printf("[mir] "+format, v...)
 	}

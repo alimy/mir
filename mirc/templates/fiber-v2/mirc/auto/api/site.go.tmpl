@@ -56,7 +56,7 @@ type Tweet struct {
 
 type Site interface {
 	// Chain provide handlers chain for fiber
-	Chain() []interface{}
+	Chain() []any
 
 	Logout(*LogoutReq) mir.Error
 	Login(*LoginReq) (*LoginResp, mir.Error)
@@ -160,8 +160,8 @@ func RegisterSiteServant(app *fiber.App, s Site, b SiteBinding, r SiteRender) {
 type UnimplementedSiteServant struct {
 }
 
-func (UnimplementedSiteServant) Chain() []interface{} {
-	return []interface{}{logger.New()}
+func (UnimplementedSiteServant) Chain() []any {
+	return []any{logger.New()}
 }
 
 func (UnimplementedSiteServant) Logout(req *LogoutReq) mir.Error {

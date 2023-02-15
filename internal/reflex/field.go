@@ -263,7 +263,7 @@ func (r *reflex) inflateQuery(qs string) []string {
 }
 
 // valueByName return field value by field name
-func (r *reflex) valueByName(value reflect.Value, name string) interface{} {
+func (r *reflex) valueByName(value reflect.Value, name string) any {
 	if fieldValue := value.FieldByName(name); !fieldValue.IsNil() {
 		return fieldValue.Elem().Interface()
 	}

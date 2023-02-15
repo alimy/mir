@@ -18,7 +18,7 @@ import (
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for fiber
-    {{.Chain}}() []interface{}
+    {{.Chain}}() []any
 {{end}}
 {{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
 {{end}}
@@ -91,8 +91,8 @@ type {{$unimplementedServant}} struct {
 }
 
 {{if notEmptyStr .Chain }}
-func ({{$unimplementedServant}}){{.Chain}}() []interface{} {
-    return []interface{}{middleware.Logger()}
+func ({{$unimplementedServant}}){{.Chain}}() []any {
+    return []any{middleware.Logger()}
 }
 
 {{end}}

@@ -23,7 +23,7 @@ type reflex struct {
 
 // Parse get Descriptors from parse entries
 // Notice: Descriptors may be an empty if no actual item and is not routine safe
-func (r *reflex) Parse(entries []interface{}) (core.Descriptors, error) {
+func (r *reflex) Parse(entries []any) (core.Descriptors, error) {
 	ds := make(core.Descriptors)
 	for _, entry := range entries {
 		iface, err := r.IfaceFrom(entry)
@@ -41,7 +41,7 @@ func (r *reflex) Parse(entries []interface{}) (core.Descriptors, error) {
 	return ds, nil
 }
 
-func (r *reflex) IfaceFrom(entry interface{}) (*core.IfaceDescriptor, error) {
+func (r *reflex) IfaceFrom(entry any) (*core.IfaceDescriptor, error) {
 	// used to find tagInfo
 	entryType := reflect.TypeOf(entry)
 	if entryType == nil {
