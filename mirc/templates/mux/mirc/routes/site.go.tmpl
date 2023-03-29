@@ -55,7 +55,7 @@ type Tweet struct {
 
 // Site site interface info
 type Site struct {
-	Chain      Chain                                       `mir:"-"`
+	Chain      `mir:"-"`
 	Index      func(Get)                                   `mir:"/index/"`
 	Articles   func(Get)                                   `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
 	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`

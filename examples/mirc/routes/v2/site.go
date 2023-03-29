@@ -54,7 +54,7 @@ type Tweet struct {
 
 // Site site v2 interface info
 type Site struct {
-	Group      Group                                       `mir:"v2"`
+	Group      `mir:"v2"`
 	Index      func(Get)                                   `mir:"/index/"`
 	Articles   func(Get)                                   `mir:"/articles/:category/"`
 	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`

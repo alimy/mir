@@ -46,9 +46,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, r SiteRender) {
 
 			r.RenderArticles(c, s.Articles())
 		}
-		router.Handle("GET", "/articles/:category/", h)
 		router.Handle("HEAD", "/articles/:category/", h)
 		router.Handle("POST", "/articles/:category/", h)
+		router.Handle("GET", "/articles/:category/", h)
 	}
 
 	router.Handle("GET", "/index/", func(c *gin.Context) {
