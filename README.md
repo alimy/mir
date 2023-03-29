@@ -86,8 +86,8 @@ type LoginResp struct {
 
 // User user interface info
 type User struct {
-	Chain  Chain                          `mir:"-"`
-	Group  Group                          `mir:"v1"`
+	Chain      `mir:"-"`
+	Group      `mir:"v1"`
 	Login  func(Post, LoginReq) LoginResp `mir:"/login/"`
 	Logout func(Post)                     `mir:"/logout/"`
 }
