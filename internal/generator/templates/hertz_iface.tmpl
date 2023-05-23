@@ -34,6 +34,14 @@ type {{.TypeName}}Binding interface {
 	mustEmbedUnimplemented{{.TypeName}}Binding()
 }
 {{end}}
+{{if .IsUseFieldChain }}
+type {{.TypeName}}Chain interface {
+{{range .ChainFields }}    Chain{{.MethodName}}() []app.HandlerFunc
+{{end}}
+
+	mustEmbedUnimplemented{{.TypeName}}Chain()
+}
+{{end}}
 
 type {{.TypeName}}Render interface {
 {{range .Fields}}    {{if notEmptyStr .OutName }}Render{{.MethodName}}(*app.RequestContext, *{{ .OutName }}, mir.Error){{else}}Render{{.MethodName}}(*app.RequestContext, mir.Error){{end}}
@@ -43,14 +51,14 @@ type {{.TypeName}}Render interface {
 }
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to hertz
-func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
+func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render{{if .IsUseFieldChain }},  c {{.TypeName}}Chain{{end}}) {
 {{if notEmptyStr .Group }}    router := e.Group("{{.Group}}"){{else}}    router := e{{end}}
 {{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", func(c context.Context, ctx *app.RequestContext) {{if $.WatchCtxDone }}{
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", {{if .IsFieldChain }}append(c.Chain{{.MethodName}}(), {{end}}func(c context.Context, ctx *app.RequestContext) {{if $.WatchCtxDone }}{
 		select {
 		case <- c.Done():
 			return
@@ -65,8 +73,8 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBin
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
 		r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}()){{end}}{{end}}
-	})
-	{{else if .JustHttpAny}}    router.Any("{{.Path}}", func(c context.Context, ctx *app.RequestContext) {{if $.WatchCtxDone }}{
+	}{{if .IsFieldChain }})...{{end}})
+	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(c.Chain{{.MethodName}}(), {{end}}func(c context.Context, ctx *app.RequestContext) {{if $.WatchCtxDone }}{
 		select {
 		case <- c.Done():
 			return
@@ -81,9 +89,9 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBin
 		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
 		r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}()){{end}}{{end}}
-	})
+	}{{if .IsFieldChain }})...{{end}})
 	{{else}}{{$field := .}}    {
-        	h := func(c context.Context, ctx *app.RequestContext) {{if $.WatchCtxDone }}{
+        	h := {{if .IsFieldChain }}append(c.Chain{{.MethodName}}(), {{end}}func(c context.Context, ctx *app.RequestContext) {{if $.WatchCtxDone }}{
 			select {
 			case <- c.Done():
 				return
@@ -98,8 +106,8 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseBin
 		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
 		    r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
 		    r.Render{{.MethodName}}(ctx, resp, err){{else}}r.Render{{.MethodName}}(ctx, s.{{.MethodName}}()){{end}}{{end}}
-	    }
-		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h)
+	    }{{if .IsFieldChain }}){{end}}
+		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})
 		{{end}}    }
 	{{end}}
 {{end}}}
@@ -151,4 +159,17 @@ type {{$unimplementedBinding}} struct {
 {{end}}
 {{end}}
 func (b *{{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
+{{end}}
+{{if .IsUseFieldChain }}
+{{ $unimplementedChain := print "Unimplemented" .TypeName "Chain" }}
+// {{$unimplementedChain}} can be embedded to have forward compatible implementations.
+type {{$unimplementedChain}} struct {
+}
+
+{{range .Fields}}{{if .IsFieldChain }}func (b *{{$unimplementedChain}}) Chain{{.MethodName}}() []app.HandlerFunc {
+	return nil
+}
+{{end}}
+{{end}}
+func (b *{{$unimplementedChain}})mustEmbedUnimplemented{{.TypeName}}Chain() {}
 {{end}}
