@@ -3,7 +3,7 @@ module github.com/alimy/mir-example/v3
 go 1.18
 
 require (
-	github.com/alimy/mir/v3 v3.2.0
+	github.com/alimy/mir/v3 v3.2.1
 	github.com/gin-gonic/gin v1.9.0
 )
 
