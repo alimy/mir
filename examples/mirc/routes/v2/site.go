@@ -55,10 +55,10 @@ type Tweet struct {
 // Site site v2 interface info
 type Site struct {
 	Group      `mir:"v2"`
-	Index      func(Get)                                   `mir:"/index/"`
+	Index      func(Get, Chain)                            `mir:"/index/"`
 	Articles   func(Get)                                   `mir:"/articles/:category/"`
-	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`
-	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev"`
+	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next/"`
+	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev/"`
 	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
 	Logout     func(Post)                                  `mir:"/user/logout/"`
 }

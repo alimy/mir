@@ -38,21 +38,22 @@ func (e tagError) Error() string {
 
 // tagInfo indicate mir tag information in struct tag string
 type tagInfo struct {
-	isAnyMethod bool                // isAnyMethod indicate whether method is Any
-	methods     utils.HttpMethodSet // method indicate methods information in struct tag string
-	host        string              // host indicate host information in struct tag string
-	path        string              // path indicate path information in struct tag string
-	queries     []string            // queries indicate path information in struct tag string
-	isGroup     bool                // indicate whether a group field
-	isChain     bool                // indicate whether a chain field
-	group       string              // indicate group information in struct tag string
-	chainFunc   string              // indicate chain function information in struct tag string
-	handler     string              // indicate handler information in struct tag string
-	fieldName   string              // indicate field name
-	in          reflect.Type
-	out         reflect.Type
-	inOuts      []reflect.Type
-	comment     string // indicate comment info (not support now)
+	isAnyMethod  bool                // isAnyMethod indicate whether method is Any
+	isFieldChain bool                // isFieldChain indicate whether method is need field chain
+	methods      utils.HttpMethodSet // method indicate methods information in struct tag string
+	host         string              // host indicate host information in struct tag string
+	path         string              // path indicate path information in struct tag string
+	queries      []string            // queries indicate path information in struct tag string
+	isGroup      bool                // indicate whether a group field
+	isChain      bool                // indicate whether a chain field
+	group        string              // indicate group information in struct tag string
+	chainFunc    string              // indicate chain function information in struct tag string
+	handler      string              // indicate handler information in struct tag string
+	fieldName    string              // indicate field name
+	in           reflect.Type
+	out          reflect.Type
+	inOuts       []reflect.Type
+	comment      string // indicate comment info (not support now)
 }
 
 // tagInfoFrom build tagInfo from field
@@ -96,53 +97,61 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 		ft := field.Type
 		numIn := ft.NumIn()
 		numOut := ft.NumOut()
-		if numIn == 0 || numOut > 1 {
-			return nil, errors.New("func field must need one least argument and one most return value")
+		if numOut > 1 {
+			return nil, errors.New("func field just need one most return value")
 		}
+		if numIn > 0 {
+			// request type in latest in argument if declared
+			it := ft.In(numIn - 1)
+			if it.Kind() == reflect.Struct {
+				cts, err := CheckStruct(it, pkgPath)
+				if err != nil {
+					return nil, err
+				}
+				info.in = it
+				info.inOuts = append(info.inOuts, cts...)
 
-		// request type in latest in argument if declared
-		it := ft.In(numIn - 1)
-		if it.Kind() == reflect.Struct {
-			cts, err := CheckStruct(it, pkgPath)
-			if err != nil {
-				return nil, err
+				// minus numIn to ignore latest in argument that had processed
+				numIn--
 			}
-			info.in = it
-			info.inOuts = append(info.inOuts, cts...)
 
-			// minus numIn to ignore latest in argument that had processed
-			numIn--
+			// process other in argument
+			for i := numIn - 1; i >= 0; i-- {
+				it = ft.In(i)
+				if it.PkgPath() != mirPkgName {
+					continue
+				}
+				switch it.Name() {
+				case "Get":
+					info.methods.Add(mir.MethodGet)
+				case "Put":
+					info.methods.Add(mir.MethodPut)
+				case "Post":
+					info.methods.Add(mir.MethodPost)
+				case "Delete":
+					info.methods.Add(mir.MethodDelete)
+				case "Head":
+					info.methods.Add(mir.MethodHead)
+				case "Options":
+					info.methods.Add(mir.MethodOptions)
+				case "Patch":
+					info.methods.Add(mir.MethodPatch)
+				case "Trace":
+					info.methods.Add(mir.MethodTrace)
+				case "Connect":
+					info.methods.Add(mir.MethodConnect)
+				case "Any":
+					info.isAnyMethod = true
+					info.methods.Add(mir.HttpMethods...)
+				case "Chain":
+					info.isFieldChain = true
+				}
+			}
 		}
-
-		// process other in argument
-		for i := numIn - 1; i >= 0; i-- {
-			it = ft.In(i)
-			if it.PkgPath() != mirPkgName {
-				continue
-			}
-			switch it.Name() {
-			case "Get":
-				info.methods.Add(mir.MethodGet)
-			case "Put":
-				info.methods.Add(mir.MethodPut)
-			case "Post":
-				info.methods.Add(mir.MethodPost)
-			case "Delete":
-				info.methods.Add(mir.MethodDelete)
-			case "Head":
-				info.methods.Add(mir.MethodHead)
-			case "Options":
-				info.methods.Add(mir.MethodOptions)
-			case "Patch":
-				info.methods.Add(mir.MethodPatch)
-			case "Trace":
-				info.methods.Add(mir.MethodTrace)
-			case "Connect":
-				info.methods.Add(mir.MethodConnect)
-			case "Any":
-				info.isAnyMethod = true
-				info.methods.Add(mir.HttpMethods...)
-			}
+		// process special case for not set methods
+		if len(info.methods) == 0 {
+			info.isAnyMethod = true
+			info.methods.Add(mir.HttpMethods...)
 		}
 		if numOut == 1 {
 			ot := ft.Out(i)

@@ -15,7 +15,7 @@ import (
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "v3.1.1",
+		MirVer: "v3.2.0",
 	}
 )
 
@@ -32,18 +32,19 @@ type VersionInfo struct {
 
 // FieldDescriptor field Descriptor info
 type FieldDescriptor struct {
-	Imports     map[string]string
-	PkgPath     string
-	Host        string
-	Path        string
-	Queries     []string
-	HttpMethods []string
-	IsAnyMethod bool
-	In          reflect.Type
-	Out         reflect.Type
-	InOuts      []reflect.Type
-	MethodName  string
-	Comment     string // not support now so always empty
+	Imports      map[string]string
+	PkgPath      string
+	Host         string
+	Path         string
+	Queries      []string
+	HttpMethods  []string
+	IsAnyMethod  bool
+	IsFieldChain bool
+	In           reflect.Type
+	Out          reflect.Type
+	InOuts       []reflect.Type
+	MethodName   string
+	Comment      string // not support now so always empty
 }
 
 // IfaceDescriptor interface Descriptor info
@@ -181,6 +182,26 @@ func (d *IfaceDescriptor) AllInOuts() []reflect.Type {
 		}
 	}
 	return inouts
+}
+
+// ChainFields return field chains
+func (d *IfaceDescriptor) ChainFields() (fields []*FieldDescriptor) {
+	for _, f := range d.Fields {
+		if f.IsFieldChain {
+			fields = append(fields, f)
+		}
+	}
+	return
+}
+
+// IsUseFieldChain whether use field chain
+func (d *IfaceDescriptor) IsUseFieldChain() bool {
+	for _, f := range d.Fields {
+		if f.IsFieldChain {
+			return true
+		}
+	}
+	return false
 }
 
 // IsUseBinding return whether use binding interface

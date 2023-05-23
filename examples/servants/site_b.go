@@ -8,32 +8,40 @@ import (
 	api "github.com/alimy/mir-example/v3/mirc/auto/api/v2"
 )
 
-type siteV2Srv struct {
+type siteSrvB struct {
 	api.UnimplementedSiteServant
 }
 
-type siteV2Binding struct {
+type siteChainB struct {
+	api.UnimplementedSiteChain
+}
+
+type siteBindingB struct {
 	*api.UnimplementedSiteBinding
 }
 
-type siteV2Render struct {
+type siteRenderB struct {
 	*api.UnimplementedSiteRender
 }
 
-func newSiteV2Srv() api.Site {
-	return &siteV2Srv{}
+func newSiteSrvB() api.Site {
+	return &siteSrvB{}
 }
 
-func newSiteV2Binding() api.SiteBinding {
-	return &siteV2Binding{
+func newSiteChainB() api.SiteChain {
+	return &siteChainB{}
+}
+
+func newSiteBindingB() api.SiteBinding {
+	return &siteBindingB{
 		UnimplementedSiteBinding: &api.UnimplementedSiteBinding{
 			BindAny: bindAny,
 		},
 	}
 }
 
-func newSiteV2Render() api.SiteRender {
-	return &siteV2Render{
+func newSiteRenderB() api.SiteRender {
+	return &siteRenderB{
 		UnimplementedSiteRender: &api.UnimplementedSiteRender{
 			RenderAny: renderAny,
 		},

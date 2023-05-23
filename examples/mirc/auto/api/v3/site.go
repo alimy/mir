@@ -2,7 +2,7 @@
 // versions:
 // - mir v3.2.0
 
-package v2
+package v3
 
 import (
 	"net/http"
@@ -69,12 +69,6 @@ type SiteBinding interface {
 	mustEmbedUnimplementedSiteBinding()
 }
 
-type SiteChain interface {
-	ChainIndex() gin.HandlersChain
-
-	mustEmbedUnimplementedSiteChain()
-}
-
 type SiteRender interface {
 	RenderLogout(*gin.Context, mir.Error)
 	RenderLogin(*gin.Context, *LoginResp, mir.Error)
@@ -87,8 +81,8 @@ type SiteRender interface {
 }
 
 // RegisterSiteServant register Site servant to gin
-func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender, c SiteChain) {
-	router := e.Group("v2")
+func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender) {
+	router := e.Group("v3")
 
 	// register routes info to router
 	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
@@ -164,7 +158,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender, c S
 		r.RenderArticles(c, s.Articles())
 	})
 
-	router.Handle("GET", "/index/", append(c.ChainIndex(), func(c *gin.Context) {
+	router.Handle("GET", "/index/", func(c *gin.Context) {
 		select {
 		case <-c.Request.Context().Done():
 			return
@@ -172,7 +166,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, b SiteBinding, r SiteRender, c S
 		}
 
 		r.RenderIndex(c, s.Index())
-	})...)
+	})
 
 }
 
@@ -261,13 +255,3 @@ func (b *UnimplementedSiteBinding) BindNextTweets(c *gin.Context) (*TweetsReq, m
 }
 
 func (b *UnimplementedSiteBinding) mustEmbedUnimplementedSiteBinding() {}
-
-// UnimplementedSiteChain can be embedded to have forward compatible implementations.
-type UnimplementedSiteChain struct {
-}
-
-func (b *UnimplementedSiteChain) ChainIndex() gin.HandlersChain {
-	return nil
-}
-
-func (b *UnimplementedSiteChain) mustEmbedUnimplementedSiteChain() {}

@@ -2,7 +2,7 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package routes
+package v3
 
 import (
 	. "github.com/alimy/mir/v3"
@@ -32,11 +32,6 @@ type LoginReq struct {
 	Passwd    string    `json:"passwd"`
 }
 
-type LogoutReq struct {
-	AgentInfo AgentInfo `json:"agent_info"`
-	Name      string    `json:"name"`
-}
-
 type LoginResp struct {
 	UserInfo
 	ServerInfo ServerInfo `json:"server_info"`
@@ -57,14 +52,13 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
-// Site site interface info
+// Site site v3 interface info
 type Site struct {
-	Chain      `mir:"-"`
-	Index      func(Get, Chain)                            `mir:"/index/"`
+	Group      `mir:"v3"`
+	Index      func(Get)                                   `mir:"/index/"`
 	Articles   func(Get)                                   `mir:"/articles/:category/"`
-	AnyTopics  func()                                      `mir:"/topics/"`
 	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next/"`
 	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev/"`
 	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
-	Logout     func(Post, LogoutReq)                       `mir:"/user/logout/"`
+	Logout     func(Post)                                  `mir:"/user/logout/"`
 }

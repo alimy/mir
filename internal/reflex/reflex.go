@@ -131,16 +131,17 @@ func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *t
 // fieldFrom build tagField from entry and tagInfo
 func (r *reflex) fieldFrom(t *tagInfo, pkgPath string) *core.FieldDescriptor {
 	return &core.FieldDescriptor{
-		PkgPath:     pkgPath,
-		IsAnyMethod: t.isAnyMethod,
-		HttpMethods: t.methods.List(),
-		In:          t.in,
-		Out:         t.out,
-		InOuts:      t.inOuts,
-		Host:        t.host,
-		Path:        t.path,
-		Queries:     t.queries,
-		MethodName:  t.fieldName,
+		PkgPath:      pkgPath,
+		IsAnyMethod:  t.isAnyMethod,
+		IsFieldChain: t.isFieldChain,
+		HttpMethods:  t.methods.List(),
+		In:           t.in,
+		Out:          t.out,
+		InOuts:       t.inOuts,
+		Host:         t.host,
+		Path:         t.path,
+		Queries:      t.queries,
+		MethodName:   t.fieldName,
 	}
 }
 

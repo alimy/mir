@@ -142,10 +142,11 @@ type User struct {
             }
             ``` 
         * `func(...)...` 表示接口的方法定义；函数中的参数与返回值有着特殊意义:  
-            * 函数至少有一个参数，可以有多个参数；
-            * 函数参数的类型限定为 `mir.(Get/Put/Post/Delete/Head/Patch/Trace/Connect/Options/Any)`类型、Go `struct`类型；
+            * 函数可以有多个参数，也可无参数，无参数时表示将这个接口注册为所有HTTP Method handler;
+            * 函数参数的类型限定为 `mir.(Get/Put/Post/Delete/Head/Patch/Trace/Connect/Options/Any/Chain)`类型、Go `struct`类型；
             * Go `struct`类型作为函数参数只能放置在最后一个参数位置，表示接口需要这个`struct`类型表示的参数类型的从http request中Binding后的结果对象作为请求参数；
             * 函数参数中的非最后一个参数，可以有多个，类型限定为`mir.(Get/Put/Post/Delete/Head/Patch/Trace/Connect/Options/Any)`类型；表示的意思是这个接口将注册为相应的HTTP Method handler，比如`mir.Post`表示将这个接口注册为 HTTP Method 为`POST` 的handler `router.Handle("POST", "/login/", func(...){...})`; `mir.Any` 表示将这个接口注册为所有HTTP Method handler;
+			* 函数参数中如果有`Chain`表示这个接口有自定义的HTTP引擎中间件的方法，比如gin引擎的`gin.HandlersChain`，会与接口一起注册，目前仅支持`gin`引擎；
             * 函数返回值至多只有一个，可以没有，也可以有一个，限定类型为Go `struct`类型；
             * 函数中的最后一个参数和返回值，如果有的话，限定类型为Go `struct`类型，并且可以说与接口定义的同一个包中的结构体，也可以是其他包中的结构体； 
 
