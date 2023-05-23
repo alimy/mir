@@ -3,7 +3,7 @@ module github.com/alimy/mir-example/v3
 go 1.18
 
 require (
-	github.com/alimy/mir/v3 v3.1.1
+	github.com/alimy/mir/v3 v3.2.0
 	github.com/gin-gonic/gin v1.9.0
 )
 
@@ -31,8 +31,4 @@ require (
 	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-)
-
-replace (
-	github.com/alimy/mir/v3 => ../
 )
