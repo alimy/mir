@@ -98,7 +98,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}
@@ -139,7 +139,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}
@@ -181,7 +181,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}

@@ -11,6 +11,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type _binding_ interface {
+	Bind(*gin.Context) mir.Error
+}
+
+type _render_ interface {
+	Render(*gin.Context)
+}
+
+type _default_ interface {
+	Bind(*gin.Context, any) mir.Error
+	Render(*gin.Context, any, mir.Error)
+}
+
 type Site interface {
 	_default_
 

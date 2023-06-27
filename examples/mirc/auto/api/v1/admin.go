@@ -11,19 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type _binding_ interface {
-	Bind(*gin.Context) mir.Error
-}
-
-type _render_ interface {
-	Render(*gin.Context)
-}
-
-type _default_ interface {
-	Bind(*gin.Context, any) mir.Error
-	Render(*gin.Context, any, mir.Error)
-}
-
 type Admin interface {
 	_default_
 
@@ -79,9 +66,9 @@ func RegisterAdminServant(e *gin.Engine, s Admin, m ...AdminChain) {
 
 			s.Render(c, nil, s.Teams())
 		})
-		router.Handle("HEAD", "/teams/:category/", h...)
 		router.Handle("POST", "/teams/:category/", h...)
 		router.Handle("GET", "/teams/:category/", h...)
+		router.Handle("HEAD", "/teams/:category/", h...)
 	}
 	router.Handle("DELETE", "/user/", append(cc.ChainDelUser(), func(c *gin.Context) {
 		select {

@@ -130,7 +130,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}
@@ -164,14 +164,14 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 				return
 			}
 			if rv, ok := obj.(_render_); !ok {
-				s.Render(c, obj, err)
+				s.Render(c, obj, nil)
 			} else {
 				rv.Render(c)
 			}
 		}
+		router.Handle("POST", "/tweets/prev/", h)
 		router.Handle("HEAD", "/tweets/prev/", h)
 		router.Handle("GET", "/tweets/prev/", h)
-		router.Handle("POST", "/tweets/prev/", h)
 	}
 	router.Any("/tweets/next/", func(c *gin.Context) {
 		select {
@@ -201,7 +201,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}

@@ -158,7 +158,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}
@@ -192,7 +192,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 				return
 			}
 			if rv, ok := obj.(_render_); !ok {
-				s.Render(c, obj, err)
+				s.Render(c, obj, nil)
 			} else {
 				rv.Render(c)
 			}
@@ -229,7 +229,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		}
 		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
+			s.Render(c, obj, nil)
 		} else {
 			rv.Render(c)
 		}
