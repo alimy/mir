@@ -103,10 +103,10 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 		)
 		req := new(LoginReq)
 		obj = req
-		if obj, ok := obj.(_binding_); !ok {
+		if bv, ok := obj.(_binding_); !ok {
 			err = s.Bind(c, req)
 		} else {
-			err = obj.Bind(c)
+			err = bv.Bind(c)
 		}
 		if err != nil {
 			s.Render(c, nil, err)
@@ -117,10 +117,10 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 			s.Render(c, nil, err)
 			return
 		}
-		if obj, ok := obj.(_render_); !ok {
+		if rv, ok := obj.(_render_); !ok {
 			s.Render(c, obj, err)
 		} else {
-			obj.Render(c)
+			rv.Render(c)
 		}
 	})
 	{
@@ -137,10 +137,10 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 			)
 			req := new(TweetsReq)
 			obj = req
-			if obj, ok := obj.(_binding_); !ok {
+			if bv, ok := obj.(_binding_); !ok {
 				err = s.Bind(c, req)
 			} else {
-				err = obj.Bind(c)
+				err = bv.Bind(c)
 			}
 			if err != nil {
 				s.Render(c, nil, err)
@@ -151,15 +151,15 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 				s.Render(c, nil, err)
 				return
 			}
-			if obj, ok := obj.(_render_); !ok {
+			if rv, ok := obj.(_render_); !ok {
 				s.Render(c, obj, err)
 			} else {
-				obj.Render(c)
+				rv.Render(c)
 			}
 		}
+		router.Handle("POST", "/tweets/prev/", h)
 		router.Handle("HEAD", "/tweets/prev/", h)
 		router.Handle("GET", "/tweets/prev/", h)
-		router.Handle("POST", "/tweets/prev/", h)
 	}
 	router.Any("/tweets/next/", func(c *gin.Context) {
 		select {
@@ -174,10 +174,10 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 		)
 		req := new(TweetsReq)
 		obj = req
-		if obj, ok := obj.(_binding_); !ok {
+		if bv, ok := obj.(_binding_); !ok {
 			err = s.Bind(c, req)
 		} else {
-			err = obj.Bind(c)
+			err = bv.Bind(c)
 		}
 		if err != nil {
 			s.Render(c, nil, err)
@@ -188,10 +188,10 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 			s.Render(c, nil, err)
 			return
 		}
-		if obj, ok := obj.(_render_); !ok {
+		if rv, ok := obj.(_render_); !ok {
 			s.Render(c, obj, err)
 		} else {
-			obj.Render(c)
+			rv.Render(c)
 		}
 	})
 	router.Handle("GET", "/articles/:category/", func(c *gin.Context) {

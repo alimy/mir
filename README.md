@@ -165,10 +165,10 @@ func RegisterUserServant(e *gin.Engine, s User) {
 		)
 		req := new(LoginReq)
 		obj = req
-		if obj, ok := obj.(_binding_); !ok {
+		if bv, ok := obj.(_binding_); !ok {
 			err = s.Bind(c, req)
 		} else {
-			err = obj.Bind(c)
+			err = bv.Bind(c)
 		}
 		if err != nil {
 			s.Render(c, nil, err)
@@ -179,10 +179,10 @@ func RegisterUserServant(e *gin.Engine, s User) {
 			s.Render(c, nil, err)
 			return
 		}
-		if obj, ok := obj.(_render_); !ok {
+		if rv, ok := obj.(_render_); !ok {
 			s.Render(c, obj, err)
 		} else {
-			obj.Render(c)
+			rv.Render(c)
 		}
 	})
 	router.Handle("POST", "/logout/", func(c *gin.Context) {

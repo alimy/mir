@@ -81,10 +81,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		{{if notEmptyStr .InName -}}
 		req := new({{.InName}})
 		obj = req
-		if obj, ok := obj.(_binding_); !ok {
+		if bv, ok := obj.(_binding_); !ok {
 			err = s.Bind(c, req)
 		} else {
-			err = obj.Bind(c)
+			err = bv.Bind(c)
 		}
 		if err != nil {
 			s.Render(c, nil, err)
@@ -97,10 +97,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			s.Render(c, nil, err)
 			return
 		}
-		if obj, ok := obj.(_render_); !ok {
+		if rv, ok := obj.(_render_); !ok {
 			s.Render(c, obj, err)
 		} else {
-			obj.Render(c)
+			rv.Render(c)
 		}
 		{{- else }}
 		s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
@@ -122,10 +122,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		{{if notEmptyStr .InName -}}
 		req := new({{.InName}})
 		obj = req
-		if obj, ok := obj.(_binding_); !ok {
+		if bv, ok := obj.(_binding_); !ok {
 			err = s.Bind(c, req)
 		} else {
-			err = obj.Bind(c)
+			err = bv.Bind(c)
 		}
 		if err != nil {
 			s.Render(c, nil, err)
@@ -138,10 +138,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			s.Render(c, nil, err)
 			return
 		}
-		if obj, ok := obj.(_render_); !ok {
+		if rv, ok := obj.(_render_); !ok {
 			s.Render(c, obj, err)
 		} else {
-			obj.Render(c)
+			rv.Render(c)
 		}
 		{{- else }}
 		s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
@@ -164,10 +164,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		{{if notEmptyStr .InName -}}
 		req := new({{.InName}})
 		obj = req
-		if obj, ok := obj.(_binding_); !ok {
+		if bv, ok := obj.(_binding_); !ok {
 			err = s.Bind(c, req)
 		} else {
-			err = obj.Bind(c)
+			err = bv.Bind(c)
 		}
 		if err != nil {
 			s.Render(c, nil, err)
@@ -180,10 +180,10 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			s.Render(c, nil, err)
 			return
 		}
-		if obj, ok := obj.(_render_); !ok {
+		if rv, ok := obj.(_render_); !ok {
 			s.Render(c, obj, err)
 		} else {
-			obj.Render(c)
+			rv.Render(c)
 		}
 		{{- else }}
 		s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
