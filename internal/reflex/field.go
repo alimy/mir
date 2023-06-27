@@ -10,8 +10,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v3"
-	"github.com/alimy/mir/v3/internal/utils"
+	"github.com/alimy/mir/v4"
+	"github.com/alimy/mir/v4/internal/utils"
 )
 
 var (
@@ -25,7 +25,7 @@ var (
 )
 
 const (
-	mirPkgName = "github.com/alimy/mir/v3"
+	mirPkgName = "github.com/alimy/mir/v4"
 )
 
 // tagError indicate error information

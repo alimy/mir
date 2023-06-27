@@ -7,7 +7,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v3"
+    "github.com/alimy/mir/v4"
     {{if notEmptyStr .EngineInfo.PkgName }}echo "{{ .EngineInfo.PkgName }}{{else}}"github.com/labstack/echo/v4{{end}}"
 	{{ declareImports .Imports }}
 )

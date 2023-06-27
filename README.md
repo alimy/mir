@@ -1,6 +1,6 @@
 ## Mir
 [![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
-[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v3)
+[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
 [![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
 Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端开发脚手架，适配多种HTTP框架，包括 [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
@@ -67,8 +67,8 @@ example
 package routes
 
 import (
-	. "github.com/alimy/mir/v3"
-	. "github.com/alimy/mir/v3/engine"
+	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4/engine"
 )
 
 func init() {
@@ -106,7 +106,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v3"
+	"github.com/alimy/mir/v4"
 	"github.com/gin-gonic/gin"
 )
 
@@ -230,7 +230,7 @@ func (r *UnimplementedUserRender) mustEmbedUnimplementedUserRender() {}
 package servants
 
 import (
-	"github.com/alimy/mir-example/v3/mirc/auto/api"
+	"github.com/alimy/mir-example/v4/mirc/auto/api"
 )
 
 type userSrv struct {
@@ -288,7 +288,7 @@ func renderAny(c *gin.Context, data any, err mir.Error) {
 package servants
 
 import (
-	"github.com/alimy/mir-example/v3/mirc/auto/api"
+	"github.com/alimy/mir-example/v4/mirc/auto/api"
 	"github.com/gin-gonic/gin"
 )
 
@@ -309,7 +309,7 @@ package main
 import (
 	"log"
 
-	"github.com/alimy/mir-example/v3/servants"
+	"github.com/alimy/mir-example/v4/servants"
 	"github.com/gin-gonic/gin"
 )
 

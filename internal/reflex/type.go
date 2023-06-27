@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v3/internal/utils"
+	"github.com/alimy/mir/v4/internal/utils"
 )
 
 // CheckStruct check struct type is in pkgPath and return other struct type field's

@@ -10,13 +10,13 @@ package main
 import (
 	"log"
 
-	. "github.com/alimy/mir/v3/core"
-	. "github.com/alimy/mir/v3/engine"
+	. "github.com/alimy/mir/v4/core"
+	. "github.com/alimy/mir/v4/engine"
 
-	_ "github.com/alimy/mir-example/v3/mirc/routes"
-	_ "github.com/alimy/mir-example/v3/mirc/routes/v1"
-	_ "github.com/alimy/mir-example/v3/mirc/routes/v2"
-	_ "github.com/alimy/mir-example/v3/mirc/routes/v3"
+	_ "github.com/alimy/mir-example/v4/mirc/routes"
+	_ "github.com/alimy/mir-example/v4/mirc/routes/v1"
+	_ "github.com/alimy/mir-example/v4/mirc/routes/v2"
+	_ "github.com/alimy/mir-example/v4/mirc/routes/v3"
 )
 
 //go:generate go run $GOFILE

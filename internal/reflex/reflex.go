@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v3/core"
-	"github.com/alimy/mir/v3/internal/naming"
+	"github.com/alimy/mir/v4/core"
+	"github.com/alimy/mir/v4/internal/naming"
 )
 
 // reflex real parser

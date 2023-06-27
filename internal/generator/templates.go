@@ -12,9 +12,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/alimy/mir/v3/core"
-	"github.com/alimy/mir/v3/internal/reflex"
-	"github.com/alimy/mir/v3/internal/utils"
+	"github.com/alimy/mir/v4/core"
+	"github.com/alimy/mir/v4/internal/reflex"
+	"github.com/alimy/mir/v4/internal/utils"
 )
 
 //go:embed templates

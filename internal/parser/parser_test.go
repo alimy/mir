@@ -7,7 +7,7 @@ package parser
 import (
 	"testing"
 
-	. "github.com/alimy/mir/v3"
+	. "github.com/alimy/mir/v4"
 )
 
 type AgentInfo struct {

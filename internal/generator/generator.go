@@ -13,9 +13,9 @@ import (
 	"sync"
 	"text/template"
 
-	"github.com/alimy/mir/v3/core"
-	"github.com/alimy/mir/v3/internal/naming"
-	"github.com/alimy/mir/v3/internal/utils"
+	"github.com/alimy/mir/v4/core"
+	"github.com/alimy/mir/v4/internal/naming"
+	"github.com/alimy/mir/v4/internal/utils"
 )
 
 func init() {
@@ -183,6 +183,7 @@ FuckErr:
 			break
 		}
 		filter := utils.NewStrSet()
+		hadDecribeCoreInterface := false
 		for _, iface := range ifaces {
 			var inouts []reflect.Type
 			for _, typ := range iface.AllInOuts() {
@@ -195,6 +196,10 @@ FuckErr:
 				}
 			}
 			iface.SetInnerInOuts(inouts)
+			if !hadDecribeCoreInterface {
+				hadDecribeCoreInterface = true
+				iface.SetDeclareCoreInterface(true)
+			}
 			if err = writer.Write(dirPath, iface); err != nil {
 				break FuckErr
 			}

@@ -5,15 +5,15 @@
 package servants
 
 import (
-	api "github.com/alimy/mir-example/v4/mirc/auto/api/v2"
+	api "github.com/alimy/mir-example/v4/mirc/auto/api/v1"
 )
 
-type siteSrvB struct {
+type adminSrvA struct {
 	baseSrv
 
-	api.UnimplementedSiteServant
+	api.UnimplementedAdminServant
 }
 
-func newSiteSrvB() api.Site {
-	return &siteSrvB{}
+func newAdminSrvA() api.Admin {
+	return &adminSrvA{}
 }

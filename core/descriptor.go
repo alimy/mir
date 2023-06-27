@@ -10,12 +10,12 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v3/internal/utils"
+	"github.com/alimy/mir/v4/internal/utils"
 )
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "v3.2.1",
+		MirVer: "v4.0.0",
 	}
 )
 
@@ -49,18 +49,19 @@ type FieldDescriptor struct {
 
 // IfaceDescriptor interface Descriptor info
 type IfaceDescriptor struct {
-	Group        string
-	Chain        string
-	Imports      map[string]string
-	PkgPath      string
-	PkgName      string
-	TypeName     string
-	Comment      string // not support now so always empty
-	InOuts       []reflect.Type
-	Fields       []*FieldDescriptor
-	EngineInfo   *EngineInfo
-	VerInfo      *VersionInfo
-	WatchCtxDone bool
+	Group                string
+	Chain                string
+	Imports              map[string]string
+	PkgPath              string
+	PkgName              string
+	TypeName             string
+	Comment              string // not support now so always empty
+	InOuts               []reflect.Type
+	Fields               []*FieldDescriptor
+	EngineInfo           *EngineInfo
+	VerInfo              *VersionInfo
+	WatchCtxDone         bool
+	DeclareCoreInterface bool // whether need to declare core interface, default is false
 }
 
 // IfaceDescriptors interface Descriptor map {TypeName:*IfaceDescriptor}
@@ -122,6 +123,11 @@ func (d Descriptors) keyFrom(s string) string {
 // SetPkgName set package name
 func (d *IfaceDescriptor) SetPkgName(name string) {
 	d.PkgName = name
+}
+
+// SetDeclareCoreInterface set declare core interface value
+func (d *IfaceDescriptor) SetDeclareCoreInterface(isNeed bool) {
+	d.DeclareCoreInterface = isNeed
 }
 
 // SetInnerInOuts set inner InOuts for defined
@@ -250,6 +256,11 @@ func (f *FieldDescriptor) AnyHttpMethods() []string {
 // HttpMethodArgs return http method as argument like "POST","GET","HEAD"
 func (f *FieldDescriptor) HttpMethodArgs() string {
 	return utils.QuoteJoin(f.HttpMethods, ",")
+}
+
+// OrInOut in or out
+func (f *FieldDescriptor) OrInOut() bool {
+	return f.In != nil || f.Out != nil
 }
 
 // InName return In type name

@@ -61,8 +61,8 @@ example
 package routes
 
 import (
-	. "github.com/alimy/mir/v3"
-	. "github.com/alimy/mir/v3/engine"
+	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4/engine"
 )
 
 func init() {
@@ -197,7 +197,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v3"
+	"github.com/alimy/mir/v4"
 	"github.com/gin-gonic/gin"
 )
 
@@ -321,7 +321,7 @@ func (r UnimplementedUserRender) mustEmbedUnimplementedUserRender() {}
 package servants
 
 import (
-	"github.com/alimy/mir-example/v3/mirc/auto/api"
+	"github.com/alimy/mir-example/v4/mirc/auto/api"
 )
 
 type userSrv struct {
@@ -379,7 +379,7 @@ func renderAny(c *gin.Context, data any, err mir.Error) {
 package servants
 
 import (
-	"github.com/alimy/mir-example/v3/mirc/auto/api"
+	"github.com/alimy/mir-example/v4/mirc/auto/api"
 	"github.com/gin-gonic/gin"
 )
 

@@ -8,7 +8,7 @@ import (
 	"context"
     "net/http"
 
-    "github.com/alimy/mir/v3"
+    "github.com/alimy/mir/v4"
     "{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/cloudwego/hertz{{end}}/pkg/app"
 	"{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}{{else}}github.com/cloudwego/hertz{{end}}/pkg/route"
 	{{ declareImports .Imports }}

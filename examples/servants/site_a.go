@@ -5,10 +5,12 @@
 package servants
 
 import (
-	api "github.com/alimy/mir-example/v3/mirc/auto/api/v1"
+	api "github.com/alimy/mir-example/v4/mirc/auto/api/v1"
 )
 
 type siteSrvA struct {
+	baseSrv
+
 	api.UnimplementedSiteServant
 }
 
@@ -16,20 +18,8 @@ type siteChainA struct {
 	api.UnimplementedSiteChain
 }
 
-type siteRenderA struct {
-	*api.UnimplementedSiteRender
-}
-
 func newSiteSrvA() api.Site {
 	return &siteSrvA{}
-}
-
-func newSiteRenderA() api.SiteRender {
-	return &siteRenderA{
-		UnimplementedSiteRender: &api.UnimplementedSiteRender{
-			RenderAny: renderAny,
-		},
-	}
 }
 
 func newSiteChainA() api.SiteChain {

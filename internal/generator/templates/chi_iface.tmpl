@@ -7,7 +7,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v3"
+    "github.com/alimy/mir/v4"
     {{if notEmptyStr .EngineInfo.PkgName }}chi "{{ .EngineInfo.PkgName }}{{else}}"github.com/go-chi/chi/v5{{end}}"
 	{{ declareImports .Imports }}
 )
