@@ -66,9 +66,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 
 			s.Render(c, nil, s.Articles())
 		})
+		router.Handle("HEAD", "/articles/:category/", h...)
 		router.Handle("POST", "/articles/:category/", h...)
 		router.Handle("GET", "/articles/:category/", h...)
-		router.Handle("HEAD", "/articles/:category/", h...)
 	}
 	router.Any("/topics/", append(cc.ChainAnyTopics(), func(c *gin.Context) {
 		select {

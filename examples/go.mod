@@ -4,14 +4,11 @@ go 1.18
 
 require (
 	github.com/alimy/mir/engine/gin/v4 v4.0.0
-	github.com/alimy/mir/v4 v4.0.0
+	github.com/alimy/mir/v4 v4.0.0-alpha.4
 	github.com/gin-gonic/gin v1.9.1
 )
 
-replace (
-	github.com/alimy/mir/engine/gin/v4 => ../engine/gin
-	github.com/alimy/mir/v4 => ../
-)
+replace github.com/alimy/mir/engine/gin/v4 => ../engine/gin
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
