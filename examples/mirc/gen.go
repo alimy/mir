@@ -17,6 +17,7 @@ import (
 	_ "github.com/alimy/mir-example/v4/mirc/routes/v1"
 	_ "github.com/alimy/mir-example/v4/mirc/routes/v2"
 	_ "github.com/alimy/mir-example/v4/mirc/routes/v3"
+	_ "github.com/alimy/mir/engine/gin/v4"
 )
 
 //go:generate go run $GOFILE

@@ -2,18 +2,12 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package routes
+package model
 
 import (
 	"github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
 	"github.com/gin-gonic/gin"
 )
-
-func init() {
-	AddEntry(new(Site))
-}
 
 type AgentInfo struct {
 	Platform  string `json:"platform"`
@@ -32,11 +26,6 @@ type LoginReq struct {
 	AgentInfo AgentInfo `json:"agent_info"`
 	Name      string    `json:"name"`
 	Passwd    string    `json:"passwd"`
-}
-
-type LogoutReq struct {
-	AgentInfo AgentInfo `json:"agent_info"`
-	Name      string    `json:"name"`
 }
 
 type LoginResp struct {
@@ -59,7 +48,6 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
-// Bind custom binding but not effect because defined in sampe packge with servant interface
 func (r *LoginReq) Bind(c *gin.Context) mir.Error {
 	err := c.ShouldBind(r)
 	if err != nil {
@@ -68,19 +56,6 @@ func (r *LoginReq) Bind(c *gin.Context) mir.Error {
 	return nil
 }
 
-// Bind custom render but not effect because defined in sampe packge with servant interface
 func (r *LoginResp) Render(c *gin.Context) {
 	c.String(200, "login success")
-}
-
-// Site site interface info
-type Site struct {
-	Chain      `mir:"-"`
-	Index      func(Get, Chain)                            `mir:"/index/"`
-	Articles   func(Get)                                   `mir:"/articles/:category/"`
-	AnyTopics  func()                                      `mir:"/topics/"`
-	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next/"`
-	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev/"`
-	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
-	Logout     func(Post, LogoutReq)                       `mir:"/user/logout/"`
 }

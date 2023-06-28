@@ -40,6 +40,8 @@ type FieldDescriptor struct {
 	HttpMethods  []string
 	IsAnyMethod  bool
 	IsFieldChain bool
+	IsBindIn     bool
+	IsRenderOut  bool
 	In           reflect.Type
 	Out          reflect.Type
 	InOuts       []reflect.Type

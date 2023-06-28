@@ -135,6 +135,8 @@ func (r *reflex) fieldFrom(t *tagInfo, pkgPath string) *core.FieldDescriptor {
 		IsAnyMethod:  t.isAnyMethod,
 		IsFieldChain: t.isFieldChain,
 		HttpMethods:  t.methods.List(),
+		IsBindIn:     t.isBindIn,
+		IsRenderOut:  t.isRenderOut,
 		In:           t.in,
 		Out:          t.out,
 		InOuts:       t.inOuts,

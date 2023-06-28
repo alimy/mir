@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/alimy/mir/mirc/v3/version"
+	"github.com/alimy/mir/mirc/v4/version"
 	"github.com/spf13/cobra"
 )
 

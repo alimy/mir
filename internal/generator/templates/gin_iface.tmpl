@@ -72,39 +72,33 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		default:
 		}
 {{else}}{ {{end}}
-	{{if .OrInOut -}}
-		var (
-			obj any
-			err mir.Error
-		)
-		{{- end }}
-		{{if notEmptyStr .InName -}}
-		req := new({{.InName}})
-		obj = req
-		if bv, ok := obj.(_binding_); !ok {
-			err = s.Bind(c, req)
-		} else {
-			err = bv.Bind(c)
-		}
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		{{- end }}
-		{{if notEmptyStr .OutName -}}
-		obj, err = s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, nil)
-		} else {
-			rv.Render(c)
-		}
-		{{- else }}
-		s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
-		{{- end }}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	}{{if .IsFieldChain }})...{{end}})
 	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c *gin.Context) {{if $.WatchCtxDone }}{
 		select {
@@ -113,39 +107,33 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		default:
 		}
 {{else}}{ {{end}}
-	{{if .OrInOut -}}
-		var (
-			obj any
-			err mir.Error
-		)
-		{{- end }}
-		{{if notEmptyStr .InName -}}
-		req := new({{.InName}})
-		obj = req
-		if bv, ok := obj.(_binding_); !ok {
-			err = s.Bind(c, req)
-		} else {
-			err = bv.Bind(c)
-		}
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		{{- end }}
-		{{if notEmptyStr .OutName -}}
-		obj, err = s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, nil)
-		} else {
-			rv.Render(c)
-		}
-		{{- else }}
-		s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
-		{{- end }}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	}{{if .IsFieldChain }})...{{end}})
 	{{else}}{{$field := .}}    {
         	h := {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c *gin.Context) {{if $.WatchCtxDone }}{
@@ -155,42 +143,36 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			default:
 			}
 {{else}}{ {{end}}
-	{{if .OrInOut -}}
-		var (
-			obj any
-			err mir.Error
-		)
-		{{- end }}
-		{{if notEmptyStr .InName -}}
-		req := new({{.InName}})
-		obj = req
-		if bv, ok := obj.(_binding_); !ok {
-			err = s.Bind(c, req)
-		} else {
-			err = bv.Bind(c)
-		}
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		{{- end }}
-		{{if notEmptyStr .OutName -}}
-		obj, err = s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, nil)
-		} else {
-			rv.Render(c)
-		}
-		{{- else }}
-		s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
-		{{- end }}
-	    }{{if .IsFieldChain }}){{end}}
-		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})
-		{{end}}    }
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
+	}{{if .IsFieldChain }}){{end}}
+	{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})
+	{{end}}    }
 	{{end}}
 {{- end -}}
 }

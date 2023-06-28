@@ -1,4 +1,4 @@
-module github.com/alimy/mir/mirc/v3
+module github.com/alimy/mir/mirc/v4
 
 go 1.16
 
