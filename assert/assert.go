@@ -4,9 +4,26 @@
 
 package assert
 
-var (
-	_typeAssertor TypeAssertor = fakeTypeAssertor{}
+import (
+	"github.com/alimy/mir/v4"
 )
+
+var (
+	_typeAssertor TypeAssertor = anyTypeAssertor[fakeType]{}
+)
+
+// fakeType just a fake type for default type assertor
+type fakeType struct{}
+
+// Binding[T] binding interface for custom T context
+type Binding[T any] interface {
+	Bind(T) mir.Error
+}
+
+// Render[T] render interface for custom T context
+type Render[T any] interface {
+	Render(T)
+}
 
 // TypeAssertor type assert for Binding and Render interface
 type TypeAssertor interface {
@@ -17,6 +34,11 @@ type TypeAssertor interface {
 // Register register custom TypeAssertor to assert Binding/Render interface
 func Register(ta TypeAssertor) {
 	_typeAssertor = ta
+}
+
+// RegisterType register custom TypeAssertor to assert Binding[T]/Render[T] interface
+func RegisterType[T any]() {
+	_typeAssertor = anyTypeAssertor[T]{}
 }
 
 // AssertBinding assert Binding interface for obj
