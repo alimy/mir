@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	assert.Register(typeAssortor{})
+	assert.Register(typeAssertor{})
 }
 
 type Binding interface {
@@ -22,14 +22,14 @@ type Render interface {
 	Render(*gin.Context)
 }
 
-type typeAssortor struct{}
+type typeAssertor struct{}
 
-func (typeAssortor) AssertBinding(obj any) bool {
+func (typeAssertor) AssertBinding(obj any) bool {
 	_, ok := obj.(Binding)
 	return ok
 }
 
-func (typeAssortor) AssertRender(obj any) bool {
+func (typeAssertor) AssertRender(obj any) bool {
 	_, ok := obj.(Render)
 	return ok
 }
