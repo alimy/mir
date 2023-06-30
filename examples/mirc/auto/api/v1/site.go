@@ -11,6 +11,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type _binding_ interface {
+	Bind(*gin.Context) mir.Error
+}
+
+type _render_ interface {
+	Render(*gin.Context)
+}
+
+type _default_ interface {
+	Bind(*gin.Context, any) mir.Error
+	Render(*gin.Context, any, mir.Error)
+}
+
 type Site interface {
 	_default_
 
@@ -66,9 +79,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 
 			s.Render(c, nil, s.Articles())
 		})
-		router.Handle("POST", "/articles/:category/", h...)
 		router.Handle("GET", "/articles/:category/", h...)
 		router.Handle("HEAD", "/articles/:category/", h...)
+		router.Handle("POST", "/articles/:category/", h...)
 	}
 	router.Any("/topics/", append(cc.ChainAnyTopics(), func(c *gin.Context) {
 		select {

@@ -11,26 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type _binding_ interface {
-	Bind(*gin.Context) mir.Error
-}
-
-type _render_ interface {
-	Render(*gin.Context)
-}
-
-type _default_ interface {
-	Bind(*gin.Context, any) mir.Error
-	Render(*gin.Context, any, mir.Error)
-}
-
 type Admin interface {
 	_default_
 
 	// Chain provide handlers chain for gin
 	Chain() gin.HandlersChain
 
-	quit() mir.Error
+	Quit() mir.Error
 	Teams() mir.Error
 	DelUser() mir.Error
 	User() mir.Error
@@ -67,7 +54,7 @@ func RegisterAdminServant(e *gin.Engine, s Admin, m ...AdminChain) {
 		default:
 		}
 
-		s.Render(c, nil, s.quit())
+		s.Render(c, nil, s.Quit())
 	})
 	{
 		h := append(cc.ChainTeams(), func(c *gin.Context) {
@@ -110,7 +97,7 @@ func (UnimplementedAdminServant) Chain() gin.HandlersChain {
 	return nil
 }
 
-func (UnimplementedAdminServant) quit() mir.Error {
+func (UnimplementedAdminServant) Quit() mir.Error {
 	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 

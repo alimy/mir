@@ -27,13 +27,12 @@ func AddEntry(entries ...any) {
 	addEntries(entries...)
 }
 
-// AddEntries add mir's entry list.
-// Deprecated use AddEntry(...) instead.
-func AddEntries(entries ...any) {
+// Entry add mir's entry by a type
+func Entry[T any]() {
 	mu.Lock()
 	defer mu.Unlock()
 
-	addEntries(entries...)
+	addEntries(new(T))
 }
 
 // Generate generate interface code from mir's iface entry

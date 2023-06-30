@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 // Site site v3 interface info

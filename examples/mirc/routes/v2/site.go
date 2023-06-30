@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 type AgentInfo struct {

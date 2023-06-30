@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 type AgentInfo struct {
@@ -59,7 +59,7 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
-// Bind custom binding but not effect because defined in sampe packge with servant interface
+// Bind custom binding but not effect because defined in sampe package with servant interface
 func (r *LoginReq) Bind(c *gin.Context) mir.Error {
 	err := c.ShouldBind(r)
 	if err != nil {
@@ -68,7 +68,7 @@ func (r *LoginReq) Bind(c *gin.Context) mir.Error {
 	return nil
 }
 
-// Bind custom render but not effect because defined in sampe packge with servant interface
+// Bind custom render but not effect because defined in sampe package with servant interface
 func (r *LoginResp) Render(c *gin.Context) {
 	c.String(200, "login success")
 }
