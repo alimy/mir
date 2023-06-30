@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - 'v3'
+      - 'v4'
     paths:
       - '**.go'
       - 'go.mod'
