@@ -138,8 +138,8 @@ type User interface {
 	// Chain provide handlers chain for gin
 	Chain() gin.HandlersChain
 
-	Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error)
-	Logout(c *gin.Context) mir.Error
+	Login(*gin.Context, *LoginReq) (*LoginResp, mir.Error)
+	Logout(*gin.Context) mir.Error
 
 	mustEmbedUnimplementedUserServant()
 }
@@ -162,32 +162,13 @@ func RegisterUserServant(e *gin.Engine, s User) {
 			return
 		default:
 		}
-
-		var (
-			obj any
-			err mir.Error
-		)
 		req := new(LoginReq)
-		obj = req
-		if bv, ok := obj.(_binding_); !ok {
-			err = s.Bind(c, req)
-		} else {
-			err = bv.Bind(c)
-		}
-		if err != nil {
+		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)
 			return
 		}
-		obj, err = s.Login(req)
-		if err != nil {
-			s.Render(c, nil, err)
-			return
-		}
-		if rv, ok := obj.(_render_); !ok {
-			s.Render(c, obj, err)
-		} else {
-			rv.Render(c)
-		}
+		resp, err := s.Login(req)
+		s.Render(c, resp, err)
 	})
 	router.Handle("POST", "/logout/", func(c *gin.Context) {
 		select {
@@ -196,7 +177,7 @@ func RegisterUserServant(e *gin.Engine, s User) {
 		default:
 		}
 		
-		r.RenderLogout(c, s.Logout(c))
+		r.Render(c, nil, s.Logout(c))
 	})
 }
 
