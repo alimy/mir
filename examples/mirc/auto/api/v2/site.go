@@ -108,7 +108,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		default:
 		}
-
 		req := new(LoginReq)
 		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)
@@ -124,7 +123,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 				return
 			default:
 			}
-
 			req := new(TweetsReq)
 			if err := s.Bind(c, req); err != nil {
 				s.Render(c, nil, err)
@@ -133,9 +131,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			resp, err := s.PrevTweets(req)
 			s.Render(c, resp, err)
 		}
-		router.Handle("POST", "/tweets/prev/", h)
 		router.Handle("HEAD", "/tweets/prev/", h)
 		router.Handle("GET", "/tweets/prev/", h)
+		router.Handle("POST", "/tweets/prev/", h)
 	}
 	router.Any("/tweets/next/", func(c *gin.Context) {
 		select {
@@ -143,7 +141,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		default:
 		}
-
 		req := new(TweetsReq)
 		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)

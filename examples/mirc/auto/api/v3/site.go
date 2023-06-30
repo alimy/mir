@@ -58,7 +58,6 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 			return
 		default:
 		}
-
 		req := new(model.LoginReq)
 		var bv _binding_ = req
 		if err := bv.Bind(c); err != nil {
@@ -80,7 +79,6 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 				return
 			default:
 			}
-
 			req := new(model.TweetsReq)
 			if err := s.Bind(c, req); err != nil {
 				s.Render(c, nil, err)
@@ -99,7 +97,6 @@ func RegisterSiteServant(e *gin.Engine, s Site) {
 			return
 		default:
 		}
-
 		req := new(model.TweetsReq)
 		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)

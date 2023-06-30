@@ -111,7 +111,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		default:
 		}
-
 		req := new(LogoutReq)
 		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)
@@ -125,7 +124,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		default:
 		}
-
 		req := new(LoginReq)
 		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)
@@ -141,7 +139,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 				return
 			default:
 			}
-
 			req := new(TweetsReq)
 			if err := s.Bind(c, req); err != nil {
 				s.Render(c, nil, err)
@@ -160,7 +157,6 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			return
 		default:
 		}
-
 		req := new(TweetsReq)
 		if err := s.Bind(c, req); err != nil {
 			s.Render(c, nil, err)

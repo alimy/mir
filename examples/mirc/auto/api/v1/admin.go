@@ -79,9 +79,9 @@ func RegisterAdminServant(e *gin.Engine, s Admin, m ...AdminChain) {
 
 			s.Render(c, nil, s.Teams())
 		})
-		router.Handle("POST", "/teams/:category/", h...)
 		router.Handle("GET", "/teams/:category/", h...)
 		router.Handle("HEAD", "/teams/:category/", h...)
+		router.Handle("POST", "/teams/:category/", h...)
 	}
 	router.Handle("DELETE", "/user/", append(cc.ChainDelUser(), func(c *gin.Context) {
 		select {
