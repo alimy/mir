@@ -7,6 +7,9 @@ package assert
 // anyTypeAssertor a common type assert for type T
 type anyTypeAssertor[T any] struct{}
 
+// anyTypeAssertor2 a common type assert for type B(Binding) and R(Render)
+type anyTypeAssertor2[B, R any] struct{}
+
 func (anyTypeAssertor[T]) AssertBinding(obj any) bool {
 	_, ok := obj.(Binding[T])
 	return ok
@@ -14,5 +17,15 @@ func (anyTypeAssertor[T]) AssertBinding(obj any) bool {
 
 func (anyTypeAssertor[T]) AssertRender(obj any) bool {
 	_, ok := obj.(Render[T])
+	return ok
+}
+
+func (anyTypeAssertor2[B, R]) AssertBinding(obj any) bool {
+	_, ok := obj.(Binding[B])
+	return ok
+}
+
+func (anyTypeAssertor2[B, R]) AssertRender(obj any) bool {
+	_, ok := obj.(Render[R])
 	return ok
 }

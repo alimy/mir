@@ -36,9 +36,14 @@ func Register(ta TypeAssertor) {
 	_typeAssertor = ta
 }
 
-// RegisterType register custom TypeAssertor to assert Binding[T]/Render[T] interface
+// RegisterType[T] register custom TypeAssertor to assert Binding[T]/Render[T] interface
 func RegisterType[T any]() {
 	_typeAssertor = anyTypeAssertor[T]{}
+}
+
+// RegisterType2[B, R] register custom TypeAssertor to assert Binding[B]/Render[R] interface
+func RegisterType2[B, R any]() {
+	_typeAssertor = anyTypeAssertor2[B, R]{}
 }
 
 // AssertBinding assert Binding interface for obj
