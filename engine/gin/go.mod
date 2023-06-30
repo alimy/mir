@@ -3,7 +3,7 @@ module github.com/alimy/mir/engine/gin/v4
 go 1.18
 
 require (
-	github.com/alimy/mir/v4 v4.0.0-alpha.4
+	github.com/alimy/mir/v4 v4.0.0-alpha.5
 	github.com/gin-gonic/gin v1.9.1
 )
 
