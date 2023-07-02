@@ -3,77 +3,284 @@ title: 介绍
 type: docs
 ---
 
-# 中文索引页
+[![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
+[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
+[![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
 
-{{< columns >}}
-## Astris ipse furtiva
+Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端开发脚手架，适配多种HTTP框架，包括 [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
 
-Est in vagis et Pittheus tu arge accipiter regia iram vocatur nurus. Omnes ut
-olivae sensit **arma sorori** deducit, inesset **crudus**, ego vetuere aliis,
-modo arsit? Utinam rapta fiducia valuere litora _adicit cursu_, ad facies
+ ![](/mir/images/mir-arc.png) 
 
-<--->
+ ## 使用说明
+* 生成样板项目
+```bash
+% go install github.com/alimy/mir/mirc/v3@latest
+% mirc new -h
+create template project
 
-## Suis quot vota
+Usage:
+  mirc new [flags]
 
-Ea _furtique_ risere fratres edidit terrae magis. Colla tam mihi tenebat:
-miseram excita suadent es pecudes iam. Concilio _quam_ velatus posset ait quod
-nunc! Fragosis suae dextra geruntur functus vulgata.
-{{< /columns >}}
+Flags:
+  -d, --dst string     genereted destination target directory (default ".")
+  -h, --help           help for new
+      --mir string     mir replace package name or place
+  -p, --pkg string     project's package name (default "github.com/alimy/mir-example")
+  -s, --style string   generated engine style eg: gin,chi,mux,hertz,echo,iris,fiber,fiber-v2,macaron,httprouter (default "gin")
 
+% mirc new -d example 
+% tree example
+example
+.
+|-- Makefile
+|-- README.md
+|-- go.mod
+|-- go.sum
+|-- main.go
+|-- mirc
+|   |-- auto
+|   |   `-- api
+|   |       |-- site.go
+|   |       |-- v1
+|   |       |   `-- site.go
+|   |       `-- v2
+|   |           `-- site.go
+|   |-- gen.go
+|   `-- routes
+|       |-- site.go
+|       |-- v1
+|       |   `-- site.go
+|       `-- v2
+|           `-- site.go
+`-- servants
+    |-- core.go
+    |-- servants.go
+    |-- site.go
+    |-- site_v1.go
+    `-- site_v2.go
 
-## Tempora nisi nunc
+% cd example
+% make generate
+% make run
+```
 
-Lorem **markdownum** emicat gestu. Cannis sol pressit ducta. **Est** Idaei,
-tremens ausim se tutaeque, illi ulnis hausit, sed, lumina cutem. Quae avis
-sequens!
+* RESTful接口定义:
+```go
+// file: mirc/routes.go
 
-    var panel = ram_design;
-    if (backup + system) {
-        file.readPoint = network_native;
-        sidebar_engine_device(cell_tftp_raster,
-                dual_login_paper.adf_vci.application_reader_design(
-                graphicsNvramCdma, lpi_footer_snmp, integer_model));
-    }
-    public_keyboard_docking += error.controller_gibibyte_plug.ip(4,
-            asciiPetaflops, software(supercomputer_compatible_status + 4));
-    dynamic_disk.indexModeLaptop = bufferTftpReality;
-    var export_vlog_sequence = trinitron_flowchart + supercomputer_cluster_rj(
-            -1, toolbar_powerpoint_query, -2 / multiprocessing_impression);
+package routes
 
-## Locis suis novi cum suoque decidit eadem
+import (
+	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4/engine"
+)
 
-Idmoniae ripis, at aves, ali missa adest, ut _et autem_, et ab? Venit spes
-versus finis sermonibus patefecit murum nec est sine oculis. _Ille_ inmota
-macies domoque caelestia cadit tantummodo scelus procul, corde!
+func init() {
+	AddEntry(new(User))
+}
 
-1. Dolentem capi parte rostro alvum habentem pudor
-2. Fulgentia sanguine paret
-3. E punior consurgit lentus
-4. Vox hasta eras micantes
+type LoginReq struct {
+	Name   string `json:"name"`
+	Passwd string `json:"passwd"`
+}
 
-## Facibus pharetrae indetonsusque indulsit sic incurrite foliis
+type LoginResp struct {
+	JwtToken string `json:"jwt_token"`
+}
 
-Nefandam et prisci palmas! Blandita cutis flectitur montis macies, te _nati_
-Latiis; turbaque inferias. Virginis tibi peracta avidusque facies caper nec, e
-at ademptae, mira.
+// User user interface info
+type User struct {
+	Chain      `mir:"-"`
+	Group      `mir:"v1"`
+	Login  func(Post, LoginReq) LoginResp `mir:"/login/"`
+	Logout func(Post)                     `mir:"/logout/"`
+}
+```
 
-    direct *= font(inputScareware(sliHome), crossplatform.byte(
-            ppl_encryption.excel_e_rte(integratedModelModifier), timeVirtual,
-            floating_speakers.media_printer(us, yahoo, primaryPhp)));
-    friendly_metal_flatbed(cd, isoPrimaryStorage(reader), dmaMirrored);
-    if (parse_flash_cron.metalGif(1, adServiceDevice, utility)) {
-        adf -= operation_cdma_samba;
-        imapGif.switch += torrent;
-    } else {
-        pmu.disk_captcha = digital_ppp_pci + recursionTransistor(5, dram);
-        ajax_service += grayscalePythonLock;
-        google_scroll_capacity = ftp + engine_dslam_sidebar / tape - 1;
-    }
-    drive_rw = zipTftp;
-    var suffix = software_router_extension.dimm_ddr(-5,
-            kernel_digital_minisite);
+* 代码生成:
+```go
+// file: mirc/auto/api/routes.go
 
-Vocavit toto; alas **mitis** maestus in liquidarum ab legi finitimosque dominam
-tibi subitus; Orionis vertitur nota. Currere alti etiam seroque cernitis
-innumeris miraturus amplectique collo sustinet quemque! Litora ante turba?
+// Code generated by go-mir. DO NOT EDIT.
+// versions:
+// - mir v4.0.0
+
+package routes
+
+import (
+	"net/http"
+
+	"github.com/alimy/mir/v4"
+	"github.com/gin-gonic/gin"
+)
+
+type _binding_ interface {
+	Bind(*gin.Context) mir.Error
+}
+
+type _render_ interface {
+	Render(*gin.Context)
+}
+
+type _default_ interface {
+	Bind(*gin.Context, any) mir.Error
+	Render(*gin.Context, any, mir.Error)
+}
+
+type LoginReq struct {
+	Name   string `json:"name"`
+	Passwd string `json:"passwd"`
+}
+
+type LoginResp struct {
+	JwtToken string `json:"jwt_token"`
+}
+
+type User interface {
+	_default_
+
+	// Chain provide handlers chain for gin
+	Chain() gin.HandlersChain
+
+	Login(*gin.Context, *LoginReq) (*LoginResp, mir.Error)
+	Logout(*gin.Context) mir.Error
+
+	mustEmbedUnimplementedUserServant()
+}
+
+// RegisterUserServant register User servant to gin
+func RegisterUserServant(e *gin.Engine, s User) {
+	router := e.Group("v1")
+	// use chain for router
+	middlewares := s.Chain()
+	router.Use(middlewares...)
+
+	// register routes info to router
+	router.Handle("POST", "/login/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		req := new(LoginReq)
+		if err := s.Bind(c, req); err != nil {
+			s.Render(c, nil, err)
+			return
+		}
+		resp, err := s.Login(req)
+		s.Render(c, resp, err)
+	})
+	router.Handle("POST", "/logout/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		
+		s.Render(c, nil, s.Logout(c))
+	})
+}
+
+func (UnimplementedUserServant) Chain() gin.HandlersChain {
+	return nil
+}
+
+func (UnimplementedUserServant) Login(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error) {
+	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+}
+
+func (UnimplementedUserServant) Logout(c *gin.Context) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+}
+
+func (UnimplementedUserServant) mustEmbedUnimplementedUserServant() {}
+```
+
+* 接口实现:   
+```go
+// file: servants/user.go
+
+package servants
+
+import (
+	"github.com/alimy/mir-example/v4/mirc/auto/api"
+	"github.com/alimy/mir/v4"
+	"github.com/gin-gonic/gin"
+)
+
+type baseSrv struct{}
+
+func (baseSrv) Bind(c *gin.Context, obj any) mir.Error {
+	if err := c.ShouldBind(obj); err != nil {
+		mir.NewError(http.StatusBadRequest, err)
+	}
+	return nil
+}
+
+func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
+	if err == nil {
+		c.JSON(http.StatusOK, data)
+	} else {
+		c.JSON(err.StatusCode(), err.Error())
+	}
+}
+
+type userSrv struct {
+	baseSrv
+
+	api.UnimplementedUserServant
+}
+
+func newUserSrv() api.Site {
+	return &userSrv{}
+}
+```
+
+* 服务注册:  
+```go
+// file: servants/servants.go
+
+package servants
+
+import (
+	"github.com/alimy/mir-example/v4/mirc/auto/api"
+	"github.com/gin-gonic/gin"
+)
+
+// RegisterServants register all the servants to gin.Engine
+func RegisterServants(e *gin.Engine) {
+	api.RegisterUserServant(e, newUserSrv())
+	
+	// TODO: some other servant to register
+}
+```
+
+* 程序启动:
+```go
+// file: main.go
+
+package main
+
+import (
+	"log"
+
+	"github.com/alimy/mir-example/v4/servants"
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	e := gin.Default()
+
+	// register servants to gin
+	servants.RegisterServants(e)
+
+	// start servant service
+	if err := e.Run(); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+## 使用go-mir的项目
+ * [examples](examples) - 本项目自带的demo，主要演示了如何使用[Mir](https://github.com/alimy/mir)快速进行RESTful API的后端开发。   
+* [paopao-ce](https://github.com/rocboss/paopao-ce/tree/dev) - 一个清新文艺的微社区，提供类似Twiter/微博的推文分享服务。    
