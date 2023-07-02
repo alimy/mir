@@ -8,10 +8,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/alimy/mir/v3/core"
+	"github.com/alimy/mir/v4/core"
 
-	_ "github.com/alimy/mir/v3/internal/generator"
-	_ "github.com/alimy/mir/v3/internal/parser"
+	_ "github.com/alimy/mir/v4/internal/generator"
+	_ "github.com/alimy/mir/v4/internal/parser"
 )
 
 type mirCtx struct {

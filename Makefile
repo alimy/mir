@@ -16,6 +16,11 @@ build: fmt
 test: fmt misspell vet
 	go test ./...
 
+.PHONY: gen-docs
+gen-docs: 
+	@-rm -rf docs/public
+	@cd docs && higo --minify  --baseURL "https://alimy.me/mir/" && cd -
+
 .PHONY: vet
 vet:
 	go vet ./...

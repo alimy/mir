@@ -7,7 +7,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v3"
+    "github.com/alimy/mir/v4"
     {{if notEmptyStr .EngineInfo.PkgName }}httprouter "{{ .EngineInfo.PkgName }}{{else}}"github.com/julienschmidt/httprouter{{end}}"
 	{{ declareImports .Imports }}
 )

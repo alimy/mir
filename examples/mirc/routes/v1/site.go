@@ -5,12 +5,12 @@
 package v1
 
 import (
-	. "github.com/alimy/mir/v3"
-	. "github.com/alimy/mir/v3/engine"
+	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4/engine"
 )
 
 func init() {
-	AddEntry(new(Site))
+	AddEntry(new(Site), new(Admin))
 }
 
 // Site site v1 interface info
@@ -21,4 +21,14 @@ type Site struct {
 	AnyTopics func(Chain)                  `mir:"/topics/"`
 	Articles  func(Head, Get, Post, Chain) `mir:"/articles/:category/"`
 	Logout    func(Post)                   `mir:"/user/logout/"`
+}
+
+// Admin admin v1 interface info
+type Admin struct {
+	Chain   `mir:"-"`
+	Group   `mir:"v1"`
+	User    func(Get, Chain)             `mir:"/user/"`
+	DelUser func(Delete, Chain)          `mir:"/user/"`
+	Teams   func(Head, Get, Post, Chain) `mir:"/teams/:category/"`
+	Quit    func(Post)                   `mir:"/user/quit/"`
 }

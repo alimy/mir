@@ -5,37 +5,15 @@
 package servants
 
 import (
-	api "github.com/alimy/mir-example/v3/mirc/auto/api/v3"
+	api "github.com/alimy/mir-example/v4/mirc/auto/api/v3"
 )
 
 type siteSrvC struct {
+	baseSrv
+
 	api.UnimplementedSiteServant
-}
-
-type siteBindingC struct {
-	*api.UnimplementedSiteBinding
-}
-
-type siteRenderC struct {
-	*api.UnimplementedSiteRender
 }
 
 func newSiteSrvC() api.Site {
 	return &siteSrvC{}
-}
-
-func newSiteBindingC() api.SiteBinding {
-	return &siteBindingC{
-		UnimplementedSiteBinding: &api.UnimplementedSiteBinding{
-			BindAny: bindAny,
-		},
-	}
-}
-
-func newSiteRenderC() api.SiteRender {
-	return &siteRenderC{
-		UnimplementedSiteRender: &api.UnimplementedSiteRender{
-			RenderAny: renderAny,
-		},
-	}
 }

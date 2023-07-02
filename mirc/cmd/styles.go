@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/alimy/mir/mirc/v3/templates"
+	"github.com/alimy/mir/mirc/v4/templates"
 	"github.com/spf13/cobra"
 )
 

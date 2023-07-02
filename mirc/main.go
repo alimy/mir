@@ -5,7 +5,7 @@
 package main
 
 import (
-	"github.com/alimy/mir/mirc/v3/cmd"
+	"github.com/alimy/mir/mirc/v4/cmd"
 )
 
 func main() {

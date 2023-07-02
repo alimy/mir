@@ -5,12 +5,12 @@
 package v2
 
 import (
-	. "github.com/alimy/mir/v3"
-	. "github.com/alimy/mir/v3/engine"
+	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4/engine"
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 type AgentInfo struct {

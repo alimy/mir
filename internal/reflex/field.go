@@ -10,8 +10,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v3"
-	"github.com/alimy/mir/v3/internal/utils"
+	"github.com/alimy/mir/v4"
+	"github.com/alimy/mir/v4/assert"
+	"github.com/alimy/mir/v4/internal/utils"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 )
 
 const (
-	mirPkgName = "github.com/alimy/mir/v3"
+	mirPkgName = "github.com/alimy/mir/v4"
 )
 
 // tagError indicate error information
@@ -50,6 +51,8 @@ type tagInfo struct {
 	chainFunc    string              // indicate chain function information in struct tag string
 	handler      string              // indicate handler information in struct tag string
 	fieldName    string              // indicate field name
+	isBindIn     bool
+	isRenderOut  bool
 	in           reflect.Type
 	out          reflect.Type
 	inOuts       []reflect.Type
@@ -109,6 +112,9 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 					return nil, err
 				}
 				info.in = it
+				if it.PkgPath() != pkgPath {
+					info.isBindIn = assert.AssertBinding(reflect.New(it).Interface())
+				}
 				info.inOuts = append(info.inOuts, cts...)
 
 				// minus numIn to ignore latest in argument that had processed
@@ -163,6 +169,9 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 				return nil, err
 			}
 			info.out = ot
+			if ot.PkgPath() != pkgPath {
+				info.isRenderOut = assert.AssertRender(reflect.New(ot).Interface())
+			}
 			info.inOuts = append(info.inOuts, cts...)
 		}
 	default:

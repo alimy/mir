@@ -7,6 +7,8 @@ package core
 import (
 	"context"
 	"log"
+
+	"github.com/alimy/mir/v4/assert"
 )
 
 const (
@@ -189,6 +191,20 @@ func ParserName(name string) Option {
 func SinkPath(path string) Option {
 	return optFunc(func(opts *InitOpts) {
 		opts.SinkPath = path
+	})
+}
+
+// AssertType[T] register assert.TypeAssertor for custom T type
+func AssertType[T any]() Option {
+	return optFunc(func(_opts *InitOpts) {
+		assert.RegisterType[T]()
+	})
+}
+
+// AssertType2[B, R] register assert.TypeAssertor for custom B(Binding) and R(Render) type
+func AssertType2[B, R any]() Option {
+	return optFunc(func(_opts *InitOpts) {
+		assert.RegisterType2[B, R]()
 	})
 }
 

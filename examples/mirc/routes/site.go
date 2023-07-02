@@ -5,12 +5,14 @@
 package routes
 
 import (
-	. "github.com/alimy/mir/v3"
-	. "github.com/alimy/mir/v3/engine"
+	"github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v4/engine"
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 type AgentInfo struct {
@@ -55,6 +57,20 @@ type TweetsResp struct {
 type Tweet struct {
 	Type    string `json:"type"`
 	Content string `json:"content"`
+}
+
+// Bind custom binding but not effect because defined in sampe package with servant interface
+func (r *LoginReq) Bind(c *gin.Context) mir.Error {
+	err := c.ShouldBind(r)
+	if err != nil {
+		return mir.NewError(500, err)
+	}
+	return nil
+}
+
+// Bind custom render but not effect because defined in sampe package with servant interface
+func (r *LoginResp) Render(c *gin.Context) {
+	c.String(200, "login success")
 }
 
 // Site site interface info

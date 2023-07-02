@@ -7,7 +7,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v3"
+    "github.com/alimy/mir/v4"
     {{if notEmptyStr .EngineInfo.PkgName }}fiber "{{ .EngineInfo.PkgName }}{{else}}"github.com/gofiber/fiber{{end}}"
 	{{if notEmptyStr .Chain }}"github.com/gofiber/fiber/middleware"{{end}}
 	{{ declareImports .Imports }}

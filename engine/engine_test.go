@@ -13,7 +13,7 @@ func TestGenerate(t *testing.T) {
 		t.Error("want an error but not")
 	}
 	AddEntry(nil)
-	AddEntries(nil, nil)
+	AddEntry(nil, nil)
 	if len(mirEntries) != 4 {
 		t.Errorf("want mirEntries's size is 4 but is %d", len(mirEntries))
 	}
