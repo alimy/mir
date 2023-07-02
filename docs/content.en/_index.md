@@ -3,6 +3,18 @@ title: Introduction
 type: docs
 ---
 
+<div align="center">
+  <a href="https://github.com/alimy/mir">
+    <img src="https://alimy.me/mir/static/images/mir-logo.png" alt="Logo" width="160" height="160">
+  </a>
+
+  <h3 align="center">Mir</h3>
+
+  <p align="center">
+    A cool help tool to develop RESTful API.
+  </p>
+</div>
+
 [![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
 [![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
 [![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
