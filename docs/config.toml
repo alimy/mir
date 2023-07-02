@@ -25,7 +25,7 @@ enableGitInfo = true
 [languages]
 [languages.zh]
   languageCode = "zh"
-  languageName = 'Chinese'
+  languageName = '中文'
   contentDir = 'content.zh'
   title = 'Mir 文档'
   weight = 1
