@@ -3,9 +3,13 @@ title: 介绍
 type: docs
 ---
 
+[![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
+[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
+[![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
+
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/static/images/mir-logo.png" alt="Logo" width="160" height="160">
+    <img src="https://alimy.me/mir/images/mir-logo.png" alt="Logo" width="240" height="240">
   </a>
 
   <h3 align="center">Mir</h3>
@@ -15,13 +19,13 @@ type: docs
   </p>
 </div>
 
-[![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
-[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
-[![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
-
 Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端开发脚手架，适配多种HTTP框架，包括 [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
 
- ![](/mir/images/mir-arc.png) 
+<div align="center">
+  <a href="https://github.com/alimy/mir">
+    <img src="https://alimy.me/mir/images/mir-arc.png">
+  </a>
+</div>
 
  ## 使用说明
 * 生成样板项目

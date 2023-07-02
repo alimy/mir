@@ -1,6 +1,10 @@
+[![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
+[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
+[![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
+
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/static/images/mir-logo.png" alt="Logo" width="160" height="160">
+    <img src="https://alimy.me/mir/images/mir-logo.png" alt="Logo" width="240" height="240">
   </a>
 
   <h3 align="center">Mir</h3>
@@ -10,13 +14,13 @@
   </p>
 </div>
 
-[![Go](https://github.com/alimy/mir/actions/workflows/go.yml/badge.svg)](https://github.com/alimy/mir/actions/workflows/go.yml)
-[![GoDoc](https://godoc.org/github.com/alimy/mir?status.svg)](https://pkg.go.dev/github.com/alimy/mir/v4)
-[![Sourcegraph](https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?logo=sourcegraph)](https://sourcegraph.com/github.com/alimy/mir)
-
 Mir is a toolkit to develop RESTful API backend service like develop service of gRPC. It adapt some HTTP framework sush as [Gin](https://github.com/gin-gonic/gin), [Chi](https://github.com/go-chi/chi), [Hertz](https://github.com/cloudwego/hertz), [Echo](https://github.com/labstack/echo), [Iris](https://github.com/kataras/iris), [Fiber](https://github.com/gofiber/fiber), [Macaron](https://github.com/go-macaron/macaron), [Mux](https://github.com/gorilla/mux), [httprouter](https://github.com/julienschmidt/httprouter)。  
 
- ![](docs/.assets/02.png) 
+<div align="center">
+  <a href="https://github.com/alimy/mir">
+    <img src="https://alimy.me/mir/images/mir-arc.png">
+  </a>
+</div>
  
  ### Tutorials
 * Generate a simple template project
