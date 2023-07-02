@@ -45,9 +45,14 @@ enableGitInfo = true
   weight = 10
 
 [[menu.after]]
+  name = "Alimy's Me"
+  url = "https://alimy.me/"
+  weight = 20
+
+[[menu.after]]
   name = "Hugo Themes"
   url = "https://themes.gohugo.io/hugo-book/"
-  weight = 20
+  weight = 30
 
 [params]
   # (Optional, default light) Sets color theme: light, dark or auto.
