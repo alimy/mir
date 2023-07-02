@@ -19,7 +19,11 @@ test: fmt misspell vet
 .PHONY: gen-docs
 gen-docs: 
 	@-rm -rf docs/public
-	@cd docs && higo --minify  --baseURL "https://alimy.me/mir/" && cd -
+	@cd docs && hugo --minify  --baseURL "https://alimy.me/mir/" && cd -
+
+.PHONY: run-docs
+run-docs: 
+	@cd docs && hugo serve --minify && cd -
 
 .PHONY: vet
 vet:
