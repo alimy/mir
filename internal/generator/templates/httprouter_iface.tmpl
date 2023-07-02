@@ -11,66 +11,107 @@ import (
     {{if notEmptyStr .EngineInfo.PkgName }}httprouter "{{ .EngineInfo.PkgName }}{{else}}"github.com/julienschmidt/httprouter{{end}}"
 	{{ declareImports .Imports }}
 )
+{{- if .DeclareCoreInterface }}
+type _binding_ interface {
+	Bind(*http.Request) mir.Error
+}
+
+type _render_ interface {
+	Render(http.ResponseWriter)
+}
+
+type _default_ interface {
+	Bind(*http.Request, any) mir.Error
+	Render(http.ResponseWriter, any, mir.Error)
+}
+{{- end }}
 
 {{ declareTypes .InOuts .PkgPath .Imports }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
+	_default_
+
 {{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
 }
-{{if .IsUseBinding }}
-type {{.TypeName}}Binding interface {
-{{range .BindingFields }}    Bind{{.MethodName}}(*http.Request, httprouter.Params) (*{{ .InName }}, mir.Error)
-{{end}}
-
-	mustEmbedUnimplemented{{.TypeName}}Binding()
-}
-{{end}}
-
-type {{.TypeName}}Render interface {
-{{range .Fields}}    {{if notEmptyStr .OutName }}Render{{.MethodName}}(http.ResponseWriter, *{{ .OutName }}, mir.Error){{else}}Render{{.MethodName}}(http.ResponseWriter, mir.Error){{end}}
-{{end}}
-	
-	mustEmbedUnimplemented{{.TypeName}}Render()
-}
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
-func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {{if $.WatchCtxDone }}{
+func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+	{{- if $.WatchCtxDone }}
 		select {
 		case <-hr.Context().Done():
 			return
 		default:
 		}
-{{else}}{ {{end}}
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr, p)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
+	{{end -}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(hr); err != nil {
+	{{- else -}}
+	if err := s.Bind(hr, req); err != nil {
+	{{- end }}
+		s.Render(rw, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(rw, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(rw)
+	{{- else -}}
+	s.Render(rw, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(rw, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	})
 	{{else}}{{$field := .}}    {
-        h := func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {{if $.WatchCtxDone }}{
-			select {
-			case <-hr.Context().Done():
-				return
-			default:
-			}
-{{else}}{ {{end}}
-		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(hr, p)
-		    if err != nil {
-			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(rw, nil, err){{else}}r.Render{{.MethodName}}(rw, err){{end}}
-				return
-		    }
-		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		    r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		    r.Render{{.MethodName}}(rw, resp, err){{else}}r.Render{{.MethodName}}(rw, s.{{.MethodName}}()){{end}}{{end}}
+        h := func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+			{{- if $.WatchCtxDone }}
+		select {
+		case <-hr.Context().Done():
+			return
+		default:
+		}
+	{{end -}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(hr); err != nil {
+	{{- else -}}
+	if err := s.Bind(hr, req); err != nil {
+	{{- end }}
+		s.Render(rw, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(rw, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(rw)
+	{{- else -}}
+	s.Render(rw, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(rw, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	    }
 		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{joinPath $.Group $field.Path}}", h)
 		{{end}}    }
@@ -79,8 +120,7 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}{{if
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
 // {{$unimplementedServant}} can be embedded to have forward compatible implementations.
-type {{$unimplementedServant}} struct {
-}
+type {{$unimplementedServant}} struct {}
 
 {{range .Fields}}
 func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
@@ -89,33 +129,3 @@ func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *
 
 {{end}}
 func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}
-
-{{ $unimplementedRender := print "Unimplemented" .TypeName "Render" }}
-// {{$unimplementedRender}} can be embedded to have forward compatible implementations.
-type {{$unimplementedRender}} struct {
-	RenderAny func(http.ResponseWriter, any, mir.Error)
-}
-
-{{range .Fields}}
-func (r *{{$unimplementedRender}}) Render{{.MethodName}}(w http.ResponseWriter{{if notEmptyStr .OutName }}, data *{{ .OutName }}{{end}}, err mir.Error) {
-	{{if notEmptyStr .OutName}}r.RenderAny(w, data, err){{else}}r.RenderAny(w, nil, err){{end}}
-}
-
-{{end}}
-func (r *{{$unimplementedRender}})mustEmbedUnimplemented{{.TypeName}}Render() {}
-{{if .IsUseBinding }}
-{{ $unimplementedBinding := print "Unimplemented" .TypeName "Binding" }}
-// {{$unimplementedBinding}} can be embedded to have forward compatible implementations.
-type {{$unimplementedBinding}} struct {
-	BindAny func(*http.Request, httprouter.Params, any) mir.Error
-}
-
-{{range .Fields}}{{if notEmptyStr .InName }}func (b *{{$unimplementedBinding}}) Bind{{.MethodName}}(r *http.Request, p httprouter.Params) (*{{ .InName }}, mir.Error) {
-	obj := new({{ .InName }})
-	err := b.BindAny(r, p, obj)
-	return obj, err
-}
-{{end}}
-{{end}}
-func (b *{{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
-{{end}}
