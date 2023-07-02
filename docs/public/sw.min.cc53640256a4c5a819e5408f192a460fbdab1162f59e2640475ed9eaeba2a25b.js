@@ -1,1 +1,0 @@
-navigator.serviceWorker&&navigator.serviceWorker.register("/mir/sw.js",{scope:"/"})
