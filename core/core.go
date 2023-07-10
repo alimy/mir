@@ -26,7 +26,6 @@ const (
 	GeneratorEcho       = "echo"
 	GeneratorIris       = "iris"
 	GeneratorFiber      = "fiber"
-	GeneratorFiberV2    = "fiberV2"
 	GeneratorMacaron    = "macaron"
 	GeneratorHttpRouter = "httprouter"
 

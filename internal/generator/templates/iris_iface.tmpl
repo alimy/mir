@@ -12,11 +12,27 @@ import (
 	"{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}/context{{else}}github.com/kataras/iris/v12/context{{end}}"
 	{{ declareImports .Imports }}
 )
+{{- if .DeclareCoreInterface }}
+type _binding_ interface {
+	Bind(*context.Context) mir.Error
+}
+
+type _render_ interface {
+	Render(*context.Context)
+}
+
+type _default_ interface {
+	Bind(*context.Context, any) mir.Error
+	Render(*context.Context, any, mir.Error)
+}
+{{- end }}
 
 {{ declareTypes .InOuts .PkgPath .Imports }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
+	_default_
+
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for iris
     {{.Chain}}() context.Handlers
 {{end}}
@@ -25,14 +41,6 @@ type {{.TypeName}} interface {
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
 }
-{{if .IsUseBinding }}
-type {{.TypeName}}Binding interface {
-{{range .BindingFields }}    Bind{{.MethodName}}(context.Context) (*{{ .InName }}, mir.Error)
-{{end}}
-
-	mustEmbedUnimplemented{{.TypeName}}Binding()
-}
-{{end}}
 {{if .IsUseFieldChain }}
 type {{.TypeName}}Chain interface {
 {{range .ChainFields }}    Chain{{.MethodName}}() context.Handlers
@@ -42,79 +50,138 @@ type {{.TypeName}}Chain interface {
 }
 {{end}}
 
-type {{.TypeName}}Render interface {
-{{range .Fields}}    {{if notEmptyStr .OutName }}Render{{.MethodName}}(context.Context, *{{ .OutName }}, mir.Error){{else}}Render{{.MethodName}}(context.Context, mir.Error){{end}}
-{{end}}
-	
-	mustEmbedUnimplemented{{.TypeName}}Render()
-}
-
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to iris
-func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render{{if .IsUseFieldChain }},  c {{.TypeName}}Chain{{end}}) {
+func Register{{.TypeName}}Servant(app *iris.Application, s {{.TypeName}}{{if .IsUseFieldChain }},  m ...{{.TypeName}}Chain{{end}}) {
+{{- if .IsUseFieldChain -}}
+	var cc {{.TypeName}}Chain
+	if len(m) > 0 {
+		cc = m[0]
+	} else {
+		cc = &Unimplemented{{.TypeName}}Chain{}
+	}
+{{- end}}
 {{if notEmptyStr .Group }}    router := app.Party("{{.Group}}"){{else}}    router := app{{end}}
 {{if notEmptyStr .Chain }}    // use chain for party
     middlewares := s.{{.Chain}}()
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", {{if .IsFieldChain }}append(c.Chain{{.MethodName}}(), {{end}}func(c context.Context) {{if $.WatchCtxDone }}{
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c *context.Context) {
+	{{- if $.WatchCtxDone }}
 		select {
 		case <- c.Request().Context().Done():
 			return
 		default:
 		}
-{{else}}{ {{end}}
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{end -}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	}{{if .IsFieldChain }})...{{end}})
-	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(c.Chain{{.MethodName}}(), {{end}}func(c context.Context) {{if $.WatchCtxDone }}{
+	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c *context.Context) {
+	{{- if $.WatchCtxDone }}
 		select {
 		case <- c.Request().Context().Done():
 			return
 		default:
 		}
-{{else}}{ {{end}}
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
-	}{{if .IsFieldChain }})...{{end}})
+	{{end -}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}	}{{if .IsFieldChain }})...{{end}})
 	{{else}}{{$field := .}}    {
-        h := {{if .IsFieldChain }}append(c.Chain{{.MethodName}}(), {{end}}func(c context.Context) {{if $.WatchCtxDone }}{
-			select {
-			case <- c.Request().Context().Done():
-				return
-			default:
-			}
-{{else}}{ {{end}}
-		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		    if err != nil {
-			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-				return
-		    }
-		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
-	    }{{if .IsFieldChain }}){{end}}
+        h := {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c *context.Context) {
+	{{- if $.WatchCtxDone }}
+		select {
+		case <- c.Request().Context().Done():
+			return
+		default:
+		}
+	{{end -}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}	    }{{if .IsFieldChain }}){{end}}
 		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})
 		{{end}}    }
 	{{end}}
-{{end}}}
+{{- end -}}
+}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
 // {{$unimplementedServant}} can be embedded to have forward compatible implementations.
-type {{$unimplementedServant}} struct {
-}
+type {{$unimplementedServant}} struct {}
 
 {{if notEmptyStr .Chain }}
 func ({{$unimplementedServant}}){{.Chain}}() context.Handlers {
@@ -129,41 +196,10 @@ func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *
 
 {{end}}
 func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}
-
-{{ $unimplementedRender := print "Unimplemented" .TypeName "Render" }}
-// {{$unimplementedRender}} can be embedded to have forward compatible implementations.
-type {{$unimplementedRender}} struct {
-	RenderAny func(context.Context, any, mir.Error)
-}
-
-{{range .Fields}}
-func (r *{{$unimplementedRender}}) Render{{.MethodName}}(c context.Context{{if notEmptyStr .OutName }}, data *{{ .OutName }}{{end}}, err mir.Error) {
-	{{if notEmptyStr .OutName}}r.RenderAny(c, data, err){{else}}r.RenderAny(c, nil, err){{end}}
-}
-
-{{end}}
-func (r *{{$unimplementedRender}})mustEmbedUnimplemented{{.TypeName}}Render() {}
-{{if .IsUseBinding }}
-{{ $unimplementedBinding := print "Unimplemented" .TypeName "Binding" }}
-// {{$unimplementedBinding}} can be embedded to have forward compatible implementations.
-type {{$unimplementedBinding}} struct {
-	BindAny func(context.Context, any) mir.Error
-}
-
-{{range .Fields}}{{if notEmptyStr .InName }}func (b *{{$unimplementedBinding}}) Bind{{.MethodName}}(c context.Context) (*{{ .InName }}, mir.Error) {
-	obj := new({{ .InName }})
-	err := b.BindAny(c, obj)
-	return obj, err
-}
-{{end}}
-{{end}}
-func (b *{{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
-{{end}}
 {{if .IsUseFieldChain }}
 {{ $unimplementedChain := print "Unimplemented" .TypeName "Chain" }}
 // {{$unimplementedChain}} can be embedded to have forward compatible implementations.
-type {{$unimplementedChain}} struct {
-}
+type {{$unimplementedChain}} struct {}
 
 {{range .Fields}}{{if .IsFieldChain }}func (b *{{$unimplementedChain}}) Chain{{.MethodName}}() context.Handlers {
 	return nil

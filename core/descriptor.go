@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/alimy/mir/v4/internal/utils"
@@ -111,6 +112,20 @@ func (d Descriptors) Exist(iface *IfaceDescriptor) bool {
 		return false
 	}
 	return true
+}
+
+// SortedIfaces return sorted Iface slice
+func (d IfaceDescriptors) SortedIfaces() []*IfaceDescriptor {
+	keys := make([]string, 0, len(d))
+	ifaces := make([]*IfaceDescriptor, 0, len(d))
+	for key := range d {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		ifaces = append(ifaces, d[key])
+	}
+	return ifaces
 }
 
 // GroupFrom return group name from key

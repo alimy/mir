@@ -27,7 +27,6 @@ func init() {
 		&mirGenerator{name: core.GeneratorEcho},
 		&mirGenerator{name: core.GeneratorIris},
 		&mirGenerator{name: core.GeneratorFiber},
-		&mirGenerator{name: core.GeneratorFiberV2},
 		&mirGenerator{name: core.GeneratorMacaron},
 		&mirGenerator{name: core.GeneratorHttpRouter},
 	)
@@ -184,7 +183,7 @@ FuckErr:
 		}
 		filter := utils.NewStrSet()
 		hadDecribeCoreInterface := false
-		for _, iface := range ifaces {
+		for _, iface := range ifaces.SortedIfaces() {
 			var inouts []reflect.Type
 			for _, typ := range iface.AllInOuts() {
 				if typ.PkgPath() == iface.PkgPath {

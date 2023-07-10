@@ -29,7 +29,6 @@ var tmplInfos = map[string]string{
 	core.GeneratorEcho:       "templates/echo_iface.tmpl",
 	core.GeneratorIris:       "templates/iris_iface.tmpl",
 	core.GeneratorFiber:      "templates/fiber_iface.tmpl",
-	core.GeneratorFiberV2:    "templates/fiber_iface_v2.tmpl",
 	core.GeneratorMacaron:    "templates/macaron_iface.tmpl",
 	core.GeneratorHttpRouter: "templates/httprouter_iface.tmpl",
 }

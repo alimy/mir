@@ -11,11 +11,27 @@ import (
     {{if notEmptyStr .EngineInfo.PkgName }}macaron "{{ .EngineInfo.PkgName }}{{else}}"gopkg.in/macaron.v1{{end}}"
 	{{ declareImports .Imports }}
 )
+{{- if .DeclareCoreInterface }}
+type _binding_ interface {
+	Bind(*macaron.Context) mir.Error
+}
+
+type _render_ interface {
+	Render(*macaron.Context)
+}
+
+type _default_ interface {
+	Bind(*macaron.Context, any) mir.Error
+	Render(*macaron.Context, any, mir.Error)
+}
+{{- end }}
 
 {{ declareTypes .InOuts .PkgPath .Imports }}
 
 {{if notEmptyStr .Comment }}// {{.Comment}}{{end}}
 type {{.TypeName}} interface {
+	_default_
+
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for macaron
     {{.Chain}}() []macaron.Handler
 {{end}}
@@ -24,91 +40,190 @@ type {{.TypeName}} interface {
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
 }
-{{if .IsUseBinding }}
-type {{.TypeName}}Binding interface {
-{{range .BindingFields }}    Bind{{.MethodName}}(*macaron.Context) (*{{ .InName }}, mir.Error)
-{{end}}
-
-	mustEmbedUnimplemented{{.TypeName}}Binding()
-}
-{{end}}
-
-type {{.TypeName}}Render interface {
-{{range .Fields}}    {{if notEmptyStr .OutName }}Render{{.MethodName}}(*macaron.Context, *{{ .OutName }}, mir.Error){{else}}Render{{.MethodName}}(*macaron.Context, mir.Error){{end}}
-{{end}}
-	
-	mustEmbedUnimplemented{{.TypeName}}Render()
-}
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to macaron
-func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}{{if .IsUseBinding }},  b {{.TypeName}}Binding{{end}}, r {{.TypeName}}Render ) {
+func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 {{if notEmptyStr .Group }}{{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
     m.Group("{{.Group}}", func() {
 {{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{func(c *macaron.Context) {
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	}})
 	{{else if .JustHttpAny}}    m.Any("{{.Path}}", func(c *macaron.Context) {
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	})
 	{{else}}{{$field := .}}    {
         h := func(c *macaron.Context) {
-		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		    if err != nil {
-			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-				return
-		    }
-		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	    }
 		{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{h})
 		{{end}}}{{end}}
 {{end}}}, middlewares...){{else}} m.Group("{{.Group}}", func() {
 {{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{func(c *macaron.Context) {
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	}})
 {{else if .JustHttpAny}}    m.Any("{{.Path}}",  func(c *macaron.Context) {
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	})
 	{{else}}{{$field := .}}    {
         h := func(c *macaron.Context) {
-		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		    if err != nil {
-			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-				return
-		    }
-		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	    }
 		{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{h})
 		{{end}}}{{end}}
@@ -119,45 +234,103 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}{{if .IsUse
     }{{end}}
 
 {{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{func(c *macaron.Context) {
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	}})
 	{{else if .JustHttpAny}}    m.Any("{{.Path}}", func(c *macaron.Context) {
-		{{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		if err != nil {
-			{{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-			return
-		}
-		{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	})
 	{{else}}{{$field := .}}    {
         h := func(c *macaron.Context) {
-		    {{if notEmptyStr .InName }}req, err := b.Bind{{.MethodName}}(c)
-		    if err != nil {
-			    {{if notEmptyStr .OutName }}r.Render{{.MethodName}}(c, nil, err){{else}}r.Render{{.MethodName}}(c, err){{end}}
-				return
-		    }
-		    {{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}(req)
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}(req)){{end}}{{else}}{{if notEmptyStr .OutName}}resp, err := s.{{.MethodName}}()
-		    r.Render{{.MethodName}}(c, resp, err){{else}}r.Render{{.MethodName}}(c, s.{{.MethodName}}()){{end}}{{end}}
+	{{if notEmptyStr .InName -}}
+	req := new({{.InName}})
+	{{if .IsBindIn -}}
+	var bv _binding_ = req
+	if err := bv.Bind(c); err != nil {
+	{{- else -}}
+	if err := s.Bind(c, req); err != nil {
+	{{- end }}
+		s.Render(c, nil, err)
+		return
+	}
+	{{- end }}
+	{{if notEmptyStr .OutName -}}
+	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	{{if .IsRenderOut -}}
+	if err != nil {
+		s.Render(c, nil, err)
+		return
+	}
+	var rv _render_ = resp
+	rv.Render(c)
+	{{- else -}}
+	s.Render(c, resp, err)
+	{{- end }}
+	{{- else -}}
+	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	{{- end }}
 	    }
 		{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{h})
 		{{end}}}
 	{{end}}
-{{end}}{{end}}}
+{{end}}
+{{- end -}}
+}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
 // {{$unimplementedServant}} can be embedded to have forward compatible implementations.
-type {{$unimplementedServant}} struct {
-}
+type {{$unimplementedServant}} struct {}
 
 {{if notEmptyStr .Chain }}
 func ({{$unimplementedServant}}){{.Chain}}() []macaron.Handler {
@@ -172,33 +345,3 @@ func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *
 
 {{end}}
 func ({{$unimplementedServant}})mustEmbedUnimplemented{{.TypeName}}Servant() {}
-
-{{ $unimplementedRender := print "Unimplemented" .TypeName "Render" }}
-// {{$unimplementedRender}} can be embedded to have forward compatible implementations.
-type {{$unimplementedRender}} struct {
-	RenderAny func(*macaron.Context, any, mir.Error)
-}
-
-{{range .Fields}}
-func (r *{{$unimplementedRender}}) Render{{.MethodName}}(c *macaron.Context{{if notEmptyStr .OutName }}, data *{{ .OutName }}{{end}}, err mir.Error) {
-	{{if notEmptyStr .OutName}}r.RenderAny(c, data, err){{else}}r.RenderAny(c, nil, err){{end}}
-}
-
-{{end}}
-func (r *{{$unimplementedRender}})mustEmbedUnimplemented{{.TypeName}}Render() {}
-{{if .IsUseBinding }}
-{{ $unimplementedBinding := print "Unimplemented" .TypeName "Binding" }}
-// {{$unimplementedBinding}} can be embedded to have forward compatible implementations.
-type {{$unimplementedBinding}} struct {
-	BindAny func(*macaron.Context, any) mir.Error
-}
-
-{{range .Fields}}{{if notEmptyStr .InName }}func (b *{{$unimplementedBinding}}) Bind{{.MethodName}}(c *macaron.Context) (*{{ .InName }}, mir.Error) {
-	obj := new({{ .InName }})
-	err := b.BindAny(c, obj)
-	return obj, err
-}
-{{end}}
-{{end}}
-func (b *{{$unimplementedBinding}})mustEmbedUnimplemented{{.TypeName}}Binding() {}
-{{end}}
