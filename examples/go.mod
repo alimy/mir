@@ -3,11 +3,9 @@ module github.com/alimy/mir-example/v4
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.0.0-alpha.4
+	github.com/alimy/mir/v4 v4.0.0-rc.1
 	github.com/gin-gonic/gin v1.9.1
 )
-
-replace github.com/alimy/mir/v4 => ../
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
