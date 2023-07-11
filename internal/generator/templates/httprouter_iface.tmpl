@@ -13,7 +13,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*http.Request) mir.Error
+	Bind(*http.Request, httprouter.Params) mir.Error
 }
 
 type _render_ interface {
@@ -21,7 +21,7 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(*http.Request, any) mir.Error
+	Bind(*http.Request, httprouter.Params, any) mir.Error
 	Render(http.ResponseWriter, any, mir.Error)
 }
 {{- end }}
@@ -52,9 +52,9 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
 	var bv _binding_ = req
-	if err := bv.Bind(hr); err != nil {
+	if err := bv.Bind(hr, p); err != nil {
 	{{- else -}}
-	if err := s.Bind(hr, req); err != nil {
+	if err := s.Bind(hr, p, req); err != nil {
 	{{- end }}
 		s.Render(rw, nil, err)
 		return
@@ -89,9 +89,9 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
 	var bv _binding_ = req
-	if err := bv.Bind(hr); err != nil {
+	if err := bv.Bind(hr, p); err != nil {
 	{{- else -}}
-	if err := s.Bind(hr, req); err != nil {
+	if err := s.Bind(hr, p, req); err != nil {
 	{{- end }}
 		s.Render(rw, nil, err)
 		return
@@ -116,7 +116,8 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{joinPath $.Group $field.Path}}", h)
 		{{end}}    }
 	{{end}}
-{{end}}}
+{{- end -}}
+}
 
 {{ $unimplementedServant := print "Unimplemented" .TypeName "Servant" }}
 // {{$unimplementedServant}} can be embedded to have forward compatible implementations.

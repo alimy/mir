@@ -5,13 +5,16 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	. "github.com/alimy/mir/v4/core"
 	. "github.com/alimy/mir/v4/engine"
+	"github.com/julienschmidt/httprouter"
 
 	_ "{{ .PkgName }}/mirc/routes"
 	_ "{{ .PkgName }}/mirc/routes/v1"
 	_ "{{ .PkgName }}/mirc/routes/v2"
+	_ "{{ .PkgName }}/mirc/routes/v3"
 )
 
 //go:generate go run $GOFILE
@@ -19,6 +22,7 @@ func main() {
 	log.Println("generate code start")
 	opts := Options{
 		RunMode(InSerialMode),
+		AssertType3[*http.Request, httprouter.Params, http.ResponseWriter](),
 		GeneratorName(GeneratorHttpRouter),
 		WatchCtxDone(true),
 		SinkPath("auto"),

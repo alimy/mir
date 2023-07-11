@@ -207,6 +207,13 @@ func AssertType2[B, R any]() Option {
 	})
 }
 
+// AssertType3[B, P, R] register assert.TypeAssertor for custom B(Binding)/P(Params) and R(Render) type
+func AssertType3[B, P, R any]() Option {
+	return optFunc(func(_opts *InitOpts) {
+		assert.RegisterType3[B, P, R]()
+	})
+}
+
 // WatchCtxDone set generator whether watch context done when Register Servants in
 // generated code. default watch context done.
 func WatchCtxDone(enable bool) Option {

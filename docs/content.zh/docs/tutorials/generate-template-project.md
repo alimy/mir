@@ -5,7 +5,7 @@ title: "生成样板项目"
 
 ## 生成样板项目
 ```bash
-% go get github.com/alimy/mir/mirc/v3@latest
+% go get github.com/alimy/mir/mirc/v4@latest
 % mirc new -h
 create template project
 

@@ -30,7 +30,7 @@ Mir is a toolkit to develop RESTful API backend service like develop service of 
  
 ## Generate a simple template project
 ```bash
-% go install github.com/alimy/mir/mirc/v3@latest
+% go install github.com/alimy/mir/mirc/v4@latest
 % mirc new -h
 create template project
 

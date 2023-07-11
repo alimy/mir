@@ -9,6 +9,7 @@ import (
 
 	"github.com/alimy/mir/v4"
 	"github.com/alimy/mir/v4/assert"
+	"github.com/julienschmidt/httprouter"
 )
 
 func init() {
@@ -16,7 +17,7 @@ func init() {
 }
 
 type Binding interface {
-	Bind(*http.Request) mir.Error
+	Bind(*http.Request, httprouter.Params) mir.Error
 }
 
 type Render interface {

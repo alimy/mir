@@ -1,0 +1,14 @@
+package servants
+
+import (
+	api "{{ .PkgName }}/mirc/auto/api/v1"
+)
+
+type adminSrvA struct {
+	baseSrv
+	api.UnimplementedAdminServant
+}
+
+func newAdminSrvA() api.Admin {
+	return &adminSrvA{}
+}

@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 type AgentInfo struct {
@@ -56,10 +56,11 @@ type Tweet struct {
 // Site site interface info
 type Site struct {
 	Chain      `mir:"-"`
-	Index      func(Get)                                   `mir:"/index/"`
-	Articles   func(Get)                                   `mir:"/articles/{category}/{id:[0-9]+}"`
-	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`
-	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev"`
+	Index      func(Get, Chain)                            `mir:"/index/"`
+	Articles   func(Get)                                   `mir:"/articles/:category/"`
+	AnyTopics  func()                                      `mir:"/topics/"`
+	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next/"`
+	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev/"`
 	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
 	Logout     func(Post, LogoutReq)                       `mir:"/user/logout/"`
 }

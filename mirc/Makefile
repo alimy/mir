@@ -48,7 +48,7 @@ fmt:
 .PHONY: check-all
 check-all: check-debug-all
 
-STYLES = chi hertz echo fiber fiber-v2 gin httprouter iris macaron mux
+STYLES = chi hertz echo fiber gin httprouter iris macaron mux
 .PHONY: check-debug-all
 check-debug-all:
 	@for target in $(STYLES); do \

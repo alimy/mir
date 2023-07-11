@@ -5,14 +5,16 @@ import (
 	"net/http"
 
 	"github.com/alimy/mir/v4"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
-func bindAny(c *fiber.Ctx, obj any) mir.Error {
+type baseSrv struct{}
+
+func (baseSrv) Bind(c *fiber.Ctx, obj any) mir.Error {
 	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
 }
 
-func renderAny(c *fiber.Ctx, data any, err mir.Error) {
+func (baseSrv) Render(c *fiber.Ctx, data any, err mir.Error) {
 	c.Status(http.StatusNotImplemented)
 	c.Write([]byte("method not implemented"))
 }

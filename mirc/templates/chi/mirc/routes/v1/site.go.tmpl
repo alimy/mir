@@ -6,13 +6,15 @@ import (
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 // Site site v1 interface info
 type Site struct {
-	Chain    `mir:"-"`
-	Group    Group                 `mir:"/v1"`
-	Index    func(Get)             `mir:"/index/"`
-	Articles func(Head, Get, Post) `mir:"/articles/:category/"`
+	Chain     `mir:"-"`
+	Group     `mir:"/v1"`
+	Index     func(Get, Chain)             `mir:"/index/"`
+	AnyTopics func(Chain)                  `mir:"/topics/"`
+	Articles  func(Head, Get, Post, Chain) `mir:"/articles/:category/"`
+	Logout    func(Post)                   `mir:"/user/logout/"`
 }

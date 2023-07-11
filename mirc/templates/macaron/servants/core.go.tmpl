@@ -8,11 +8,13 @@ import (
 	"gopkg.in/macaron.v1"
 )
 
-func bindAny(c *macaron.Context, obj any) mir.Error {
+type baseSrv struct{}
+
+func (baseSrv) Bind(c *macaron.Context, obj any) mir.Error {
 	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
 }
 
-func renderAny(c *macaron.Context, data any, err mir.Error) {
+func (baseSrv) Render(c *macaron.Context, data any, err mir.Error) {
 	c.Resp.WriteHeader(http.StatusNotImplemented)
 	c.Resp.Write([]byte("method not implemented"))
 }

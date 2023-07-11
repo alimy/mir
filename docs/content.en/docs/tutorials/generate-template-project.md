@@ -5,7 +5,7 @@ title: "Generate Template Project"
 
 ## Generate Template Project
 ```bash
-% go install github.com/alimy/mir/mirc/v3@latest
+% go install github.com/alimy/mir/mirc/v4@latest
 % mirc new -h
 create template project
 

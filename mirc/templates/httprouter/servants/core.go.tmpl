@@ -8,11 +8,13 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func bindAny(r *http.Request, p httprouter.Params, obj any) mir.Error {
+type baseSrv struct{}
+
+func (baseSrv) Bind(r *http.Request, p httprouter.Params, obj any) mir.Error {
 	return mir.NewError(http.StatusBadRequest, errors.New("method not implemented"))
 }
 
-func renderAny(w http.ResponseWriter, data any, err mir.Error) {
+func (baseSrv) Render(w http.ResponseWriter, data any, err mir.Error) {
 	w.WriteHeader(http.StatusNotImplemented)
 	w.Write([]byte("method not implemented"))
 }

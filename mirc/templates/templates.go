@@ -19,8 +19,6 @@ var (
 	//go:embed echo/.gitignore.tmpl
 	//go:embed fiber
 	//go:embed fiber/.gitignore.tmpl
-	//go:embed fiber-v2
-	//go:embed fiber-v2/.gitignore.tmpl
 	//go:embed gin
 	//go:embed gin/.gitignore.tmpl
 	//go:embed hertz
@@ -78,14 +76,6 @@ func init() {
 		}},
 		{ts{"fiber"}, &tmplInfo{
 			target: "fiber",
-			files:  levelStar(5),
-		}},
-		{ts{"fiber-v2"}, &tmplInfo{
-			target: "fiber-v2",
-			files:  levelStar(5),
-		}},
-		{ts{"fiber", "v2"}, &tmplInfo{
-			target: "fiber-v2",
 			files:  levelStar(5),
 		}},
 		{ts{"httprouter"}, &tmplInfo{

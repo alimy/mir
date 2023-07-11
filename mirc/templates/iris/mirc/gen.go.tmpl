@@ -8,6 +8,7 @@ import (
 
 	. "github.com/alimy/mir/v4/core"
 	. "github.com/alimy/mir/v4/engine"
+	"github.com/kataras/iris/v12/context"
 
 	_ "{{ .PkgName }}/mirc/routes"
 	_ "{{ .PkgName }}/mirc/routes/v1"
@@ -19,6 +20,7 @@ func main() {
 	log.Println("generate code start")
 	opts := Options{
 		RunMode(InSerialMode),
+		AssertType[*context.Context](),
 		GeneratorName(GeneratorIris),
 		WatchCtxDone(true),
 		SinkPath("auto"),

@@ -10,6 +10,9 @@ type anyTypeAssertor[T any] struct{}
 // anyTypeAssertor2 a common type assert for type B(Binding) and R(Render)
 type anyTypeAssertor2[B, R any] struct{}
 
+// anyTypeAssertor3 a common type assert for type B(Binding)/P(Params) and R(Render)
+type anyTypeAssertor3[B, P, R any] struct{}
+
 func (anyTypeAssertor[T]) AssertBinding(obj any) bool {
 	_, ok := obj.(Binding[T])
 	return ok
@@ -26,6 +29,16 @@ func (anyTypeAssertor2[B, R]) AssertBinding(obj any) bool {
 }
 
 func (anyTypeAssertor2[B, R]) AssertRender(obj any) bool {
+	_, ok := obj.(Render[R])
+	return ok
+}
+
+func (anyTypeAssertor3[B, P, R]) AssertBinding(obj any) bool {
+	_, ok := obj.(Binding2[B, P])
+	return ok
+}
+
+func (anyTypeAssertor3[B, P, R]) AssertRender(obj any) bool {
 	_, ok := obj.(Render[R])
 	return ok
 }

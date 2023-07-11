@@ -1,12 +1,15 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
+
+	"github.com/alimy/mir/v4"
 	. "github.com/alimy/mir/v4"
 	. "github.com/alimy/mir/v4/engine"
 )
 
 func init() {
-	AddEntry(new(Site))
+	Entry[Site]()
 }
 
 type AgentInfo struct {
@@ -53,13 +56,28 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
+// Bind custom binding but not effect because defined in sampe package with servant interface
+func (r *LoginReq) Bind(c *gin.Context) Error {
+	err := c.ShouldBind(r)
+	if err != nil {
+		return mir.NewError(500, err)
+	}
+	return nil
+}
+
+// Bind custom render but not effect because defined in sampe package with servant interface
+func (r *LoginResp) Render(c *gin.Context) {
+	c.String(200, "login success")
+}
+
 // Site site interface info
 type Site struct {
 	Chain      `mir:"-"`
-	Index      func(Get)                                   `mir:"/index/"`
+	Index      func(Get, Chain)                            `mir:"/index/"`
 	Articles   func(Get)                                   `mir:"/articles/:category/"`
-	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`
-	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev"`
+	AnyTopics  func()                                      `mir:"/topics/"`
+	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next/"`
+	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev/"`
 	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
 	Logout     func(Post, LogoutReq)                       `mir:"/user/logout/"`
 }

@@ -8,10 +8,11 @@ import (
 
 	. "github.com/alimy/mir/v4/core"
 	. "github.com/alimy/mir/v4/engine"
+	"github.com/labstack/echo/v4"
 
-	_ "{{ .PkgName }}/mirc/routes"
-	_ "{{ .PkgName }}/mirc/routes/v1"
-	_ "{{ .PkgName }}/mirc/routes/v2"
+	_ "github.com/alimy/mir-echo/mirc/routes"
+	_ "github.com/alimy/mir-echo/mirc/routes/v1"
+	_ "github.com/alimy/mir-echo/mirc/routes/v2"
 )
 
 //go:generate go run $GOFILE
@@ -19,6 +20,7 @@ func main() {
 	log.Println("generate code start")
 	opts := Options{
 		RunMode(InSerialMode),
+		AssertType[echo.Context](),
 		GeneratorName(GeneratorEcho),
 		WatchCtxDone(true),
 		SinkPath("auto"),

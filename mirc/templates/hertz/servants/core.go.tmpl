@@ -1,22 +1,23 @@
 package servants
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/alimy/mir/v4"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
-func bindAny(ctx *app.RequestContext, obj any) mir.Error {
-	return mir.NewError(http.StatusBadRequest, errors.New("method not implemented"))
+type baseSrv struct{}
+
+func (baseSrv) Bind(c *app.RequestContext, obj any) mir.Error {
+	// do something
+	return nil
 }
 
-func renderAny(ctx *app.RequestContext, data any, err mir.Error) {
+func (baseSrv) Render(c *app.RequestContext, data any, err mir.Error) {
 	if err == nil {
-		ctx.JSON(consts.StatusOK, data)
+		c.JSON(http.StatusOK, data)
 	} else {
-		ctx.JSON(err.StatusCode(), err.Error())
+		c.JSON(err.StatusCode(), err.Error())
 	}
 }

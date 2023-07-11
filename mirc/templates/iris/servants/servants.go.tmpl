@@ -9,7 +9,7 @@ import (
 
 // RegisterServants register all the servants to iris.Application
 func RegisterServants(app *iris.Application) {
-	api.RegisterSiteServant(app, newSiteSrv(), newSiteBinding(), newSiteRender())
-	v1.RegisterSiteServant(app, newSiteV1Srv(), newSiteV1Render())
-	v2.RegisterSiteServant(app, newSiteV2Srv(), newSiteV2Binding(), newSiteV2Render())
+	api.RegisterSiteServant(app, newSiteSrv())
+	v1.RegisterSiteServant(app, newSiteSrvA())
+	v2.RegisterSiteServant(app, newSiteSrvB())
 }

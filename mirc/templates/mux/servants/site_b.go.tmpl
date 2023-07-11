@@ -1,0 +1,14 @@
+package servants
+
+import (
+	api "{{ .PkgName }}/mirc/auto/api/v2"
+)
+
+type siteSrvB struct {
+	baseSrv
+	api.UnimplementedSiteServant
+}
+
+func newSiteSrvB() api.Site {
+	return &siteSrvB{}
+}
