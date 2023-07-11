@@ -25,7 +25,7 @@ Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端�
  ## 使用说明
 * 生成样板项目
 ```bash
-% go install github.com/alimy/mir/mirc/v3@latest
+% go install github.com/alimy/mir/mirc/v4@latest
 % mirc new -h
 create template project
 
