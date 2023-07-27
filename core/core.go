@@ -179,6 +179,69 @@ func GeneratorName(name string) Option {
 	})
 }
 
+// UseGin use Gin engine generator
+func UseGin() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorGin
+	})
+}
+
+// UseChi use Chi engine generator
+func UseChi() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorChi
+	})
+}
+
+// UseMux use Mux engine generator
+func UseMux() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorMux
+	})
+}
+
+// UseHertz use Hertz engine generator
+func UseHertz() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorHertz
+	})
+}
+
+// UseEcho use Echo engine generator
+func UseEcho() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorEcho
+	})
+}
+
+// UseIris use Iris engine generator
+func UseIris() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorIris
+	})
+}
+
+// UseFiber use Fiber engine generator
+func UseFiber() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorFiber
+	})
+}
+
+// UseMacaron use Macaron engine generator
+func UseMacaron() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorMacaron
+	})
+}
+
+// UseHttpRouter use HttpRouter engine generator
+func UseHttpRouter() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.GeneratorName = GeneratorHttpRouter
+	})
+}
+
 // ParserName set parser name option
 func ParserName(name string) Option {
 	return optFunc(func(opts *InitOpts) {
