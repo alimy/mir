@@ -19,12 +19,12 @@ import (
 func main() {
 	log.Println("generate code start")
 	opts := Options{
+		UseFiber(),
+		SinkPath("auto"),
+		NoneQuery(true),
+		WatchCtxDone(true),
 		RunMode(InSerialMode),
 		AssertType[*fiber.Ctx](),
-		GeneratorName(GeneratorFiber),
-		WatchCtxDone(true),
-		NoneQuery(true),
-		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

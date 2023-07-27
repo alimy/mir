@@ -19,11 +19,11 @@ import (
 func main() {
 	log.Println("generate code start")
 	opts := Options{
+		UseIris(),
+		SinkPath("auto"),
+		WatchCtxDone(true),
 		RunMode(InSerialMode),
 		AssertType[*context.Context](),
-		GeneratorName(GeneratorIris),
-		WatchCtxDone(true),
-		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

@@ -21,11 +21,11 @@ import (
 func main() {
 	log.Println("generate code start")
 	opts := Options{
+		UseHttpRouter(),
+		SinkPath("auto"),
+		WatchCtxDone(true),
 		RunMode(InSerialMode),
 		AssertType3[*http.Request, httprouter.Params, http.ResponseWriter](),
-		GeneratorName(GeneratorHttpRouter),
-		WatchCtxDone(true),
-		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

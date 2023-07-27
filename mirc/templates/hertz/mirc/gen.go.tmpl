@@ -20,11 +20,11 @@ import (
 func main() {
 	log.Println("generate code start")
 	opts := Options{
+		UseHertz(),
+		SinkPath("auto"),
+		WatchCtxDone(true),
 		RunMode(InSerialMode),
 		AssertType[*app.RequestContext](),
-		GeneratorName(GeneratorHertz),
-		WatchCtxDone(true),
-		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

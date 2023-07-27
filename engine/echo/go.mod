@@ -3,7 +3,7 @@ module github.com/alimy/mir/engine/echo/v4
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.0.0-rc.1
+	github.com/alimy/mir/v4 v4.0.0
 	github.com/labstack/echo/v4 v4.10.2
 )
 

@@ -19,11 +19,11 @@ import (
 func main() {
 	log.Println("generate code start")
 	opts := Options{
+		UseMux(),
+		SinkPath("auto"),
+		WatchCtxDone(true),
 		RunMode(InSerialMode),
 		AssertType2[*http.Request, http.ResponseWriter](),
-		GeneratorName(GeneratorMux),
-		WatchCtxDone(true),
-		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

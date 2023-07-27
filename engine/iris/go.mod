@@ -3,7 +3,7 @@ module github.com/alimy/mir/engine/iris/v4
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.0.0-rc.1
+	github.com/alimy/mir/v4 v4.0.0
 	github.com/kataras/iris/v12 v12.2.0
 )
 

@@ -101,6 +101,19 @@ type User struct {
 
             如上示例，使用gin引擎样式代码生成器将生成如下代码:  
             ```go
+			type _binding_ interface {
+				Bind(*gin.Context) mir.Error
+			}
+
+			type _render_ interface {
+				Render(*gin.Context)
+			}
+
+			type _default_ interface {
+				Bind(*gin.Context, any) mir.Error
+				Render(*gin.Context, any, mir.Error)
+			}
+
             type LoginReq struct {
 	            Name   string `json:"name"`
 	            Passwd string `json:"passwd"`
@@ -111,6 +124,8 @@ type User struct {
             }
 
             type User interface {
+				_default_
+				
 	            // Chain provide handlers chain for gin
 	            Chain() gin.HandlersChain
 
@@ -118,18 +133,5 @@ type User struct {
 	            Logout(c *gin.Context) mir.Error
 
 	            mustEmbedUnimplementedUserServant()
-            }
-
-            type UserBinding interface {
-	            BindLogin(c *gin.Context) (*LoginReq, mir.Error)
-
-	            mustEmbedUnimplementedUserBinding()
-            }
-
-            type UserRender interface {
-	            RenderLogin(c *gin.Context, data *LoginResp, err mir.Error)
-	            RenderLogout(c *gin.Context, err mir.Error)
-
-	            mustEmbedUnimplementedUserRender()
             }
             ```

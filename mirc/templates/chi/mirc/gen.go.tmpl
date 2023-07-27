@@ -20,11 +20,11 @@ import (
 func main() {
 	log.Println("generate code start")
 	opts := Options{
+		UseChi(),
+		SinkPath("auto"),
+		WatchCtxDone(true),
 		RunMode(InSerialMode),
 		AssertType[*chi.Context](),
-		GeneratorName(GeneratorChi),
-		WatchCtxDone(true),
-		SinkPath("auto"),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

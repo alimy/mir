@@ -3,7 +3,7 @@ module github.com/alimy/mir/engine/fiber/v4
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.0.0-rc.1
+	github.com/alimy/mir/v4 v4.0.0
 	github.com/gofiber/fiber/v2 v2.47.0
 )
 
