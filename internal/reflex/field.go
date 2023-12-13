@@ -41,6 +41,7 @@ func (e tagError) Error() string {
 type tagInfo struct {
 	isAnyMethod  bool                // isAnyMethod indicate whether method is Any
 	isFieldChain bool                // isFieldChain indicate whether method is need field chain
+	isUseContext bool                // isUseContext indicate whether method is just use Context
 	methods      utils.HttpMethodSet // method indicate methods information in struct tag string
 	host         string              // host indicate host information in struct tag string
 	path         string              // path indicate path information in struct tag string
@@ -151,6 +152,8 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 					info.methods.Add(mir.HttpMethods...)
 				case "Chain":
 					info.isFieldChain = true
+				case "Context":
+					info.isUseContext = true
 				}
 			}
 		}

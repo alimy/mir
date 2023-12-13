@@ -16,7 +16,7 @@ import (
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "v4.0.0",
+		MirVer: "v4.1.0",
 	}
 )
 
@@ -41,6 +41,7 @@ type FieldDescriptor struct {
 	HttpMethods  []string
 	IsAnyMethod  bool
 	IsFieldChain bool
+	IsUseContext bool
 	IsBindIn     bool
 	IsRenderOut  bool
 	In           reflect.Type

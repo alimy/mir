@@ -10,6 +10,10 @@ type Group any
 // Chain indicator a Handler slice used register Middleware to router by group
 type Chain any
 
+// Context indicator a handler that just use engine's context like use gin engine
+// the handler will just take a function func(c *gin.Context) as handler
+type Context any
+
 // Get indicator a GET method handler used placeholder register info in struct tag
 type Get any
 

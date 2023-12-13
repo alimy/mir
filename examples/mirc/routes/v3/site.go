@@ -16,11 +16,15 @@ func init() {
 
 // Site site v3 interface info
 type Site struct {
-	Group      `mir:"v3"`
-	Index      func(Get)                                               `mir:"/index/"`
-	Articles   func(Get)                                               `mir:"/articles/:category/"`
-	NextTweets func(Any, model.TweetsReq) model.TweetsResp             `mir:"/tweets/next/"`
-	PrevTweets func(Post, Get, Head, model.TweetsReq) model.TweetsResp `mir:"/tweets/prev/"`
-	Login      func(Post, model.LoginReq) model.LoginResp              `mir:"/user/login/"`
-	Logout     func(Post)                                              `mir:"/user/logout/"`
+	Group            `mir:"v3"`
+	Index            func(Get)                                               `mir:"/index/"`
+	Articles         func(Get)                                               `mir:"/articles/:category/"`
+	NextTweets       func(Any, model.TweetsReq) model.TweetsResp             `mir:"/tweets/next/"`
+	PrevTweets       func(Post, Get, Head, model.TweetsReq) model.TweetsResp `mir:"/tweets/prev/"`
+	Login            func(Post, model.LoginReq) model.LoginResp              `mir:"/user/login/"`
+	Logout           func(Post)                                              `mir:"/user/logout/"`
+	Assets           func(Get, Context)                                      `mir:"/assets"`
+	AnyStaticks      func(Any, Context)                                      `mir:"/staticks"`
+	ManyResources    func(Get, Head, Options, Context)                       `mir:"/resources"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)                `mir:"/attachments"`
 }
