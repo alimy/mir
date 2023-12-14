@@ -276,6 +276,11 @@ func (f *FieldDescriptor) HttpMethodArgs() string {
 	return utils.QuoteJoin(f.HttpMethods, ",")
 }
 
+// JustUseContext whether just use context
+func (f *FieldDescriptor) JustUseContext() bool {
+	return f.IsUseContext && len(f.InOuts) == 0
+}
+
 // OrInOut in or out
 func (f *FieldDescriptor) OrInOut() bool {
 	return f.In != nil || f.Out != nil

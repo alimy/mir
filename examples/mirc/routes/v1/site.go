@@ -21,10 +21,10 @@ type Site struct {
 	AnyTopics        func(Chain)                              `mir:"/topics/"`
 	Articles         func(Head, Get, Post, Chain)             `mir:"/articles/:category/"`
 	Logout           func(Post)                               `mir:"/user/logout/"`
-	Assets           func(Get, Context)                       `mir:"/assets"`
-	AnyStaticks      func(Any, Context)                       `mir:"/staticks"`
-	ManyResources    func(Get, Head, Options, Context)        `mir:"/resources"`
-	MultiAttachments func(Get, Head, Options, Chain, Context) `mir:"/attachments"`
+	Assets           func(Get, Context)                       `mir:"/assets/:name/"`
+	AnyStaticks      func(Any, Context)                       `mir:"/anystaticks/:name/"`
+	ManyResources    func(Get, Head, Options, Context)        `mir:"/resources/:name/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context) `mir:"/attachments/:name/"`
 }
 
 // Admin admin v1 interface info

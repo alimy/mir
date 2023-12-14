@@ -83,11 +83,12 @@ type Site struct {
 	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev/"`
 	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/"`
 	Logout           func(Post, LogoutReq)                          `mir:"/user/logout/"`
-	ImageUpload      func(Post, Context)                            `mir:"/upload/image"`
-	FileUpload       func(Post, Chain, Context)                     `mir:"/upload/file"`
-	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple"`
-	Assets           func(Get, Context)                             `mir:"/assets"`
-	AnyStaticks      func(Any, Context)                             `mir:"/staticks"`
-	ManyResources    func(Get, Head, Options, Context)              `mir:"/resources"`
-	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments"`
+	ImageUpload      func(Post, Context)                            `mir:"/upload/image/:name/"`
+	FileUpload       func(Post, Chain, Context)                     `mir:"/upload/file/:name/"`
+	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple/:name/"`
+	Assets           func(Get, Context, LoginReq)                   `mir:"/assets/:name/"`
+	Statics          func(Get, Context)                             `mir:"/statics/:name/"`
+	AnyStaticks      func(Any, Context)                             `mir:"/anystaticks/:name/"`
+	ManyResources    func(Get, Head, Options, Context)              `mir:"/resources/:name/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments/:name/"`
 }

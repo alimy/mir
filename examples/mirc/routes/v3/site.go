@@ -23,8 +23,9 @@ type Site struct {
 	PrevTweets       func(Post, Get, Head, model.TweetsReq) model.TweetsResp `mir:"/tweets/prev/"`
 	Login            func(Post, model.LoginReq) model.LoginResp              `mir:"/user/login/"`
 	Logout           func(Post)                                              `mir:"/user/logout/"`
-	Assets           func(Get, Context)                                      `mir:"/assets"`
-	AnyStaticks      func(Any, Context)                                      `mir:"/staticks"`
-	ManyResources    func(Get, Head, Options, Context)                       `mir:"/resources"`
-	MultiAttachments func(Get, Head, Options, Chain, Context)                `mir:"/attachments"`
+	Assets           func(Get, Context)                                      `mir:"/assets/:name/"`
+	Statics          func(Get, Context, model.LoginReq)                      `mir:"/statics/:name/"`
+	AnyStaticks      func(Any, Context)                                      `mir:"/anystaticks/:name/"`
+	ManyResources    func(Get, Head, Options, Context)                       `mir:"/resources/:name/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)                `mir:"/attachments/:name/"`
 }

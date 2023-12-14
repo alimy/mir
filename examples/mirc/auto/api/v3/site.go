@@ -31,6 +31,7 @@ type Site interface {
 	MultiAttachments(*gin.Context)
 	ManyResources(*gin.Context)
 	AnyStaticks(*gin.Context)
+	Statics(*gin.Context, *model.LoginReq) mir.Error
 	Assets(*gin.Context)
 	Logout() mir.Error
 	Login(*model.LoginReq) (*model.LoginResp, mir.Error)
@@ -61,18 +62,32 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 	// register routes info to router
 	{
 		h := append(cc.ChainMultiAttachments(), s.MultiAttachments)
-		router.Handle("OPTIONS", "/attachments", h...)
-		router.Handle("HEAD", "/attachments", h...)
-		router.Handle("GET", "/attachments", h...)
+		router.Handle("OPTIONS", "/attachments/:name/", h...)
+		router.Handle("HEAD", "/attachments/:name/", h...)
+		router.Handle("GET", "/attachments/:name/", h...)
 	}
 	{
 		h := s.ManyResources
-		router.Handle("OPTIONS", "/resources", h)
-		router.Handle("HEAD", "/resources", h)
-		router.Handle("GET", "/resources", h)
+		router.Handle("OPTIONS", "/resources/:name/", h)
+		router.Handle("HEAD", "/resources/:name/", h)
+		router.Handle("GET", "/resources/:name/", h)
 	}
-	router.Any("/staticks", s.AnyStaticks)
-	router.Handle("GET", "/assets", s.Assets)
+	router.Any("/anystaticks/:name/", s.AnyStaticks)
+	router.Handle("GET", "/statics/:name/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		req := new(model.LoginReq)
+		var bv _binding_ = req
+		if err := bv.Bind(c); err != nil {
+			s.Render(c, nil, err)
+			return
+		}
+		s.Render(c, nil, s.Statics(c, req))
+	})
+	router.Handle("GET", "/assets/:name/", s.Assets)
 	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
 		select {
 		case <-c.Request.Context().Done():
@@ -168,6 +183,10 @@ func (UnimplementedSiteServant) ManyResources(c *gin.Context) {
 
 func (UnimplementedSiteServant) AnyStaticks(c *gin.Context) {
 	c.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+}
+
+func (UnimplementedSiteServant) Statics(c *gin.Context, req *model.LoginReq) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
 func (UnimplementedSiteServant) Assets(c *gin.Context) {

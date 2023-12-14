@@ -69,8 +69,8 @@ type Site interface {
 	MultiAttachments(*gin.Context)
 	ManyResources(*gin.Context)
 	AnyStaticks(*gin.Context)
-	Assets(*gin.Context)
-	SimpleUpload(*gin.Context)
+	Assets(*gin.Context, *LoginReq) mir.Error
+	SimpleUpload(*gin.Context, *LoginReq) (*LoginResp, mir.Error)
 	FileUpload(*gin.Context)
 	ImageUpload(*gin.Context)
 	Logout() mir.Error
@@ -105,21 +105,46 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 	// register routes info to router
 	{
 		h := append(cc.ChainMultiAttachments(), s.MultiAttachments)
-		router.Handle("OPTIONS", "/attachments", h...)
-		router.Handle("HEAD", "/attachments", h...)
-		router.Handle("GET", "/attachments", h...)
+		router.Handle("HEAD", "/attachments/:name/", h...)
+		router.Handle("GET", "/attachments/:name/", h...)
+		router.Handle("OPTIONS", "/attachments/:name/", h...)
 	}
 	{
 		h := s.ManyResources
-		router.Handle("OPTIONS", "/resources", h)
-		router.Handle("HEAD", "/resources", h)
-		router.Handle("GET", "/resources", h)
+		router.Handle("OPTIONS", "/resources/:name/", h)
+		router.Handle("HEAD", "/resources/:name/", h)
+		router.Handle("GET", "/resources/:name/", h)
 	}
-	router.Any("/staticks", s.AnyStaticks)
-	router.Handle("GET", "/assets", s.Assets)
-	router.Handle("POST", "/upload/simple", append(cc.ChainSimpleUpload(), s.SimpleUpload)...)
-	router.Handle("POST", "/upload/file", append(cc.ChainFileUpload(), s.FileUpload)...)
-	router.Handle("POST", "/upload/image", s.ImageUpload)
+	router.Any("/anystaticks/:name/", s.AnyStaticks)
+	router.Handle("GET", "/assets/:name/", func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		req := new(LoginReq)
+		if err := s.Bind(c, req); err != nil {
+			s.Render(c, nil, err)
+			return
+		}
+		s.Render(c, nil, s.Assets(c, req))
+	})
+	router.Handle("POST", "/upload/simple/:name/", append(cc.ChainSimpleUpload(), func(c *gin.Context) {
+		select {
+		case <-c.Request.Context().Done():
+			return
+		default:
+		}
+		req := new(LoginReq)
+		if err := s.Bind(c, req); err != nil {
+			s.Render(c, nil, err)
+			return
+		}
+		resp, err := s.SimpleUpload(c, req)
+		s.Render(c, resp, err)
+	})...)
+	router.Handle("POST", "/upload/file/:name/", append(cc.ChainFileUpload(), s.FileUpload)...)
+	router.Handle("POST", "/upload/image/:name/", s.ImageUpload)
 	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
 		select {
 		case <-c.Request.Context().Done():
@@ -158,9 +183,9 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			resp, err := s.PrevTweets(req)
 			s.Render(c, resp, err)
 		}
-		router.Handle("HEAD", "/tweets/prev/", h)
 		router.Handle("GET", "/tweets/prev/", h)
 		router.Handle("POST", "/tweets/prev/", h)
+		router.Handle("HEAD", "/tweets/prev/", h)
 	}
 	router.Any("/tweets/next/", func(c *gin.Context) {
 		select {
@@ -211,12 +236,12 @@ func (UnimplementedSiteServant) AnyStaticks(c *gin.Context) {
 	c.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) Assets(c *gin.Context) {
-	c.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+func (UnimplementedSiteServant) Assets(c *gin.Context, req *LoginReq) mir.Error {
+	return mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
-func (UnimplementedSiteServant) SimpleUpload(c *gin.Context) {
-	c.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+func (UnimplementedSiteServant) SimpleUpload(c *gin.Context, req *LoginReq) (*LoginResp, mir.Error) {
+	return nil, mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 }
 
 func (UnimplementedSiteServant) FileUpload(c *gin.Context) {

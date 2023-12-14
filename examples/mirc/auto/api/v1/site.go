@@ -54,18 +54,18 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 	// register routes info to router
 	{
 		h := append(cc.ChainMultiAttachments(), s.MultiAttachments)
-		router.Handle("OPTIONS", "/attachments", h...)
-		router.Handle("HEAD", "/attachments", h...)
-		router.Handle("GET", "/attachments", h...)
+		router.Handle("OPTIONS", "/attachments/:name/", h...)
+		router.Handle("HEAD", "/attachments/:name/", h...)
+		router.Handle("GET", "/attachments/:name/", h...)
 	}
 	{
 		h := s.ManyResources
-		router.Handle("OPTIONS", "/resources", h)
-		router.Handle("HEAD", "/resources", h)
-		router.Handle("GET", "/resources", h)
+		router.Handle("GET", "/resources/:name/", h)
+		router.Handle("OPTIONS", "/resources/:name/", h)
+		router.Handle("HEAD", "/resources/:name/", h)
 	}
-	router.Any("/staticks", s.AnyStaticks)
-	router.Handle("GET", "/assets", s.Assets)
+	router.Any("/anystaticks/:name/", s.AnyStaticks)
+	router.Handle("GET", "/assets/:name/", s.Assets)
 	router.Handle("POST", "/user/logout/", func(c *gin.Context) {
 		select {
 		case <-c.Request.Context().Done():
