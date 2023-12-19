@@ -277,6 +277,13 @@ func AssertType3[B, P, R any]() Option {
 	})
 }
 
+// AssertType4[C, T] register assert.TypeAssertor for custom C, T type
+func AssertType4[C, T any]() Option {
+	return optFunc(func(_opts *InitOpts) {
+		assert.RegisterType4[C, T]()
+	})
+}
+
 // WatchCtxDone set generator whether watch context done when Register Servants in
 // generated code. default watch context done.
 func WatchCtxDone(enable bool) Option {

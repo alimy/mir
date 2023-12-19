@@ -15,16 +15,16 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*app.RequestContext) mir.Error
+	Bind(context.Context, *app.RequestContext) mir.Error
 }
 
 type _render_ interface {
-	Render(*app.RequestContext)
+	Render(context.Context, *app.RequestContext)
 }
 
 type _default_ interface {
-	Bind(*app.RequestContext, any) mir.Error
-	Render(*app.RequestContext, any, mir.Error)
+	Bind(context.Context, *app.RequestContext, any) mir.Error
+	Render(context.Context, *app.RequestContext, any, mir.Error)
 }
 {{- end }}
 
@@ -37,7 +37,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for hertz
     {{.Chain}}() []app.HandlerFunc
 {{end}}
-{{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(context.Context, *app.RequestContext){{else}}{{.MethodName}}({{if .IsUseContext }}context.Context, *app.RequestContext{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -67,7 +67,7 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseFie
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c context.Context, ctx *app.RequestContext) {
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}{{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c context.Context, ctx *app.RequestContext) {
 	{{- if $.WatchCtxDone }}
 		select {
 		case <- c.Done():
@@ -79,31 +79,31 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseFie
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
 	var bv _binding_ = req
-	if err := bv.Bind(ctx); err != nil {
+	if err := bv.Bind(c, ctx); err != nil {
 	{{- else -}}
-	if err := s.Bind(ctx, req); err != nil {
+	if err := s.Bind(c, ctx, req); err != nil {
 	{{- end }}
-		s.Render(ctx, nil, err)
+		s.Render(c, ctx, nil, err)
 		return
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c, ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
-		s.Render(ctx, nil, err)
+		s.Render(c, ctx, nil, err)
 		return
 	}
 	var rv _render_ = resp
-	rv.Render(ctx)
+	rv.Render(c, ctx)
 	{{- else -}}
-	s.Render(ctx, resp, err)
+	s.Render(c, ctx, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(ctx, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, ctx, nil, s.{{.MethodName}}({{if .IsUseContext }}c, ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	}{{if .IsFieldChain }})...{{end}})
-	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c context.Context, ctx *app.RequestContext) {
+	}{{end}}{{if .IsFieldChain }})...{{end}})
+	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}{{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c context.Context, ctx *app.RequestContext) {
 	{{- if $.WatchCtxDone }}
 		select {
 		case <- c.Done():
@@ -115,32 +115,32 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseFie
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
 	var bv _binding_ = req
-	if err := bv.Bind(ctx); err != nil {
+	if err := bv.Bind(c, ctx); err != nil {
 	{{- else -}}
-	if err := s.Bind(ctx, req); err != nil {
+	if err := s.Bind(c, ctx, req); err != nil {
 	{{- end }}
-		s.Render(ctx, nil, err)
+		s.Render(c, ctx, nil, err)
 		return
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c, ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
-		s.Render(ctx, nil, err)
+		s.Render(c, ctx, nil, err)
 		return
 	}
 	var rv _render_ = resp
-	rv.Render(ctx)
+	rv.Render(c, ctx)
 	{{- else -}}
-	s.Render(ctx, resp, err)
+	s.Render(c, ctx, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(ctx, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, ctx, nil, s.{{.MethodName}}({{if .IsUseContext }}c, ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	}{{if .IsFieldChain }})...{{end}})
+	}{{end}}{{if .IsFieldChain }})...{{end}})
 	{{else}}{{$field := .}}    {
-        	h := {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}func(c context.Context, ctx *app.RequestContext) {
+        	h := {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}{{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c context.Context, ctx *app.RequestContext) {
 				{{- if $.WatchCtxDone }}
 				select {
 				case <- c.Done():
@@ -152,30 +152,30 @@ func Register{{.TypeName}}Servant(e *route.Engine, s {{.TypeName}}{{if .IsUseFie
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
 	var bv _binding_ = req
-	if err := bv.Bind(ctx); err != nil {
+	if err := bv.Bind(c, ctx); err != nil {
 	{{- else -}}
-	if err := s.Bind(ctx, req); err != nil {
+	if err := s.Bind(c, ctx, req); err != nil {
 	{{- end }}
-		s.Render(ctx, nil, err)
+		s.Render(c, ctx, nil, err)
 		return
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c, ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
-		s.Render(ctx, nil, err)
+		s.Render(c, ctx, nil, err)
 		return
 	}
 	var rv _render_ = resp
-	rv.Render(ctx)
+	rv.Render(c, ctx)
 	{{- else -}}
-	s.Render(ctx, resp, err)
+	s.Render(c, ctx, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(ctx, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, ctx, nil, s.{{.MethodName}}({{if .IsUseContext }}c, ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	    }{{if .IsFieldChain }}){{end}}
+	    }{{end}}{{if .IsFieldChain }}){{end}}
 		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})
 		{{end}}    }
 	{{end}}
@@ -193,8 +193,12 @@ func ({{$unimplementedServant}}){{.Chain}}() []app.HandlerFunc {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c context.Context, ctx *app.RequestContext){{else}}{{.MethodName}}({{if .IsUseContext }}c context.Context, ctx *app.RequestContext{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+	{{if .JustUseContext -}}
+		ctx.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+	{{else -}}
 	return {{if notEmptyStr .OutName }}nil, {{end}}mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+	{{end -}}
 }
 
 {{end}}

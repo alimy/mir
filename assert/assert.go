@@ -20,7 +20,7 @@ type Binding[T any] interface {
 	Bind(T) mir.Error
 }
 
-// Binding2[R, P] binding interface for custom T context
+// Binding2[R, P] binding interface for custom R, P context
 type Binding2[R, P any] interface {
 	Bind(R, P) mir.Error
 }
@@ -28,6 +28,11 @@ type Binding2[R, P any] interface {
 // Render[T] render interface for custom T context
 type Render[T any] interface {
 	Render(T)
+}
+
+// Render[C, T] render interface for custom C, T context
+type Render2[C, T any] interface {
+	Render(C, T)
 }
 
 // TypeAssertor type assert for Binding and Render interface
@@ -54,6 +59,11 @@ func RegisterType2[B, R any]() {
 // RegisterType2[B, P, R] register custom TypeAssertor to assert Binding[B]/Render[R] interface
 func RegisterType3[B, P, R any]() {
 	_typeAssertor = anyTypeAssertor3[B, P, R]{}
+}
+
+// RegisterType4[C, T] register custom TypeAssertor to assert C, T interface
+func RegisterType4[C, T any]() {
+	_typeAssertor = anyTypeAssertor4[C, T]{}
 }
 
 // AssertBinding assert Binding interface for obj

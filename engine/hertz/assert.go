@@ -5,6 +5,8 @@
 package engine_hertz
 
 import (
+	"context"
+
 	"github.com/alimy/mir/v4"
 	"github.com/alimy/mir/v4/assert"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -15,11 +17,11 @@ func init() {
 }
 
 type Binding interface {
-	Bind(*app.RequestContext) mir.Error
+	Bind(context.Context, *app.RequestContext) mir.Error
 }
 
 type Render interface {
-	Render(*app.RequestContext)
+	Render(context.Context, *app.RequestContext)
 }
 
 type typeAssertor struct{}
