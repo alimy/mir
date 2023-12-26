@@ -36,7 +36,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for fiber
     {{.Chain}}() []any
 {{end}}
-{{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*fiber.Ctx) error{{else}}{{.MethodName}}({{if .IsUseContext }}*fiber.Ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -50,7 +50,7 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
     router.Use(middlewares...)
 {{end}}
     // register routes info to router
-{{range .Fields}}{{if .NotHttpAny }}    router.Add("{{.HttpMethod}}", "{{.Path}}", func(c *fiber.Ctx) error {
+{{range .Fields}}{{if .NotHttpAny }}    router.Add("{{.HttpMethod}}", "{{.Path}}", {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *fiber.Ctx) error {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -64,7 +64,7 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -76,11 +76,11 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	return nil
-	})
-	{{else if .JustHttpAny}}    router.All("{{.Path}}", func(c *fiber.Ctx) error {
+	}{{end}})
+	{{else if .JustHttpAny}}    router.All("{{.Path}}", {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *fiber.Ctx) error {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -94,7 +94,7 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -106,12 +106,12 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	return nil
-	})
+	}{{end}})
 	{{else}}{{$field := .}}    {
-        h := func(c *fiber.Ctx) error {			
+        h := {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *fiber.Ctx) error {			
 		{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -125,7 +125,7 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -137,10 +137,10 @@ func Register{{.TypeName}}Servant(app *fiber.App, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	return nil
-	    }
+	    }{{end}}
 		{{range .AnyHttpMethods}}        router.Add("{{.}}", "{{$field.Path}}", h)
 		{{end}}    }
 	{{end}}
@@ -158,8 +158,14 @@ func ({{$unimplementedServant}}){{.Chain}}() []any {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c *fiber.Ctx) error{{else}}{{.MethodName}}({{if .IsUseContext }}c *fiber.Ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+	{{if .JustUseContext -}}
+		c.Status(http.StatusNotImplemented)
+		c.Write([]byte("method not implemented"))
+		return nil
+	{{else -}}
 	return {{if notEmptyStr .OutName }}nil, {{end}}mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+	{{end -}}
 }
 
 {{end}}
