@@ -32,7 +32,7 @@ type _default_ interface {
 type {{.TypeName}} interface {
 	_default_
 
-{{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params){{else}}{{.MethodName}}({{if .IsUseContext }}http.ResponseWriter, *http.Request, httprouter.Params{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -40,7 +40,7 @@ type {{.TypeName}} interface {
 
 // Register{{.TypeName}}Servant register {{.TypeName}} servant to httprouter
 func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
-{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+{{range .Fields}}{{if .NotHttpAny }}    router.Handle("{{.HttpMethod}}", "{{joinPath $.Group .Path}}", {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
 	{{- if $.WatchCtxDone }}
 		select {
 		case <-hr.Context().Done():
@@ -61,7 +61,7 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}rw, hr, p{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(rw, nil, err)
@@ -73,11 +73,11 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 	s.Render(rw, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(rw, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(rw, nil, s.{{.MethodName}}({{if .IsUseContext }}rw, hr, p{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	})
+	}{{end}})
 	{{else}}{{$field := .}}    {
-        h := func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
+        h := {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(rw http.ResponseWriter, hr *http.Request, p httprouter.Params) {
 			{{- if $.WatchCtxDone }}
 		select {
 		case <-hr.Context().Done():
@@ -98,7 +98,7 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}rw, hr, p{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(rw, nil, err)
@@ -110,9 +110,9 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 	s.Render(rw, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(rw, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(rw, nil, s.{{.MethodName}}({{if .IsUseContext }}rw, hr, p{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	    }
+	    }{{end}}
 		{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{joinPath $.Group $field.Path}}", h)
 		{{end}}    }
 	{{end}}
@@ -124,8 +124,13 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 type {{$unimplementedServant}} struct {}
 
 {{range .Fields}}
-func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(rw http.ResponseWriter, hr *http.Request, p httprouter.Params){{else}}{{.MethodName}}({{if .IsUseContext }}rw http.ResponseWriter, hr *http.Request, p httprouter.Params{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+	{{if .JustUseContext -}}
+		rw.WriteHeader(http.StatusNotImplemented)
+		rw.Write([]byte("method not implemented"))
+	{{else -}}
 	return {{if notEmptyStr .OutName }}nil, {{end}}mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+	{{end -}}
 }
 
 {{end}}
