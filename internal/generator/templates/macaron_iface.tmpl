@@ -35,7 +35,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for macaron
     {{.Chain}}() []macaron.Handler
 {{end}}
-{{range .Fields}}    {{.MethodName}}({{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}
+{{range .Fields}}   {{if .JustUseContext }}{{ .MethodName}}(*macaron.Context){{else}}{{.MethodName}}({{if .IsUseContext }}*macaron.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -46,7 +46,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 {{if notEmptyStr .Group }}{{if notEmptyStr .Chain }}    // use chain for router
     middlewares := s.{{.Chain}}()
     m.Group("{{.Group}}", func() {
-{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{func(c *macaron.Context) {
+{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{ {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -60,7 +60,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -72,10 +72,10 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	}})
-	{{else if .JustHttpAny}}    m.Any("{{.Path}}", func(c *macaron.Context) {
+	}{{end}}})
+	{{else if .JustHttpAny}}    m.Any("{{.Path}}", {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -89,7 +89,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -101,11 +101,11 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	})
+	}{{end}})
 	{{else}}{{$field := .}}    {
-        h := func(c *macaron.Context) {
+        h := {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -119,7 +119,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -131,13 +131,13 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	    }
+	    }{{end}}
 		{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{h})
 		{{end}}}{{end}}
 {{end}}}, middlewares...){{else}} m.Group("{{.Group}}", func() {
-{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{func(c *macaron.Context) {
+{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{ {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -151,7 +151,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -163,10 +163,10 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	}})
-{{else if .JustHttpAny}}    m.Any("{{.Path}}",  func(c *macaron.Context) {
+	}{{end}}})
+{{else if .JustHttpAny}}    m.Any("{{.Path}}",  {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -180,7 +180,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -192,11 +192,11 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	})
+	}{{end}})
 	{{else}}{{$field := .}}    {
-        h := func(c *macaron.Context) {
+        h := {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -210,7 +210,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -222,9 +222,9 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	    }
+	    }{{end}}
 		{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{h})
 		{{end}}}{{end}}
 {{end}}}){{end}}{{else}}{{if notEmptyStr .Chain }}    // use chain for router
@@ -233,7 +233,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
         m.Use(middleware)
     }{{end}}
 
-{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{func(c *macaron.Context) {
+{{range .Fields}}{{if .NotHttpAny }}    m.Handle("{{.HttpMethod}}", "{{.Path}}", []macaron.Handler{ {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -247,7 +247,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -259,10 +259,10 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	}})
-	{{else if .JustHttpAny}}    m.Any("{{.Path}}", func(c *macaron.Context) {
+	}{{end}}})
+	{{else if .JustHttpAny}}    m.Any("{{.Path}}", {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -276,7 +276,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -288,11 +288,11 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	})
+	}{{end}})
 	{{else}}{{$field := .}}    {
-        h := func(c *macaron.Context) {
+        h := {{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *macaron.Context) {
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
 	{{if .IsBindIn -}}
@@ -306,7 +306,7 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -318,9 +318,9 @@ func Register{{.TypeName}}Servant(m *macaron.Macaron, s {{.TypeName}}) {
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
-	    }
+	    }{{end}}
 		{{range .AnyHttpMethods}}    m.Handle("{{.}}", "{{$field.Path}}", []macaron.Handler{h})
 		{{end}}}
 	{{end}}
@@ -339,8 +339,13 @@ func ({{$unimplementedServant}}){{.Chain}}() []macaron.Handler {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{.MethodName}}({{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c *macaron.Context){{else}}{{.MethodName}}({{if .IsUseContext }}c *macaron.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+	{{if .JustUseContext -}}
+		c.Resp.WriteHeader(http.StatusNotImplemented)
+		c.Resp.Write([]byte("method not implemented"))
+	{{else -}}
 	return {{if notEmptyStr .OutName }}nil, {{end}}mir.Errorln(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
+	{{end -}}
 }
 
 {{end}}
