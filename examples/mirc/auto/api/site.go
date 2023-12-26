@@ -119,14 +119,14 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 	{
 		h := append(cc.ChainMultiAttachments(), s.MultiAttachments)
 		router.Handle("GET", "/attachments/:name/", h...)
-		router.Handle("OPTIONS", "/attachments/:name/", h...)
 		router.Handle("HEAD", "/attachments/:name/", h...)
+		router.Handle("OPTIONS", "/attachments/:name/", h...)
 	}
 	{
 		h := s.ManyResources
-		router.Handle("OPTIONS", "/resources/:name/", h)
-		router.Handle("HEAD", "/resources/:name/", h)
 		router.Handle("GET", "/resources/:name/", h)
+		router.Handle("HEAD", "/resources/:name/", h)
+		router.Handle("OPTIONS", "/resources/:name/", h)
 	}
 	router.Any("/anystaticks/:name/", s.AnyStaticks)
 	router.Handle("GET", "/statics/:name/", s.Statics)
@@ -201,8 +201,8 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			resp, err := s.PrevTweets(req)
 			s.Render(c, resp, err)
 		}
-		router.Handle("HEAD", "/tweets/prev/", h)
 		router.Handle("GET", "/tweets/prev/", h)
+		router.Handle("HEAD", "/tweets/prev/", h)
 		router.Handle("POST", "/tweets/prev/", h)
 	}
 	router.Any("/tweets/next/", func(c *gin.Context) {

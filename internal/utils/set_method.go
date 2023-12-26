@@ -4,7 +4,10 @@
 
 package utils
 
-import "net/http"
+import (
+	"net/http"
+	"sort"
+)
 
 // HttpMethodSet http method set struct
 type HttpMethodSet map[string]struct{}
@@ -31,5 +34,6 @@ func (s HttpMethodSet) List() []string {
 	for m := range s {
 		methods = append(methods, m)
 	}
+	sort.Strings(methods)
 	return methods
 }
