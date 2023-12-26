@@ -1,6 +1,7 @@
 package servants
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/alimy/mir/v4"
@@ -9,15 +10,15 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c *app.RequestContext, obj any) mir.Error {
+func (baseSrv) Bind(c context.Context, ctx *app.RequestContext, obj any) mir.Error {
 	// do something
 	return nil
 }
 
-func (baseSrv) Render(c *app.RequestContext, data any, err mir.Error) {
+func (baseSrv) Render(c context.Context, ctx *app.RequestContext, data any, err mir.Error) {
 	if err == nil {
-		c.JSON(http.StatusOK, data)
+		ctx.JSON(http.StatusOK, data)
 	} else {
-		c.JSON(err.StatusCode(), err.Error())
+		ctx.JSON(err.StatusCode(), err.Error())
 	}
 }

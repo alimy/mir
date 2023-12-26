@@ -11,8 +11,12 @@ func init() {
 
 // Site site v1 interface info
 type Site struct {
-	Chain    `mir:"-"`
-	Group    `mir:"/v1"`
-	Index    func(Get)             `mir:"/index/"`
-	Articles func(Head, Get, Post) `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
+	Chain            `mir:"-"`
+	Group            `mir:"/v1"`
+	Index            func(Get)                                `mir:"/index/"`
+	Articles         func(Head, Get, Post)                    `mir:"//{subdomain}.example.com/articles/{category}/{id:[0-9]+}?filter={filter}&foo=bar&id={id:[0-9]+}"`
+	Statics          func(Get, Context)                       `mir:"/statics/{name}/"`
+	AnyStaticks      func(Any, Context)                       `mir:"/anystaticks/{name}/"`
+	ManyResources    func(Get, Head, Options, Context)        `mir:"/resources/{name}/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context) `mir:"/attachments/{name}/"`
 }

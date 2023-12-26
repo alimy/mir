@@ -11,10 +11,16 @@ func init() {
 
 // Site site v1 interface info
 type Site struct {
-	Chain     `mir:"-"`
-	Group     `mir:"/v1"`
-	Index     func(Get, Chain)             `mir:"/index/"`
-	AnyTopics func(Chain)                  `mir:"/topics/"`
-	Articles  func(Head, Get, Post, Chain) `mir:"/articles/:category/"`
-	Logout    func(Post)                   `mir:"/user/logout/"`
+	Chain            `mir:"-"`
+	Group            `mir:"/v1"`
+	Index            func(Get, Chain)                         `mir:"/index/"`
+	AnyTopics        func(Chain)                              `mir:"/topics/"`
+	Articles         func(Head, Get, Post, Chain)             `mir:"/articles/:category/"`
+	Logout           func(Post)                               `mir:"/user/logout/"`
+	ImageUpload      func(Post, Context)                      `mir:"/upload/image/:name/"`
+	FileUpload       func(Post, Chain, Context)               `mir:"/upload/file/:name/"`
+	Statics          func(Get, Context)                       `mir:"/statics/:name/"`
+	AnyStaticks      func(Any, Context)                       `mir:"/anystaticks/:name/"`
+	ManyResources    func(Get, Head, Options, Context)        `mir:"/resources/:name/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context) `mir:"/attachments/:name/"`
 }

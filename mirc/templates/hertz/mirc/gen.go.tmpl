@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	. "github.com/alimy/mir/v4/core"
@@ -24,7 +25,7 @@ func main() {
 		SinkPath("auto"),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),
-		AssertType[*app.RequestContext](),
+		AssertType4[context.Context, *app.RequestContext](),
 	}
 	if err := Generate(opts); err != nil {
 		log.Fatal(err)

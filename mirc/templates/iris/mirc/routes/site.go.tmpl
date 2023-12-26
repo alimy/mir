@@ -55,11 +55,19 @@ type Tweet struct {
 
 // Site site interface info
 type Site struct {
-	Chain      `mir:"-"`
-	Index      func(Get)                                   `mir:"/index/"`
-	Articles   func(Get)                                   `mir:"/articles/{category:string}"`
-	NextTweets func(Any, TweetsReq) TweetsResp             `mir:"/tweets/next"`
-	PrevTweets func(Post, Get, Head, TweetsReq) TweetsResp `mir:"/tweets/prev"`
-	Login      func(Post, LoginReq) LoginResp              `mir:"/user/login/"`
-	Logout     func(Post, LogoutReq)                       `mir:"/user/logout/"`
+	Chain            `mir:"-"`
+	Index            func(Get)                                      `mir:"/index/"`
+	Articles         func(Get)                                      `mir:"/articles/{category:string}"`
+	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next"`
+	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev"`
+	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/"`
+	Logout           func(Post, LogoutReq)                          `mir:"/user/logout/"`
+	ImageUpload      func(Post, Context)                            `mir:"/upload/image/{name:string}/"`
+	FileUpload       func(Post, Chain, Context)                     `mir:"/upload/file/{name:string}/"`
+	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple/{name:string}/"`
+	Assets           func(Get, Context, LoginReq)                   `mir:"/assets/{name:string}/"`
+	Statics          func(Get, Context)                             `mir:"/statics/{name:string}/"`
+	AnyStaticks      func(Any, Context)                             `mir:"/anystaticks/{name:string}/"`
+	ManyResources    func(Get, Head, Options, Context)              `mir:"/resources/{name:string}/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments/{name:string}/"`
 }
