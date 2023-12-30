@@ -3,7 +3,7 @@ module github.com/alimy/mir-example/v4
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.1.0-beta.1
+	github.com/alimy/mir/v4 v4.1.0
 	github.com/gin-gonic/gin v1.9.1
 )
 
@@ -35,5 +35,3 @@ require (
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/alimy/mir/v4 => ../
