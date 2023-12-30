@@ -3,7 +3,7 @@ module github.com/alimy/mir/engine/hertz/v4
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.0.0
+	github.com/alimy/mir/v4 v4.1.0
 	github.com/cloudwego/hertz v0.7.3
 )
 
