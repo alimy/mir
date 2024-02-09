@@ -25,6 +25,7 @@ func main() {
 	log.Println("generate code start")
 	opts := Options{
 		UseGin(),
+		UseRequestContext(),
 		SinkPath("auto"),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),

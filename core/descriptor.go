@@ -16,7 +16,7 @@ import (
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "v4.1.0",
+		MirVer: "v4.2.0",
 	}
 )
 
@@ -33,22 +33,23 @@ type VersionInfo struct {
 
 // FieldDescriptor field Descriptor info
 type FieldDescriptor struct {
-	Imports      map[string]string
-	PkgPath      string
-	Host         string
-	Path         string
-	Queries      []string
-	HttpMethods  []string
-	IsAnyMethod  bool
-	IsFieldChain bool
-	IsUseContext bool
-	IsBindIn     bool
-	IsRenderOut  bool
-	In           reflect.Type
-	Out          reflect.Type
-	InOuts       []reflect.Type
-	MethodName   string
-	Comment      string // not support now so always empty
+	Imports             map[string]string
+	PkgPath             string
+	Host                string
+	Path                string
+	Queries             []string
+	HttpMethods         []string
+	IsAnyMethod         bool
+	IsFieldChain        bool
+	IsUseContext        bool
+	IsUseRequestContext bool
+	IsBindIn            bool
+	IsRenderOut         bool
+	In                  reflect.Type
+	Out                 reflect.Type
+	InOuts              []reflect.Type
+	MethodName          string
+	Comment             string // not support now so always empty
 }
 
 // IfaceDescriptor interface Descriptor info
@@ -65,6 +66,7 @@ type IfaceDescriptor struct {
 	EngineInfo           *EngineInfo
 	VerInfo              *VersionInfo
 	WatchCtxDone         bool
+	UseRequestCtx        bool
 	DeclareCoreInterface bool // whether need to declare core interface, default is false
 }
 
@@ -232,6 +234,18 @@ func (d *IfaceDescriptor) IsUseFieldChain() bool {
 func (d *IfaceDescriptor) IsUseBinding() bool {
 	for _, f := range d.Fields {
 		if f.In != nil {
+			return true
+		}
+	}
+	return false
+}
+
+func (d *IfaceDescriptor) IsUseRequestContext() bool {
+	if !d.UseRequestCtx {
+		return false
+	}
+	for _, f := range d.Fields {
+		if f.IsUseRequestContext {
 			return true
 		}
 	}

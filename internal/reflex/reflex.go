@@ -14,11 +14,12 @@ import (
 
 // reflex real parser
 type reflex struct {
-	engineInfo   *core.EngineInfo
-	ns           naming.NamingStrategy
-	tagName      string
-	watchCtxDone bool
-	noneQuery    bool
+	engineInfo    *core.EngineInfo
+	ns            naming.NamingStrategy
+	tagName       string
+	watchCtxDone  bool
+	useRequestCtx bool
+	noneQuery     bool
 }
 
 // Parse get Descriptors from parse entries
@@ -74,14 +75,15 @@ func (r *reflex) IfaceFrom(entry any) (*core.IfaceDescriptor, error) {
 	pkgPath := entryType.PkgPath()
 	// get IfaceDescriptor from entryType and entryPtrType
 	iface := &core.IfaceDescriptor{
-		Imports:      make(map[string]string),
-		EngineInfo:   r.engineInfo,
-		VerInfo:      core.VerInfo,
-		TypeName:     entryType.Name(),
-		PkgPath:      pkgPath,
-		PkgName:      "api", // set default pkg name
-		Fields:       make([]*core.FieldDescriptor, 0),
-		WatchCtxDone: r.watchCtxDone,
+		Imports:       make(map[string]string),
+		EngineInfo:    r.engineInfo,
+		VerInfo:       core.VerInfo,
+		TypeName:      entryType.Name(),
+		PkgPath:       pkgPath,
+		PkgName:       "api", // set default pkg name
+		Fields:        make([]*core.FieldDescriptor, 0),
+		WatchCtxDone:  r.watchCtxDone,
+		UseRequestCtx: r.useRequestCtx,
 	}
 	for i := entryType.NumField() - 1; i >= 0; i-- {
 		field := entryType.Field(i)
@@ -107,7 +109,7 @@ func (r *reflex) IfaceFrom(entry any) (*core.IfaceDescriptor, error) {
 					return nil, errMultChainInfo
 				}
 			}
-			iface.Fields = append(iface.Fields, r.fieldFrom(tagInfo, pkgPath))
+			iface.Fields = append(iface.Fields, r.fieldFrom(tagInfo, iface.UseRequestCtx, pkgPath))
 		case errNotExist:
 			// normal field but had no mir tag info so just break to continue process next field
 		default:
@@ -129,31 +131,33 @@ func (r *reflex) inflateGroupInfo(d *core.IfaceDescriptor, v reflect.Value, t *t
 }
 
 // fieldFrom build tagField from entry and tagInfo
-func (r *reflex) fieldFrom(t *tagInfo, pkgPath string) *core.FieldDescriptor {
+func (r *reflex) fieldFrom(t *tagInfo, isUseReuestCtx bool, pkgPath string) *core.FieldDescriptor {
 	return &core.FieldDescriptor{
-		PkgPath:      pkgPath,
-		IsAnyMethod:  t.isAnyMethod,
-		IsFieldChain: t.isFieldChain,
-		IsUseContext: t.isUseContext,
-		HttpMethods:  t.methods.List(),
-		IsBindIn:     t.isBindIn,
-		IsRenderOut:  t.isRenderOut,
-		In:           t.in,
-		Out:          t.out,
-		InOuts:       t.inOuts,
-		Host:         t.host,
-		Path:         t.path,
-		Queries:      t.queries,
-		MethodName:   t.fieldName,
+		PkgPath:             pkgPath,
+		IsAnyMethod:         t.isAnyMethod,
+		IsFieldChain:        t.isFieldChain,
+		IsUseContext:        t.isUseContext,
+		IsUseRequestContext: isUseReuestCtx && !t.isUseContext,
+		HttpMethods:         t.methods.List(),
+		IsBindIn:            t.isBindIn,
+		IsRenderOut:         t.isRenderOut,
+		In:                  t.in,
+		Out:                 t.out,
+		InOuts:              t.inOuts,
+		Host:                t.host,
+		Path:                t.path,
+		Queries:             t.queries,
+		MethodName:          t.fieldName,
 	}
 }
 
-func NewReflex(info *core.EngineInfo, tagName string, watchCtxDone bool, noneQuery bool) *reflex {
+func NewReflex(info *core.EngineInfo, tagName string, watchCtxDone bool, useRequestCtx bool, noneQuery bool) *reflex {
 	return &reflex{
-		engineInfo:   info,
-		ns:           naming.NewSnakeNamingStrategy(),
-		tagName:      tagName,
-		watchCtxDone: watchCtxDone,
-		noneQuery:    noneQuery,
+		engineInfo:    info,
+		ns:            naming.NewSnakeNamingStrategy(),
+		tagName:       tagName,
+		watchCtxDone:  watchCtxDone,
+		useRequestCtx: useRequestCtx,
+		noneQuery:     noneQuery,
 	}
 }

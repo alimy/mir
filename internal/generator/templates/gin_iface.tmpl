@@ -5,6 +5,7 @@
 package {{ .PkgName }}
 
 import (
+	{{if .IsUseRequestContext }}"context"{{end}}
     "net/http"
 
     "github.com/alimy/mir/v4"
@@ -35,7 +36,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for gin
     {{.Chain}}() gin.HandlersChain
 {{end}}
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*gin.Context){{else}}{{.MethodName}}({{if .IsUseContext }}*gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*gin.Context){{else}}{{.MethodName}}({{if .IsUseRequestContext }}context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}*gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -86,7 +87,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -98,7 +99,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	}{{end}}{{if .IsFieldChain }})...{{end}})
 	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}{{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *gin.Context) {
@@ -122,7 +123,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -134,7 +135,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	}{{end}}{{if .IsFieldChain }})...{{end}})
 	{{else}}{{$field := .}}    {
@@ -159,7 +160,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	}
 	{{- end }}
 	{{if notEmptyStr .OutName -}}
-	resp, err := s.{{ .MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
+	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
 		s.Render(c, nil, err)
@@ -171,7 +172,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	s.Render(c, resp, err)
 	{{- end }}
 	{{- else -}}
-	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
+	s.Render(c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	}{{end}}{{if .IsFieldChain }}){{end}}
 	{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})
@@ -191,7 +192,7 @@ func ({{$unimplementedServant}}){{.Chain}}() gin.HandlersChain {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c *gin.Context){{else}}{{.MethodName}}({{if .IsUseContext }}c *gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c *gin.Context){{else}}{{.MethodName}}({{if .IsUseRequestContext }}c context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c *gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		c.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 	{{else -}}

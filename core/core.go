@@ -57,16 +57,18 @@ type InitOpts struct {
 	EnginePkgName     string
 	EngineImportAlias string
 	WatchCtxDone      bool
+	UseRequestCtx     bool
 	NoneQuery         bool
 	Cleanup           bool
 }
 
 // ParserOpts used for initial parser
 type ParserOpts struct {
-	EngineInfo   *EngineInfo
-	DefaultTag   string
-	WatchCtxDone bool
-	NoneQuery    bool
+	EngineInfo    *EngineInfo
+	DefaultTag    string
+	WatchCtxDone  bool
+	UseRequestCtx bool
+	NoneQuery     bool
 }
 
 // GeneratorOpts used for initial generator
@@ -95,9 +97,10 @@ func (opts Options) InitOpts() *InitOpts {
 // ParserOpts return a ParserOpts instance
 func (opts *InitOpts) ParserOpts() *ParserOpts {
 	return &ParserOpts{
-		DefaultTag:   opts.DefaultTag,
-		WatchCtxDone: opts.WatchCtxDone,
-		NoneQuery:    opts.NoneQuery,
+		DefaultTag:    opts.DefaultTag,
+		WatchCtxDone:  opts.WatchCtxDone,
+		UseRequestCtx: opts.UseRequestCtx,
+		NoneQuery:     opts.NoneQuery,
 		EngineInfo: &EngineInfo{
 			PkgName:     opts.EnginePkgName,
 			ImportAlias: opts.EngineImportAlias,
@@ -292,6 +295,14 @@ func WatchCtxDone(enable bool) Option {
 	})
 }
 
+// UseRequestContext use HTTP Request Context in generated interface method code.
+// Default is disable use HTTP Request Context.
+func UseRequestContext() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.UseRequestCtx = true
+	})
+}
+
 // Cleanup set generator cleanup out first when re-generate code
 func Cleanup(enable bool) Option {
 	return optFunc(func(opts *InitOpts) {
@@ -399,6 +410,7 @@ func defaultInitOpts() *InitOpts {
 		SinkPath:      ".auto",
 		DefaultTag:    "mir",
 		WatchCtxDone:  true,
+		UseRequestCtx: false,
 		Cleanup:       true,
 	}
 }

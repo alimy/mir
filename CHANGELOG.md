@@ -3,7 +3,7 @@
 All notable changes to paopao-ce are documented in this file.
 
 ## 4.2.0 ([`dev`](https://github.com/alimy/mir))
-TODO;
+- add `gin` engine support for `UseRequstContext` option for generate interface method code that contain HTTP Request Context.
 
 ## 4.1.0
 ### Added
