@@ -46,7 +46,7 @@ enableGitInfo = true
 
 [[menu.after]]
   name = "Alimy's Me"
-  url = "https://alimy.me/"
+  url = "https://alimy.github.io/"
   weight = 20
 
 [[menu.after]]
