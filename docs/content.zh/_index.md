@@ -5,7 +5,7 @@ type: docs
 
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/images/mir-logo.png" alt="Logo" width="240" height="240">
+    <img src="https://alimy.github.io/mir/images/mir-logo.png" alt="Logo" width="240" height="240">
   </a>
 
   <h3 align="center">Mir</h3>
@@ -19,6 +19,6 @@ Mir 是一套提供类似gRPC服务开发体验的快速开发RESTful API后端�
 
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/images/mir-arc.png">
+    <img src="https://alimy.github.io/mir/images/mir-arc.png">
   </a>
 </div>
