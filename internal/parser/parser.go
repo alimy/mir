@@ -15,8 +15,10 @@ import (
 
 var (
 	// defaultTag indicate default mir's struct tag name
-	defaultTag       = "mir"
-	defautlMethodTag = "method"
+	defaultTag        = "mir"
+	defaultBindingTag = "binding"
+	defaultRenderTag  = "render"
+	defautlMethodTag  = "method"
 )
 
 func init() {
@@ -28,11 +30,13 @@ func init() {
 
 // mirParser parse for struct tag
 type mirParser struct {
-	engineInfo    *core.EngineInfo
-	tagName       string
-	watchCtxDone  bool
-	useRequestCtx bool
-	noneQuery     bool
+	engineInfo     *core.EngineInfo
+	tagName        string
+	bindingTagName string
+	renderTagName  string
+	watchCtxDone   bool
+	useRequestCtx  bool
+	noneQuery      bool
 }
 
 // Name name of parser
@@ -49,11 +53,19 @@ func (p *mirParser) Init(opts *core.ParserOpts) error {
 		p.engineInfo = opts.EngineInfo
 	}
 	p.tagName = opts.DefaultTag
+	p.bindingTagName = opts.DefaultBindingTag
+	p.renderTagName = opts.DefaultRenderTag
 	p.watchCtxDone = opts.WatchCtxDone
 	p.useRequestCtx = opts.UseRequestCtx
 	p.noneQuery = opts.NoneQuery
 	if p.tagName == "" {
 		p.tagName = defaultTag
+	}
+	if p.bindingTagName == "" {
+		p.bindingTagName = defaultBindingTag
+	}
+	if p.renderTagName == "" {
+		p.renderTagName = defaultRenderTag
 	}
 	return nil
 }
@@ -63,7 +75,7 @@ func (p *mirParser) Parse(entries []any) (core.Descriptors, error) {
 	if len(entries) == 0 {
 		return nil, errors.New("entries is empty")
 	}
-	r := reflex.NewReflex(p.engineInfo, p.tagName, p.watchCtxDone, p.useRequestCtx, p.noneQuery)
+	r := reflex.NewReflex(p.engineInfo, p.tagName, p.bindingTagName, p.renderTagName, p.watchCtxDone, p.useRequestCtx, p.noneQuery)
 	return r.Parse(entries)
 }
 
@@ -78,7 +90,7 @@ func (p *mirParser) ParseContext(ctx core.MirCtx, entries []any) {
 		go func(ctx core.MirCtx, wg *sync.WaitGroup, ifaceSink chan<- *core.IfaceDescriptor, entry any) {
 			defer wg.Done()
 
-			r := reflex.NewReflex(p.engineInfo, p.tagName, p.watchCtxDone, p.useRequestCtx, p.noneQuery)
+			r := reflex.NewReflex(p.engineInfo, p.tagName, p.bindingTagName, p.renderTagName, p.watchCtxDone, p.useRequestCtx, p.noneQuery)
 			iface, err := r.IfaceFrom(entry)
 			if err != nil {
 				core.Logus("ifaceFrom error: %s", err)

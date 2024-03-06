@@ -45,6 +45,8 @@ type FieldDescriptor struct {
 	IsUseRequestContext bool
 	IsBindIn            bool
 	IsRenderOut         bool
+	BindingName         string
+	RenderName          string
 	In                  reflect.Type
 	Out                 reflect.Type
 	InOuts              []reflect.Type
@@ -262,6 +264,24 @@ func (d *IfaceDescriptor) BindingFields() (fields []*FieldDescriptor) {
 	return
 }
 
+func (d *IfaceDescriptor) IsUseNamedBinding() bool {
+	for _, f := range d.Fields {
+		if f.IsUseNamedBinding() {
+			return true
+		}
+	}
+	return false
+}
+
+func (d *IfaceDescriptor) IsUseNamedRender() bool {
+	for _, f := range d.Fields {
+		if f.IsUseNamedRender() {
+			return true
+		}
+	}
+	return false
+}
+
 // HttpMethod return http method when f.NotHttpAny() is true
 func (f *FieldDescriptor) HttpMethod() string {
 	if len(f.HttpMethods) == 1 {
@@ -322,6 +342,14 @@ func (f *FieldDescriptor) OutName() string {
 		return f.Out.Name()
 	}
 	return f.aliasPkgName(pkgPath) + "." + f.Out.Name()
+}
+
+func (f *FieldDescriptor) IsUseNamedBinding() bool {
+	return f.In != nil && len(f.BindingName) > 0
+}
+
+func (f *FieldDescriptor) IsUseNamedRender() bool {
+	return f.Out != nil && len(f.RenderName) > 0
 }
 
 func (f *FieldDescriptor) aliasPkgName(pkgPath string) string {

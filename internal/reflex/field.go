@@ -54,6 +54,8 @@ type tagInfo struct {
 	fieldName    string              // indicate field name
 	isBindIn     bool
 	isRenderOut  bool
+	bindingName  string
+	renderName   string
 	in           reflect.Type
 	out          reflect.Type
 	inOuts       []reflect.Type
@@ -71,6 +73,9 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 	if !exist {
 		return nil, errNotExist
 	}
+	// lookup binding/render tag info from struct field
+	info.bindingName, _ = field.Tag.Lookup(r.bindingTagName)
+	info.renderName, _ = field.Tag.Lookup(r.renderTagName)
 
 	// Skip leading space.
 	i := 0

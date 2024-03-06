@@ -14,12 +14,14 @@ import (
 
 // reflex real parser
 type reflex struct {
-	engineInfo    *core.EngineInfo
-	ns            naming.NamingStrategy
-	tagName       string
-	watchCtxDone  bool
-	useRequestCtx bool
-	noneQuery     bool
+	engineInfo     *core.EngineInfo
+	ns             naming.NamingStrategy
+	tagName        string
+	bindingTagName string
+	renderTagName  string
+	watchCtxDone   bool
+	useRequestCtx  bool
+	noneQuery      bool
 }
 
 // Parse get Descriptors from parse entries
@@ -141,6 +143,8 @@ func (r *reflex) fieldFrom(t *tagInfo, isUseReuestCtx bool, pkgPath string) *cor
 		HttpMethods:         t.methods.List(),
 		IsBindIn:            t.isBindIn,
 		IsRenderOut:         t.isRenderOut,
+		BindingName:         strings.Trim(t.bindingName, " "),
+		RenderName:          strings.Trim(t.renderName, " "),
 		In:                  t.in,
 		Out:                 t.out,
 		InOuts:              t.inOuts,
@@ -151,13 +155,15 @@ func (r *reflex) fieldFrom(t *tagInfo, isUseReuestCtx bool, pkgPath string) *cor
 	}
 }
 
-func NewReflex(info *core.EngineInfo, tagName string, watchCtxDone bool, useRequestCtx bool, noneQuery bool) *reflex {
+func NewReflex(info *core.EngineInfo, tagName string, bindingTagName string, renderTagName string, watchCtxDone bool, useRequestCtx bool, noneQuery bool) *reflex {
 	return &reflex{
-		engineInfo:    info,
-		ns:            naming.NewSnakeNamingStrategy(),
-		tagName:       tagName,
-		watchCtxDone:  watchCtxDone,
-		useRequestCtx: useRequestCtx,
-		noneQuery:     noneQuery,
+		engineInfo:     info,
+		ns:             naming.NewSnakeNamingStrategy(),
+		tagName:        tagName,
+		bindingTagName: bindingTagName,
+		renderTagName:  renderTagName,
+		watchCtxDone:   watchCtxDone,
+		useRequestCtx:  useRequestCtx,
+		noneQuery:      noneQuery,
 	}
 }

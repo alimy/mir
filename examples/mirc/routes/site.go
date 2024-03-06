@@ -79,8 +79,8 @@ type Site struct {
 	Index            func(Get, Chain)                               `mir:"/index/"`
 	Articles         func(Get)                                      `mir:"/articles/:category/"`
 	AnyTopics        func()                                         `mir:"/topics/"`
-	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next/"`
-	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev/"`
+	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next/" binding:"json"`
+	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev/" render:"json"`
 	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/"`
 	Logout           func(Post, LogoutReq)                          `mir:"/user/logout/"`
 	ImageUpload      func(Post, Context)                            `mir:"/upload/image/:name/"`

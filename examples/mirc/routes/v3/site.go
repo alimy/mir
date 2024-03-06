@@ -19,7 +19,7 @@ type Site struct {
 	Group            `mir:"v3"`
 	Index            func(Get)                                               `mir:"/index/"`
 	Articles         func(Get)                                               `mir:"/articles/:category/"`
-	NextTweets       func(Any, model.TweetsReq) model.TweetsResp             `mir:"/tweets/next/"`
+	NextTweets       func(Any, model.TweetsReq) model.TweetsResp             `mir:"/tweets/next/" render:"jsonp"`
 	PrevTweets       func(Post, Get, Head, model.TweetsReq) model.TweetsResp `mir:"/tweets/prev/"`
 	Login            func(Post, model.LoginReq) model.LoginResp              `mir:"/user/login/"`
 	Logout           func(Post)                                              `mir:"/user/logout/"`

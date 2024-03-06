@@ -7,6 +7,7 @@ package core
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/alimy/mir/v4/assert"
 )
@@ -54,6 +55,8 @@ type InitOpts struct {
 	ParserName        string
 	SinkPath          string
 	DefaultTag        string
+	DefaultBindingTag string
+	DefaultRenderTag  string
 	EnginePkgName     string
 	EngineImportAlias string
 	WatchCtxDone      bool
@@ -64,11 +67,13 @@ type InitOpts struct {
 
 // ParserOpts used for initial parser
 type ParserOpts struct {
-	EngineInfo    *EngineInfo
-	DefaultTag    string
-	WatchCtxDone  bool
-	UseRequestCtx bool
-	NoneQuery     bool
+	EngineInfo        *EngineInfo
+	DefaultTag        string
+	DefaultBindingTag string
+	DefaultRenderTag  string
+	WatchCtxDone      bool
+	UseRequestCtx     bool
+	NoneQuery         bool
 }
 
 // GeneratorOpts used for initial generator
@@ -97,10 +102,12 @@ func (opts Options) InitOpts() *InitOpts {
 // ParserOpts return a ParserOpts instance
 func (opts *InitOpts) ParserOpts() *ParserOpts {
 	return &ParserOpts{
-		DefaultTag:    opts.DefaultTag,
-		WatchCtxDone:  opts.WatchCtxDone,
-		UseRequestCtx: opts.UseRequestCtx,
-		NoneQuery:     opts.NoneQuery,
+		DefaultTag:        opts.DefaultTag,
+		DefaultBindingTag: opts.DefaultBindingTag,
+		DefaultRenderTag:  opts.DefaultRenderTag,
+		WatchCtxDone:      opts.WatchCtxDone,
+		UseRequestCtx:     opts.UseRequestCtx,
+		NoneQuery:         opts.NoneQuery,
 		EngineInfo: &EngineInfo{
 			PkgName:     opts.EnginePkgName,
 			ImportAlias: opts.EngineImportAlias,
@@ -320,7 +327,21 @@ func NoneQuery(enable bool) Option {
 // DefaultTag set parser's default struct field tag string key
 func DefaultTag(tag string) Option {
 	return optFunc(func(opts *InitOpts) {
-		opts.DefaultTag = tag
+		opts.DefaultTag = strings.Trim(tag, " ")
+	})
+}
+
+// DefaultBindingTag set parser's default struct feild binding tag string key
+func DefaultBindingTag(tag string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.DefaultBindingTag = strings.Trim(tag, " ")
+	})
+}
+
+// DefaultRenderTag set parser's default struct field render tag string key
+func DefaultRenderTag(tag string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.DefaultRenderTag = strings.Trim(tag, " ")
 	})
 }
 
@@ -404,13 +425,15 @@ func InitFrom(opts Options) *InitOpts {
 
 func defaultInitOpts() *InitOpts {
 	return &InitOpts{
-		RunMode:       InSerialMode,
-		GeneratorName: GeneratorGin,
-		ParserName:    ParserStructTag,
-		SinkPath:      ".auto",
-		DefaultTag:    "mir",
-		WatchCtxDone:  true,
-		UseRequestCtx: false,
-		Cleanup:       true,
+		RunMode:           InSerialMode,
+		GeneratorName:     GeneratorGin,
+		ParserName:        ParserStructTag,
+		SinkPath:          ".auto",
+		DefaultTag:        "mir",
+		DefaultBindingTag: "binding",
+		DefaultRenderTag:  "render",
+		WatchCtxDone:      true,
+		UseRequestCtx:     false,
+		Cleanup:           true,
 	}
 }

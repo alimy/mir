@@ -13,11 +13,11 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c *gin.Context, obj any) mir.Error {
-	if err := c.ShouldBind(obj); err != nil {
-		mir.NewError(http.StatusBadRequest, err)
+func (baseSrv) Bind(c *gin.Context, obj any) (err mir.Error) {
+	if xerr := c.ShouldBind(obj); xerr != nil {
+		err = mir.NewError(http.StatusBadRequest, xerr)
 	}
-	return nil
+	return
 }
 
 func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
@@ -25,5 +25,40 @@ func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
 		c.JSON(http.StatusOK, data)
 	} else {
 		c.JSON(err.StatusCode(), err.Error())
+	}
+}
+
+func (baseSrv) BindByName(name string, c *gin.Context, obj any) (err mir.Error) {
+	var xerr error
+	switch name {
+	case "yaml":
+		xerr = c.BindYAML(obj)
+	case "json":
+		xerr = c.BindJSON(obj)
+	default:
+		xerr = c.ShouldBind(obj)
+	}
+	if xerr != nil {
+		err = mir.NewError(http.StatusBadRequest, xerr)
+	}
+	return
+}
+
+func (baseSrv) RenderByName(name string, c *gin.Context, data any, err mir.Error) {
+	switch name {
+	case "jsonp":
+		if err == nil {
+			c.JSONP(http.StatusOK, data)
+		} else {
+			c.JSONP(err.StatusCode(), err.Error())
+		}
+	case "json":
+		fallthrough
+	default:
+		if err == nil {
+			c.JSON(http.StatusOK, data)
+		} else {
+			c.JSON(err.StatusCode(), err.Error())
+		}
 	}
 }
