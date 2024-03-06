@@ -26,5 +26,4 @@ func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
 	} else {
 		c.JSON(err.StatusCode(), err.Error())
 	}
-	c.String(http.StatusNotImplemented, "")
 }
