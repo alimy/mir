@@ -22,9 +22,9 @@ type _render_ interface {
 
 type _default_ interface {
 	Bind(*gin.Context, any) mir.Error
-	BindByName(string, *gin.Context, any) mir.Error
+	BindJson(*gin.Context, any) mir.Error
 	Render(*gin.Context, any, mir.Error)
-	RenderByName(string, *gin.Context, any, mir.Error)
+	RenderJson(*gin.Context, any, mir.Error)
 }
 
 type LoginReq struct {
@@ -198,11 +198,11 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 			}
 			req := new(TweetsReq)
 			if err := s.Bind(c, req); err != nil {
-				s.RenderByName("json", c, nil, err)
+				s.RenderJson(c, nil, err)
 				return
 			}
 			resp, err := s.PrevTweets(c.Request.Context(), req)
-			s.RenderByName("json", c, resp, err)
+			s.RenderJson(c, resp, err)
 		}
 		router.Handle("GET", "/tweets/prev/", h)
 		router.Handle("HEAD", "/tweets/prev/", h)
@@ -215,7 +215,7 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 		default:
 		}
 		req := new(TweetsReq)
-		if err := s.BindByName("json", c, req); err != nil {
+		if err := s.BindJson(c, req); err != nil {
 			s.Render(c, nil, err)
 			return
 		}

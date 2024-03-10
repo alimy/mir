@@ -24,7 +24,7 @@ type _render_ interface {
 type _default_ interface {
 	Bind(*gin.Context, any) mir.Error
 	Render(*gin.Context, any, mir.Error)
-	RenderByName(string, *gin.Context, any, mir.Error)
+	RenderJsonp(*gin.Context, any, mir.Error)
 }
 
 type Site interface {
@@ -146,11 +146,11 @@ func RegisterSiteServant(e *gin.Engine, s Site, m ...SiteChain) {
 		}
 		req := new(model.TweetsReq)
 		if err := s.Bind(c, req); err != nil {
-			s.RenderByName("jsonp", c, nil, err)
+			s.RenderJsonp(c, nil, err)
 			return
 		}
 		resp, err := s.NextTweets(c.Request.Context(), req)
-		s.RenderByName("jsonp", c, resp, err)
+		s.RenderJsonp(c, resp, err)
 	})
 	router.Handle("GET", "/articles/:category/", func(c *gin.Context) {
 		select {

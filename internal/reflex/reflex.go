@@ -14,14 +14,16 @@ import (
 
 // reflex real parser
 type reflex struct {
-	engineInfo     *core.EngineInfo
-	ns             naming.NamingStrategy
-	tagName        string
-	bindingTagName string
-	renderTagName  string
-	watchCtxDone   bool
-	useRequestCtx  bool
-	noneQuery      bool
+	engineInfo      *core.EngineInfo
+	ns              naming.NamingStrategy
+	tagName         string
+	bindingTagName  string
+	renderTagName   string
+	watchCtxDone    bool
+	useRequestCtx   bool
+	useNamedBinding bool
+	useNamedRender  bool
+	noneQuery       bool
 }
 
 // Parse get Descriptors from parse entries
@@ -145,6 +147,8 @@ func (r *reflex) fieldFrom(t *tagInfo, isUseReuestCtx bool, pkgPath string) *cor
 		IsRenderOut:         t.isRenderOut,
 		BindingName:         strings.Trim(t.bindingName, " "),
 		RenderName:          strings.Trim(t.renderName, " "),
+		UseBindingById:      !r.useNamedBinding,
+		UseRenderById:       !r.useNamedRender,
 		In:                  t.in,
 		Out:                 t.out,
 		InOuts:              t.inOuts,
@@ -155,15 +159,19 @@ func (r *reflex) fieldFrom(t *tagInfo, isUseReuestCtx bool, pkgPath string) *cor
 	}
 }
 
-func NewReflex(info *core.EngineInfo, tagName string, bindingTagName string, renderTagName string, watchCtxDone bool, useRequestCtx bool, noneQuery bool) *reflex {
+func NewReflex(info *core.EngineInfo,
+	tagName, bindingTagName, renderTagName string,
+	useNamedBinding, useNamedRender, watchCtxDone, useRequestCtx, noneQuery bool) *reflex {
 	return &reflex{
-		engineInfo:     info,
-		ns:             naming.NewSnakeNamingStrategy(),
-		tagName:        tagName,
-		bindingTagName: bindingTagName,
-		renderTagName:  renderTagName,
-		watchCtxDone:   watchCtxDone,
-		useRequestCtx:  useRequestCtx,
-		noneQuery:      noneQuery,
+		engineInfo:      info,
+		ns:              naming.NewSnakeNamingStrategy(),
+		tagName:         tagName,
+		bindingTagName:  bindingTagName,
+		renderTagName:   renderTagName,
+		watchCtxDone:    watchCtxDone,
+		useRequestCtx:   useRequestCtx,
+		useNamedBinding: useNamedBinding,
+		useNamedRender:  useNamedRender,
+		noneQuery:       noneQuery,
 	}
 }

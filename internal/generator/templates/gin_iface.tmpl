@@ -26,9 +26,19 @@ type _default_ interface {
 	{{- if .IsUseNamedBinding }}
 	BindByName(string, *gin.Context, any) mir.Error
 	{{- end }}
+	{{- if .IsUseBindingById }}
+	{{- range .BindingIdSet }}
+	Bind{{ . }}(*gin.Context, any) mir.Error
+	{{- end }}
+	{{- end }}
 	Render(*gin.Context, any, mir.Error)
 	{{- if .IsUseNamedRender }}
 	RenderByName(string, *gin.Context, any, mir.Error)
+	{{- end }}
+	{{- if .IsUseRenderById }}
+	{{- range .RenderIdSet }}
+	Render{{ . }}(*gin.Context, any, mir.Error)
+	{{- end }}
 	{{- end }}
 }
 {{- end }}
@@ -86,9 +96,9 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	var bv _binding_ = req
 	if err := bv.Bind(c); err != nil {
 	{{- else -}}
-	if err := {{if .IsUseNamedBinding }}s.BindByName("{{.BindingName}}", c, req){{else}}s.Bind(c, req){{end}}; err != nil {
+	if err := {{if .IsUseNamedBinding }}{{if .UseBindingById}}s.Bind{{.BindingId}}({{else}}s.BindByName("{{.BindingName}}",{{end}} c, req){{else}}s.Bind(c, req){{end}}; err != nil {
 	{{- end }}
-		{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, err)
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
 	{{- end }}
@@ -96,16 +106,16 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
-		{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, err)
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
 	var rv _render_ = resp
 	rv.Render(c)
 	{{- else -}}
-	{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, resp, err)
+	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, resp, err)
 	{{- end }}
 	{{- else -}}
-	{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
+	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	}{{end}}{{if .IsFieldChain }})...{{end}})
 	{{else if .JustHttpAny}}    router.Any("{{.Path}}", {{if .IsFieldChain }}append(cc.Chain{{.MethodName}}(), {{end}}{{if .JustUseContext}}s.{{ .MethodName}}{{else}}func(c *gin.Context) {
@@ -122,9 +132,9 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	var bv _binding_ = req
 	if err := bv.Bind(c); err != nil {
 	{{- else -}}
-	if err := {{if .IsUseNamedBinding }}s.BindByName("{{.BindingName}}", c, req){{else}}s.Bind(c, req){{end}}; err != nil {
+	if err := {{if .IsUseNamedBinding }}{{if .UseBindingById}}s.Bind{{.BindingId}}({{else}}s.BindByName("{{.BindingName}}",{{end}} c, req){{else}}s.Bind(c, req){{end}}; err != nil {
 	{{- end }}
-		{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, err)
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
 	{{- end }}
@@ -132,16 +142,16 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
-		{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, err)
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
 	var rv _render_ = resp
 	rv.Render(c)
 	{{- else -}}
-	{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, resp, err)
+	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, resp, err)
 	{{- end }}
 	{{- else -}}
-	{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
+	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	}{{end}}{{if .IsFieldChain }})...{{end}})
 	{{else}}{{$field := .}}    {
@@ -159,9 +169,9 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	var bv _binding_ = req
 	if err := bv.Bind(c); err != nil {
 	{{- else -}}
-	if err := {{if .IsUseNamedBinding }}s.BindByName("{{.BindingName}}", c, req){{else}}s.Bind(c, req){{end}}; err != nil {
+	if err := {{if .IsUseNamedBinding }}{{if .UseBindingById}}s.Bind{{.BindingId}}({{else}}s.BindByName("{{.BindingName}}",{{end}} c, req){{else}}s.Bind(c, req){{end}}; err != nil {
 	{{- end }}
-		{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, err)
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
 	{{- end }}
@@ -169,16 +179,16 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
 	if err != nil {
-		{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, err)
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
 	var rv _render_ = resp
 	rv.Render(c)
 	{{- else -}}
-	{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, resp, err)
+	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, resp, err)
 	{{- end }}
 	{{- else -}}
-	{{if .IsUseNamedRender }}s.RenderByName("{{.RenderName}}", {{else}}s.Render({{end}}c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
+	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, s.{{.MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}}))
 	{{- end }}
 	}{{end}}{{if .IsFieldChain }}){{end}}
 	{{range .AnyHttpMethods}}        router.Handle("{{.}}", "{{$field.Path}}", h{{if $field.IsFieldChain }}...{{end}})

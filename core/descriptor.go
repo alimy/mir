@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"unicode"
 
 	"github.com/alimy/mir/v4/internal/utils"
 )
@@ -47,6 +48,8 @@ type FieldDescriptor struct {
 	IsRenderOut         bool
 	BindingName         string
 	RenderName          string
+	UseBindingById      bool
+	UseRenderById       bool
 	In                  reflect.Type
 	Out                 reflect.Type
 	InOuts              []reflect.Type
@@ -265,21 +268,94 @@ func (d *IfaceDescriptor) BindingFields() (fields []*FieldDescriptor) {
 }
 
 func (d *IfaceDescriptor) IsUseNamedBinding() bool {
+	var isNamedBinding, useBindingById bool
 	for _, f := range d.Fields {
 		if f.IsUseNamedBinding() {
-			return true
+			isNamedBinding = true
+			break
 		}
 	}
-	return false
+	for _, f := range d.Fields {
+		if f.UseBindingById {
+			useBindingById = true
+			break
+		}
+	}
+	return isNamedBinding && !useBindingById
 }
 
 func (d *IfaceDescriptor) IsUseNamedRender() bool {
+	var isNamedRender, useRenderById bool
 	for _, f := range d.Fields {
 		if f.IsUseNamedRender() {
-			return true
+			isNamedRender = true
+			break
 		}
 	}
-	return false
+	for _, f := range d.Fields {
+		if f.UseRenderById {
+			useRenderById = true
+			break
+		}
+	}
+	return isNamedRender && !useRenderById
+}
+
+func (d *IfaceDescriptor) IsUseBindingById() bool {
+	var isNamedBinding, useBindingById bool
+	for _, f := range d.Fields {
+		if f.IsUseNamedBinding() {
+			isNamedBinding = true
+			break
+		}
+	}
+	for _, f := range d.Fields {
+		if f.UseBindingById {
+			useBindingById = true
+		}
+	}
+	return isNamedBinding && useBindingById
+}
+
+func (d *IfaceDescriptor) IsUseRenderById() bool {
+	var isNamedRender, useRenderById bool
+	for _, f := range d.Fields {
+		if f.IsUseNamedRender() {
+			isNamedRender = true
+			break
+		}
+	}
+	for _, f := range d.Fields {
+		if f.UseRenderById {
+			useRenderById = true
+			break
+		}
+	}
+	return isNamedRender && useRenderById
+}
+
+func (d *IfaceDescriptor) BindingIdSet() []string {
+	set := utils.NewStrSet()
+	var id string
+	for _, f := range d.Fields {
+		id = f.BindingId()
+		if len(id) > 0 {
+			set.Add(f.BindingId())
+		}
+	}
+	return set.List()
+}
+
+func (d *IfaceDescriptor) RenderIdSet() []string {
+	set := utils.NewStrSet()
+	var id string
+	for _, f := range d.Fields {
+		id = f.RenderId()
+		if len(id) > 0 {
+			set.Add(f.RenderId())
+		}
+	}
+	return set.List()
 }
 
 // HttpMethod return http method when f.NotHttpAny() is true
@@ -350,6 +426,38 @@ func (f *FieldDescriptor) IsUseNamedBinding() bool {
 
 func (f *FieldDescriptor) IsUseNamedRender() bool {
 	return f.Out != nil && len(f.RenderName) > 0
+}
+
+func (f *FieldDescriptor) BindingId() (res string) {
+	b := &strings.Builder{}
+	b.Grow(len(f.BindingName))
+	for i, r := range f.BindingName {
+		if r == ' ' || r == '_' {
+			continue
+		}
+		if i == 0 {
+			b.WriteRune(unicode.ToUpper(r))
+			continue
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
+}
+
+func (f FieldDescriptor) RenderId() string {
+	b := &strings.Builder{}
+	b.Grow(len(f.RenderName))
+	for i, r := range f.RenderName {
+		if r == ' ' || r == '_' {
+			continue
+		}
+		if i == 0 {
+			b.WriteRune(unicode.ToUpper(r))
+			continue
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
 }
 
 func (f *FieldDescriptor) aliasPkgName(pkgPath string) string {

@@ -61,6 +61,8 @@ type InitOpts struct {
 	EngineImportAlias string
 	WatchCtxDone      bool
 	UseRequestCtx     bool
+	UseNamedBinding   bool
+	UseNamedRender    bool
 	NoneQuery         bool
 	Cleanup           bool
 }
@@ -73,6 +75,8 @@ type ParserOpts struct {
 	DefaultRenderTag  string
 	WatchCtxDone      bool
 	UseRequestCtx     bool
+	UseNamedBinding   bool
+	UseNamedRender    bool
 	NoneQuery         bool
 }
 
@@ -107,6 +111,8 @@ func (opts *InitOpts) ParserOpts() *ParserOpts {
 		DefaultRenderTag:  opts.DefaultRenderTag,
 		WatchCtxDone:      opts.WatchCtxDone,
 		UseRequestCtx:     opts.UseRequestCtx,
+		UseNamedBinding:   opts.UseNamedBinding,
+		UseNamedRender:    opts.UseNamedRender,
 		NoneQuery:         opts.NoneQuery,
 		EngineInfo: &EngineInfo{
 			PkgName:     opts.EnginePkgName,
@@ -310,6 +316,24 @@ func UseRequestContext() Option {
 	})
 }
 
+// UseNamedBinding use Named Binding.
+// will generate BindByName(string, *gin.Context, any) mir.Error method to binding
+// object when this option is enable.
+func UseNamedBinding() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.UseNamedBinding = true
+	})
+}
+
+// UseNamedBinding use Named Binding.
+// will generate RenderByName(string, *gin.Context, any, mir.Error) method to render
+// object when this option is enable.
+func UseNamedRender() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.UseNamedRender = true
+	})
+}
+
 // Cleanup set generator cleanup out first when re-generate code
 func Cleanup(enable bool) Option {
 	return optFunc(func(opts *InitOpts) {
@@ -434,6 +458,8 @@ func defaultInitOpts() *InitOpts {
 		DefaultRenderTag:  "render",
 		WatchCtxDone:      true,
 		UseRequestCtx:     false,
+		UseNamedBinding:   false,
+		UseNamedRender:    false,
 		Cleanup:           true,
 	}
 }

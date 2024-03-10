@@ -59,13 +59,13 @@ type Site struct {
 	Articles         func(Get)                                      `mir:"/articles/:category/"`
 	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next/" render:"json"`
 	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev/" binding:"yaml"`
-	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/"`
+	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/" binding:"json"`
 	Logout           func(Post)                                     `mir:"/user/logout/"`
 	ImageUpload      func(Post, Context)                            `mir:"/upload/image/:name/"`
 	FileUpload       func(Post, Chain, Context)                     `mir:"/upload/file/:name/"`
-	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple/:name/"`
+	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple/:name/" render:"Jsonp"`
 	Assets           func(Get, Context, LoginReq)                   `mir:"/assets/:name/"`
 	AnyStaticks      func(Any, Context)                             `mir:"/anystaticks/:name/"`
 	ManyResources    func(Get, Head, Options, Context)              `mir:"/resources/:name/"`
-	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments/:name/"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments/:name/" render:"XML"`
 }

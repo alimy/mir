@@ -20,6 +20,20 @@ func (baseSrv) Bind(c *gin.Context, obj any) (err mir.Error) {
 	return
 }
 
+func (baseSrv) BindJson(c *gin.Context, obj any) (err mir.Error) {
+	if xerr := c.BindJSON(obj); xerr != nil {
+		err = mir.NewError(http.StatusBadRequest, xerr)
+	}
+	return
+}
+
+func (baseSrv) BindYaml(c *gin.Context, obj any) (err mir.Error) {
+	if xerr := c.BindYAML(obj); xerr != nil {
+		err = mir.NewError(http.StatusBadRequest, xerr)
+	}
+	return
+}
+
 func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
 	if err == nil {
 		c.JSON(http.StatusOK, data)
@@ -28,37 +42,34 @@ func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
 	}
 }
 
-func (baseSrv) BindByName(name string, c *gin.Context, obj any) (err mir.Error) {
-	var xerr error
-	switch name {
-	case "yaml":
-		xerr = c.BindYAML(obj)
-	case "json":
-		xerr = c.BindJSON(obj)
-	default:
-		xerr = c.ShouldBind(obj)
+func (baseSrv) RenderJson(c *gin.Context, data any, err mir.Error) {
+	if err == nil {
+		c.JSON(http.StatusOK, data)
+	} else {
+		c.JSON(err.StatusCode(), err.Error())
 	}
-	if xerr != nil {
-		err = mir.NewError(http.StatusBadRequest, xerr)
-	}
-	return
 }
 
-func (baseSrv) RenderByName(name string, c *gin.Context, data any, err mir.Error) {
-	switch name {
-	case "jsonp":
-		if err == nil {
-			c.JSONP(http.StatusOK, data)
-		} else {
-			c.JSONP(err.StatusCode(), err.Error())
-		}
-	case "json":
-		fallthrough
-	default:
-		if err == nil {
-			c.JSON(http.StatusOK, data)
-		} else {
-			c.JSON(err.StatusCode(), err.Error())
-		}
+func (baseSrv) RenderJsonp(c *gin.Context, data any, err mir.Error) {
+	if err == nil {
+		c.JSONP(http.StatusOK, data)
+	} else {
+		c.JSONP(err.StatusCode(), err.Error())
+	}
+}
+
+func (baseSrv) RenderYaml(c *gin.Context, data any, err mir.Error) {
+	if err == nil {
+		c.YAML(http.StatusOK, data)
+	} else {
+		c.YAML(err.StatusCode(), err.Error())
+	}
+}
+
+func (baseSrv) RenderXML(c *gin.Context, data any, err mir.Error) {
+	if err == nil {
+		c.XML(http.StatusOK, data)
+	} else {
+		c.XML(err.StatusCode(), err.Error())
 	}
 }
