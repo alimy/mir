@@ -25,9 +25,9 @@ type _default_ interface {
 	BindJson(*gin.Context, any) mir.Error
 	BindYaml(*gin.Context, any) mir.Error
 	Render(*gin.Context, any, mir.Error)
+	RenderJsonp(*gin.Context, any, mir.Error)
 	RenderJson(*gin.Context, any, mir.Error)
 	RenderXML(*gin.Context, any, mir.Error)
-	RenderJsonp(*gin.Context, any, mir.Error)
 }
 
 type LoginReq struct {

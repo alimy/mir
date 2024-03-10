@@ -23,20 +23,20 @@ type _render_ interface {
 
 type _default_ interface {
 	Bind(*gin.Context, any) mir.Error
-	{{- if .IsUseNamedBinding }}
+	{{- if .Default.IsBindingByName }}
 	BindByName(string, *gin.Context, any) mir.Error
 	{{- end }}
-	{{- if .IsUseBindingById }}
-	{{- range .BindingIdSet }}
+	{{- if  .Default.IsBindingById }}
+	{{- range .Default.BindingIds }}
 	Bind{{ . }}(*gin.Context, any) mir.Error
 	{{- end }}
 	{{- end }}
 	Render(*gin.Context, any, mir.Error)
-	{{- if .IsUseNamedRender }}
+	{{- if .Default.IsRenderByName }}
 	RenderByName(string, *gin.Context, any, mir.Error)
 	{{- end }}
-	{{- if .IsUseRenderById }}
-	{{- range .RenderIdSet }}
+	{{- if .Default.IsRenderById }}
+	{{- range .Default.RenderIds }}
 	Render{{ . }}(*gin.Context, any, mir.Error)
 	{{- end }}
 	{{- end }}

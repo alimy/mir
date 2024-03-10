@@ -43,6 +43,7 @@ func (r *reflex) Parse(entries []any) (core.Descriptors, error) {
 			return nil, err
 		}
 	}
+	ds.Adjust()
 	return ds, nil
 }
 

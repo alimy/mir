@@ -59,19 +59,27 @@ type FieldDescriptor struct {
 
 // IfaceDescriptor interface Descriptor info
 type IfaceDescriptor struct {
-	Group                string
-	Chain                string
-	Imports              map[string]string
-	PkgPath              string
-	PkgName              string
-	TypeName             string
-	Comment              string // not support now so always empty
-	InOuts               []reflect.Type
-	Fields               []*FieldDescriptor
-	EngineInfo           *EngineInfo
-	VerInfo              *VersionInfo
-	WatchCtxDone         bool
-	UseRequestCtx        bool
+	Group         string
+	Chain         string
+	Imports       map[string]string
+	PkgPath       string
+	PkgName       string
+	TypeName      string
+	Comment       string // not support now so always empty
+	InOuts        []reflect.Type
+	Fields        []*FieldDescriptor
+	EngineInfo    *EngineInfo
+	VerInfo       *VersionInfo
+	WatchCtxDone  bool
+	UseRequestCtx bool
+	Default       struct {
+		IsBindingById   bool
+		IsRenderById    bool
+		IsBindingByName bool
+		IsRenderByName  bool
+		BindingIds      []string
+		RenderIds       []string
+	}
 	DeclareCoreInterface bool // whether need to declare core interface, default is false
 }
 
@@ -143,6 +151,68 @@ func (d Descriptors) GroupFrom(key string) string {
 
 func (d Descriptors) keyFrom(s string) string {
 	return "_" + s
+}
+
+func (d Descriptors) Adjust() {
+	for _, f := range d {
+		f.Adjust()
+	}
+}
+
+func (d IfaceDescriptors) Adjust() {
+	var (
+		isBindingById   bool
+		isRenderById    bool
+		isBindingByName bool
+		isRenderByName  bool
+		bindingIds      []string
+		renderIds       []string
+	)
+	for _, f := range d {
+		if f.IsUseNamedBinding() {
+			isBindingByName = true
+		}
+		if f.IsUseNamedRender() {
+			isRenderByName = true
+		}
+		if f.IsUseBindingById() {
+			isBindingById = true
+			bindingIds = append(bindingIds, f.BindingIdSet()...)
+		}
+		if f.IsUseRenderById() {
+			isRenderById = true
+			renderIds = append(renderIds, f.RenderIdSet()...)
+		}
+	}
+
+	var id string
+	if isBindingById {
+		set := utils.NewStrSet()
+		for _, id = range bindingIds {
+			if len(id) > 0 {
+				set.Add(id)
+			}
+		}
+		bindingIds = set.List()
+	}
+	if isRenderById {
+		set := utils.NewStrSet()
+		for _, id = range renderIds {
+			if len(id) > 0 {
+				set.Add(id)
+			}
+		}
+		renderIds = set.List()
+	}
+
+	for _, f := range d {
+		f.Default.IsBindingByName = isBindingByName
+		f.Default.IsRenderByName = isRenderByName
+		f.Default.IsBindingById = isBindingById
+		f.Default.IsRenderById = isRenderById
+		f.Default.BindingIds = bindingIds
+		f.Default.RenderIds = renderIds
+	}
 }
 
 // SetPkgName set package name
