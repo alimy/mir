@@ -36,7 +36,7 @@ func (s *botService) String() string {
 	return fmt.Sprintf("listen on %s\n", color.GreenString("http://%s", s.addr))
 }
 
-func NewBotService(s *service.BaseHttpService[*gin.Engine], addr string) *botService {
+func newBotService(s *service.BaseHttpService[*gin.Engine], addr string) *botService {
 	return &botService{
 		BaseHttpService: s,
 		addr:            addr,

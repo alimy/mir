@@ -36,7 +36,7 @@ func (s *webService) String() string {
 	return fmt.Sprintf("listen on %s\n", color.GreenString("http://%s", s.addr))
 }
 
-func NewWebService(s *service.BaseHttpService[*gin.Engine], addr string) *webService {
+func newWebService(s *service.BaseHttpService[*gin.Engine], addr string) *webService {
 	return &webService{
 		BaseHttpService: s,
 		addr:            addr,
