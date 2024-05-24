@@ -32,7 +32,7 @@ func (s *BaseHttpService[T]) OnStop() error {
 }
 
 // NewBaseHttpService create a BaseHttpService instance
-func NewBaseHttpService[T http.Handler](p *serverPool[*httpServer[T]], e T, s *http.Server) *BaseHttpService[T] {
+func NewBaseHttpService[T http.Handler](p *ServerPool[*httpServer[T]], e T, s *http.Server) *BaseHttpService[T] {
 	s.Handler = e
 	server := p.from(s.Addr, func() *httpServer[T] {
 		return &httpServer[T]{

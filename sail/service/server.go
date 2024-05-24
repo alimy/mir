@@ -6,6 +6,7 @@ package service
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/fatih/color"
 	"github.com/sourcegraph/conc"
@@ -24,7 +25,7 @@ type server interface {
 	services() []Service
 }
 
-type serverPool[T server] struct {
+type ServerPool[T server] struct {
 	servers map[string]T
 }
 
@@ -32,10 +33,17 @@ type baseServer struct {
 	ss map[string]Service
 }
 
-// NewServerPool[T] create a ServerPool[T] instance
-func NewServerPool[T server]() *serverPool[T] {
-	return &serverPool[T]{
+// NewServerPool[T] create a *ServerPool[T] instance
+func NewServerPool[T server]() *ServerPool[T] {
+	return &ServerPool[T]{
 		servers: make(map[string]T),
+	}
+}
+
+// NewHttpServerPool[T] create a *ServerPool[*httpServer[T]] instance
+func NewHttpServerPool[T http.Handler]() *ServerPool[*httpServer[T]] {
+	return &ServerPool[*httpServer[T]]{
+		servers: make(map[string]*httpServer[T]),
 	}
 }
 
@@ -60,7 +68,7 @@ func (s *baseServer) services() (ss []Service) {
 }
 
 // Start start all servers
-func (p *serverPool[T]) Start(wg *conc.WaitGroup) {
+func (p *ServerPool[T]) Start(wg *conc.WaitGroup) {
 	srvSize, maxSidSize := p.checkServices()
 	if srvSize < 1 {
 		return
@@ -71,7 +79,7 @@ func (p *serverPool[T]) Start(wg *conc.WaitGroup) {
 }
 
 // Stop stop all servers
-func (p *serverPool[T]) Stop() {
+func (p *ServerPool[T]) Stop() {
 	srvSize, maxSidSize := p.checkServices()
 	if srvSize < 1 {
 		return
@@ -80,7 +88,7 @@ func (p *serverPool[T]) Stop() {
 	p.stopServer(maxSidSize)
 }
 
-func (p *serverPool[T]) from(addr string, newServer func() T) T {
+func (p *ServerPool[T]) from(addr string, newServer func() T) T {
 	s, exist := p.servers[addr]
 	if exist {
 		return s
@@ -90,7 +98,7 @@ func (p *serverPool[T]) from(addr string, newServer func() T) T {
 	return s
 }
 
-func (p *serverPool[T]) startServer(wg *conc.WaitGroup, maxSidSize int) {
+func (p *ServerPool[T]) startServer(wg *conc.WaitGroup, maxSidSize int) {
 	for _, srv := range p.servers {
 		ss := srv.services()
 		if len(ss) == 0 {
@@ -106,7 +114,7 @@ func (p *serverPool[T]) startServer(wg *conc.WaitGroup, maxSidSize int) {
 	}
 }
 
-func (p *serverPool[T]) stopServer(maxSidSize int) {
+func (p *ServerPool[T]) stopServer(maxSidSize int) {
 	for _, srv := range p.servers {
 		ss := srv.services()
 		if len(ss) < 1 {
@@ -119,20 +127,20 @@ func (p *serverPool[T]) stopServer(maxSidSize int) {
 	}
 }
 
-func (p *serverPool[T]) allServices() (ss []Service) {
+func (p *ServerPool[T]) allServices() (ss []Service) {
 	for _, srv := range p.servers {
 		ss = append(ss, srv.services()...)
 	}
 	return
 }
 
-func (p *serverPool[T]) checkServices() (int, int) {
+func (p *ServerPool[T]) checkServices() (int, int) {
 	var ss []Service
 	ss = append(ss, p.allServices()...)
 	return len(ss), p.maxSidSize(ss)
 }
 
-func (p *serverPool[T]) colorPrint(act byte, err error, l int, ss ...Service) {
+func (p *ServerPool[T]) colorPrint(act byte, err error, l int, ss ...Service) {
 	s := ss[0]
 	switch act {
 	case _actOnStart:
@@ -163,7 +171,7 @@ func (p *serverPool[T]) colorPrint(act byte, err error, l int, ss ...Service) {
 }
 
 // maxSidSize max service id string length
-func (p *serverPool[T]) maxSidSize(ss []Service) int {
+func (p *ServerPool[T]) maxSidSize(ss []Service) int {
 	length := 0
 	for _, s := range ss {
 		size := len(s.Name() + "@" + s.Version())
@@ -174,6 +182,6 @@ func (p *serverPool[T]) maxSidSize(ss []Service) int {
 	return length
 }
 
-func (p *serverPool[T]) sidStr(name string, version string, size int) string {
+func (p *ServerPool[T]) sidStr(name string, version string, size int) string {
 	return fmt.Sprintf(fmt.Sprintf("%%s@%%-%ds", size-len(name+version)+4), name, version)
 }
