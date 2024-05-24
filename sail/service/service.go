@@ -31,11 +31,10 @@ func (baseService) String() string {
 }
 
 // MustInitService Initial service
-func MustInitService(ss []Service) []Service {
+func MustInitService(ss ...Service) {
 	for _, s := range ss {
 		if err := s.OnInit(); err != nil {
 			log.Fatalf("initial %s service error: %s", s.Name(), err)
 		}
 	}
-	return ss
 }
