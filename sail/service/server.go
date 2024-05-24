@@ -12,6 +12,10 @@ import (
 	"github.com/sourcegraph/conc"
 )
 
+var (
+	_ Runtime = (*ServerPool[*httpServer[*http.ServeMux]])(nil)
+)
+
 const (
 	_actOnStart byte = iota
 	_actOnStop

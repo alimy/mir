@@ -6,40 +6,22 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/alimy/mir/sail/mir-example/v4/service"
-	sail "github.com/alimy/mir/sail/v4/service"
 	"github.com/fatih/color"
-	"github.com/gin-gonic/gin"
 	"github.com/sourcegraph/conc"
 )
 
 func main() {
-	webEngine, botEngine := service.NewEngine(), service.NewEngine()
-	p := sail.NewHttpServerPool[*gin.Engine]()
-
-	webServerAddr, botServerAddr := ":8080", ":8081"
-	hsWeb := sail.NewBaseHttpService(p, webEngine, &http.Server{
-		Addr: webServerAddr,
-	})
-	hsBot := sail.NewBaseHttpService(p, botEngine, &http.Server{
-		Addr: botServerAddr,
-	})
-
-	webSrv := service.NewWebService(hsWeb, webServerAddr)
-	botSrv := service.NewBotService(hsBot, botServerAddr)
-
-	// init service
-	sail.MustInitService(webSrv, botSrv)
+	runtime := service.NewRuntime()
 
 	// start services
 	wg := conc.NewWaitGroup()
 	fmt.Fprintf(color.Output, "\nstarting run service...\n\n")
-	p.Start(wg)
+	runtime.Start(wg)
 
 	// graceful stop services
 	wg.Go(func() {
@@ -50,7 +32,7 @@ func main() {
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 		<-quit
 		fmt.Fprintf(color.Output, "\nshutting down server...\n\n")
-		p.Stop()
+		runtime.Stop()
 	})
 	wg.Wait()
 }
