@@ -5,7 +5,7 @@
 package v3
 
 import (
-	"github.com/alimy/mir/sail/mir-example/v4/internal/model"
+	"github.com/alimy/mir/sail/examples/v4/internal/model"
 	. "github.com/alimy/mir/v4"
 	. "github.com/alimy/mir/v4/engine"
 )

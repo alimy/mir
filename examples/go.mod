@@ -1,4 +1,4 @@
-module github.com/alimy/mir-example/v4
+module github.com/alimy/mir/examples/v4
 
 go 1.21
 

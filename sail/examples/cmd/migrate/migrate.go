@@ -7,7 +7,7 @@ package migrate
 import (
 	"fmt"
 
-	"github.com/alimy/mir/sail/mir-example/v4/cmd"
+	"github.com/alimy/mir/sail/examples/v4/cmd"
 	"github.com/spf13/cobra"
 )
 

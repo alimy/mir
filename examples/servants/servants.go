@@ -5,10 +5,10 @@
 package servants
 
 import (
-	"github.com/alimy/mir-example/v4/mirc/auto/api"
-	v1 "github.com/alimy/mir-example/v4/mirc/auto/api/v1"
-	v2 "github.com/alimy/mir-example/v4/mirc/auto/api/v2"
-	v3 "github.com/alimy/mir-example/v4/mirc/auto/api/v3"
+	"github.com/alimy/mir/examples/v4/mirc/auto/api"
+	v1 "github.com/alimy/mir/examples/v4/mirc/auto/api/v1"
+	v2 "github.com/alimy/mir/examples/v4/mirc/auto/api/v2"
+	v3 "github.com/alimy/mir/examples/v4/mirc/auto/api/v3"
 	"github.com/gin-gonic/gin"
 )
 

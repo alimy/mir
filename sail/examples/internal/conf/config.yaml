@@ -1,0 +1,50 @@
+App: # APP基础设置项
+  RunMode: debug
+
+Features:
+  Default: []
+
+WebServer: # Web服务
+  Host: 0.0.0.0
+  Port: 8080
+  ReadTimeout: 60
+  WriteTimeout: 60
+
+BotServer: # Bot服务
+  Host: 0.0.0.0
+  Port: 8081
+  ReadTimeout: 60
+  WriteTimeout: 60
+
+DocsServer: # 开发文档服务
+  Host: 0.0.0.0
+  Port: 8082
+  ReadTimeout: 60
+  WriteTimeout: 60
+
+Database: # Database通用配置
+  LogLevel: error   # 日志级别 silent|error|warn|info
+  TablePrefix: p_   # 表名前缀
+
+MySQL: # MySQL数据库
+  Username: sail
+  Password: sail123
+  Host: db:3306
+  DBName: sail
+  Charset: utf8mb4
+  ParseTime: True
+  MaxIdleConns: 10
+  MaxOpenConns: 30
+
+Postgres: # PostgreSQL数据库
+  User: sail
+  Password: sail123
+  DBName: sail
+  Schema: public
+  Host: localhost
+  Port: 5432
+  SSLMode: disable
+  ApplicationName:
+
+Sqlite3: # Sqlite3数据库
+  Path: custom/data/sqlite3/sail.db

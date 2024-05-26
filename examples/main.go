@@ -7,7 +7,7 @@ package main
 import (
 	"log"
 
-	"github.com/alimy/mir-example/v4/servants"
+	"github.com/alimy/mir/examples/v4/servants"
 	"github.com/gin-gonic/gin"
 )
 

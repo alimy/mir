@@ -15,33 +15,33 @@ import (
 )
 
 var (
-	_ service.Service = (*webService)(nil)
+	_ service.Service = (*docsService)(nil)
 )
 
-type webService struct {
+type docsService struct {
 	*service.BaseHttpService[*gin.Engine]
 	addr string
 }
 
-func (s *webService) Name() string {
-	return "WebService"
+func (s *docsService) Name() string {
+	return "DocsService"
 }
 
-func (s *webService) Version() string {
+func (s *docsService) Version() string {
 	return "v0.0.1"
 }
 
-func (s *webService) OnInit() error {
-	s.RegisterRoute(s, servants.RegisterWebServants)
+func (s *docsService) OnInit() error {
+	s.RegisterRoute(s, servants.RegisterBotServants)
 	return nil
 }
 
-func (s *webService) String() string {
+func (s *docsService) String() string {
 	return fmt.Sprintf("listen on %s\n", color.GreenString("http://%s", s.addr))
 }
 
-func newWebService(s *service.BaseHttpService[*gin.Engine], addr string) *webService {
-	return &webService{
+func newDocsService(s *service.BaseHttpService[*gin.Engine], addr string) *docsService {
+	return &docsService{
 		BaseHttpService: s,
 		addr:            addr,
 	}

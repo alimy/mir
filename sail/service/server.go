@@ -21,6 +21,7 @@ const (
 	_actOnStop
 	_actStart
 	_actStop
+	_actNoop
 )
 
 type server interface {
@@ -75,6 +76,7 @@ func (s *baseServer) services() (ss []Service) {
 func (p *ServerPool[T]) Start(wg *conc.WaitGroup) {
 	srvSize, maxSidSize := p.checkServices()
 	if srvSize < 1 {
+		fmt.Fprintln(color.Output, "[noop] - service list is empty so do nothing")
 		return
 	}
 

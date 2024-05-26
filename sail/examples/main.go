@@ -5,9 +5,9 @@
 package main
 
 import (
-	"github.com/alimy/mir/sail/mir-example/v4/cmd"
-	_ "github.com/alimy/mir/sail/mir-example/v4/cmd/migrate"
-	_ "github.com/alimy/mir/sail/mir-example/v4/cmd/serve"
+	"github.com/alimy/mir/sail/examples/v4/cmd"
+	_ "github.com/alimy/mir/sail/examples/v4/cmd/migrate"
+	_ "github.com/alimy/mir/sail/examples/v4/cmd/serve"
 )
 
 func main() {

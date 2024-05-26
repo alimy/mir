@@ -6,7 +6,7 @@ BUILD_VERSION := $(shell git describe --tags --always)
 BUILD_DATE := $(shell date +'%Y-%m-%d %H:%M:%S %Z')
 SHA_SHORT := $(shell git rev-parse --short HEAD)
 
-MOD_NAME = github.com/alimy/mir/sail/mir-example/v4
+MOD_NAME = github.com/alimy/mir/sail/examples/v4
 LDFLAGS = -X "${MOD_NAME}/internal/conf.version=${BUILD_VERSION}" \
           -X "${MOD_NAME}/internal/conf.buildDate=${BUILD_DATE}" \
           -X "${MOD_NAME}/internal/conf.commitID=${SHA_SHORT}" \
@@ -18,7 +18,7 @@ default: serve
 
 .PHONY: build
 build: fmt
-	go build -trimpath -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -o mir-examples main.go
+	go build -trimpath -tags '$(TAGS)' -ldflags '$(LDFLAGS)' -o examples main.go
 
 .PHONY: build
 serve: fmt

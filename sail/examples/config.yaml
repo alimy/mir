@@ -1,0 +1,22 @@
+App: # APP基础设置项
+  RunMode: debug
+
+Features:
+  Default: ["Postgres", "Web", "Docs", "Bot"]
+
+WebServer: # Web服务
+  Port: 8080
+
+BotServer: # Bot服务
+  Port: 8081
+
+DocsServer: # 开发文档服务
+  Port: 8082
+
+Postgres: # PostgreSQL数据库
+  User: sail
+  Password: sail123
+  DBName: sail
+  Schema: public
+  Host: localhost
+  Port: 5432

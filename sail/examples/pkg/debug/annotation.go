@@ -5,13 +5,14 @@
 package debug
 
 import (
-	"github.com/sirupsen/logrus"
+	"log"
+	"log/slog"
 )
 
 func TODO() {
-	logrus.Fatalln("in todo progress")
+	slog.Warn("in todo progress")
 }
 
 func NotImplemented() {
-	logrus.Fatalln("not implemented")
+	log.Fatalln("not implemented")
 }

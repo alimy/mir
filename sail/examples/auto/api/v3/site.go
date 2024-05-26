@@ -8,7 +8,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/alimy/mir/sail/mir-example/v4/internal/model"
+	"github.com/alimy/mir/sail/examples/v4/internal/model"
 	"github.com/alimy/mir/v4"
 	"github.com/gin-gonic/gin"
 )

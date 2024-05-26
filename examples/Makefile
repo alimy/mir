@@ -6,7 +6,7 @@ default: run
 
 .PHONY: build
 build: fmt
-	go build -o mir-examples main.go
+	go build -o examples main.go
 
 .PHONY: build
 run: fmt

@@ -11,8 +11,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/alimy/mir/sail/mir-example/v4/cmd"
-	"github.com/alimy/mir/sail/mir-example/v4/internal/service"
+	"github.com/alimy/mir/sail/examples/v4/cmd"
+	"github.com/alimy/mir/sail/examples/v4/internal/conf"
+	"github.com/alimy/mir/sail/examples/v4/internal/service"
 
 	"github.com/fatih/color"
 	"github.com/sourcegraph/conc"
@@ -28,8 +29,8 @@ var (
 func init() {
 	serveCmd := &cobra.Command{
 		Use:   "serve",
-		Short: "start mir-example server",
-		Long:  "start mir-example server",
+		Short: "start sail examples server",
+		Long:  "start sail examples server",
 		Run:   serveRun,
 	}
 
@@ -43,6 +44,10 @@ func serveRun(_cmd *cobra.Command, _args []string) {
 	// set maxprocs automatic
 	maxprocs.Set(maxprocs.Logger(log.Printf))
 
+	// initial configure
+	conf.Initial(features, noDefaultFeatures)
+
+	// create service runtime
 	runtime := service.NewRuntime()
 
 	// start services

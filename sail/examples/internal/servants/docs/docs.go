@@ -2,17 +2,16 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package servants
+//go:build !docs
+// +build !docs
+
+package docs
 
 import (
-	"github.com/alimy/mir/sail/mir-example/v4/auto/api"
+	"github.com/gin-gonic/gin"
 )
 
-type siteSrv struct {
-	baseSrv
-	api.UnimplementedSiteServant
-}
-
-func newSiteSrv() api.Site {
-	return &siteSrv{}
+// RouteDocs stub function for register docs asset route
+func RouteDocs(e *gin.Engine) {
+	// empty
 }

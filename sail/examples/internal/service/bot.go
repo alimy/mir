@@ -7,9 +7,9 @@ package service
 import (
 	"fmt"
 
-	"github.com/alimy/mir/sail/mir-example/v4/internal/servants"
-
+	"github.com/alimy/mir/sail/examples/v4/internal/servants"
 	"github.com/alimy/mir/sail/v4/service"
+
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +32,7 @@ func (s *botService) Version() string {
 }
 
 func (s *botService) OnInit() error {
-	s.RegisterRoute(s, servants.RegisterServants)
+	s.RegisterRoute(s, servants.RegisterBotServants)
 	return nil
 }
 

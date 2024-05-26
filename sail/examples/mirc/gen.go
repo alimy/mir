@@ -14,10 +14,11 @@ import (
 	. "github.com/alimy/mir/v4/engine"
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/alimy/mir/sail/mir-example/v4/mirc/routes"
-	_ "github.com/alimy/mir/sail/mir-example/v4/mirc/routes/v1"
-	_ "github.com/alimy/mir/sail/mir-example/v4/mirc/routes/v2"
-	_ "github.com/alimy/mir/sail/mir-example/v4/mirc/routes/v3"
+	_ "github.com/alimy/mir/sail/examples/v4/mirc/bot/v1"
+	_ "github.com/alimy/mir/sail/examples/v4/mirc/web"
+	_ "github.com/alimy/mir/sail/examples/v4/mirc/web/v1"
+	_ "github.com/alimy/mir/sail/examples/v4/mirc/web/v2"
+	_ "github.com/alimy/mir/sail/examples/v4/mirc/web/v3"
 )
 
 //go:generate go run $GOFILE

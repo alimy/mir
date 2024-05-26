@@ -7,27 +7,51 @@ package service
 import (
 	"net/http"
 
+	"github.com/alimy/mir/sail/examples/v4/internal/conf"
 	sail "github.com/alimy/mir/sail/v4/service"
+	"github.com/alimy/tryst/cfg"
 	"github.com/gin-gonic/gin"
 )
 
 func NewRuntime() sail.Runtime {
-	webEngine, botEngine := newEngine(), newEngine()
+	var ss []sail.Service
 	p := sail.NewHttpServerPool[*gin.Engine]()
 
-	webServerAddr, botServerAddr := ":8080", ":8081"
-	hsWeb := sail.NewBaseHttpService(p, webEngine, &http.Server{
-		Addr: webServerAddr,
-	})
-	hsBot := sail.NewBaseHttpService(p, botEngine, &http.Server{
-		Addr: botServerAddr,
+	// initial Web service
+	cfg.Be("Web", func() {
+		addr := conf.WebServerSetting.MyAddr()
+		hs := sail.NewBaseHttpService(p, newEngine(), &http.Server{
+			Addr:         addr,
+			ReadTimeout:  conf.WebServerSetting.MyReadTimeout(),
+			WriteTimeout: conf.WebServerSetting.MyWriteTimeout(),
+		})
+		ss = append(ss, newWebService(hs, addr))
 	})
 
-	webSrv := newWebService(hsWeb, webServerAddr)
-	botSrv := newBotService(hsBot, botServerAddr)
+	// initial Bot service
+	cfg.Be("Bot", func() {
+		addr := conf.BotServerSetting.MyAddr()
+		hs := sail.NewBaseHttpService(p, newEngine(), &http.Server{
+			Addr:         addr,
+			ReadTimeout:  conf.BotServerSetting.MyReadTimeout(),
+			WriteTimeout: conf.BotServerSetting.MyWriteTimeout(),
+		})
+		ss = append(ss, newBotService(hs, addr))
+	})
+
+	// initial Docs service
+	cfg.Be("Docs", func() {
+		addr := conf.DocsServerSetting.MyAddr()
+		hs := sail.NewBaseHttpService(p, newEngine(), &http.Server{
+			Addr:         addr,
+			ReadTimeout:  conf.DocsServerSetting.MyReadTimeout(),
+			WriteTimeout: conf.DocsServerSetting.MyWriteTimeout(),
+		})
+		ss = append(ss, newDocsService(hs, addr))
+	})
 
 	// init service
-	sail.MustInitService(webSrv, botSrv)
+	sail.MustInitService(ss...)
 	return p
 }
 

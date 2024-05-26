@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/alimy/mir/sail/mir-example/v4/internal/conf"
+	"github.com/alimy/mir/sail/examples/v4/internal/conf"
 	"github.com/spf13/cobra"
 )
 

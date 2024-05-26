@@ -5,18 +5,23 @@
 package servants
 
 import (
-	"github.com/alimy/mir/sail/mir-example/v4/auto/api"
-	v1 "github.com/alimy/mir/sail/mir-example/v4/auto/api/v1"
-	v2 "github.com/alimy/mir/sail/mir-example/v4/auto/api/v2"
-	v3 "github.com/alimy/mir/sail/mir-example/v4/auto/api/v3"
+	"github.com/alimy/mir/sail/examples/v4/internal/servants/bot"
+	"github.com/alimy/mir/sail/examples/v4/internal/servants/docs"
+	"github.com/alimy/mir/sail/examples/v4/internal/servants/web"
 	"github.com/gin-gonic/gin"
 )
 
-// RegisterServants register all the servants to gin.Engine
-func RegisterServants(e *gin.Engine) {
-	api.RegisterSiteServant(e, newSiteSrv())
-	v1.RegisterAdminServant(e, newAdminSrvA())
-	v1.RegisterSiteServant(e, newSiteSrvA(), newSiteChainA())
-	v2.RegisterSiteServant(e, newSiteSrvB())
-	v3.RegisterSiteServant(e, newSiteSrvC())
+// RegisterWebServants register the web servants to gin.Engine
+func RegisterWebServants(e *gin.Engine) {
+	web.RouteWeb(e)
+}
+
+// RegisterBotServants register the bot servants to gin.Engine
+func RegisterBotServants(e *gin.Engine) {
+	bot.RouteBot(e)
+}
+
+// RegisterDocsServants register the docs servants to gin.Engine
+func RegisterDocsServants(e *gin.Engine) {
+	docs.RouteDocs(e)
 }

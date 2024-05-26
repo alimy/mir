@@ -5,7 +5,7 @@
 package v3
 
 import (
-	"github.com/alimy/mir-example/v4/model"
+	"github.com/alimy/mir/examples/v4/model"
 	. "github.com/alimy/mir/v4"
 	. "github.com/alimy/mir/v4/engine"
 )

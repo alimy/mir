@@ -2,18 +2,18 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package servants
+package web
 
 import (
-	api "github.com/alimy/mir/sail/mir-example/v4/auto/api/v3"
+	api "github.com/alimy/mir/sail/examples/v4/auto/api/v2"
+	"github.com/alimy/mir/sail/examples/v4/internal/servants/base"
 )
 
-type siteSrvC struct {
-	baseSrv
-
+type siteSrvB struct {
+	base.BaseSrv
 	api.UnimplementedSiteServant
 }
 
-func newSiteSrvC() api.Site {
-	return &siteSrvC{}
+func newSiteSrvB() api.Site {
+	return &siteSrvB{}
 }
