@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/alimy/mir/v4 v4.2.0
+	github.com/alimy/tryst v0.12.0
 	github.com/fatih/color v1.17.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/sourcegraph/conc v0.3.0
@@ -11,7 +12,6 @@ require (
 )
 
 require (
-	github.com/alimy/tryst v0.12.0
 	github.com/bytedance/sonic v1.11.7 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
