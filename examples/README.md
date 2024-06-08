@@ -1,8 +1,6 @@
-## mir-examples
-just a simple mir's examples for explain how to use mir in your project.
+## Examples
+Some example for mir.
 
-#### Usage
-```bash
-% make generate
-% make run
-```
+- [mir-example](mir-example) - simple minimal mir example for explain how to use mir.
+- [sail-example](sail-example) - product least mir example for explain how to use mir in production enviroment.
+
