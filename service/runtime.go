@@ -4,9 +4,12 @@
 
 package service
 
+// Launch start task interface
 type Launch interface {
 	Go(func())
 }
+
+// Runtime service runtime interface
 type Runtime interface {
 	Start(Launch)
 	Stop()
