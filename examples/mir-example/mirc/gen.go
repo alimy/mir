@@ -12,26 +12,19 @@ import (
 
 	. "github.com/alimy/mir/v4/core"
 	. "github.com/alimy/mir/v4/engine"
-	"github.com/gin-gonic/gin"
-
-	_ "github.com/alimy/mir/mir-example/v4/mirc/routes"
-	_ "github.com/alimy/mir/mir-example/v4/mirc/routes/v1"
-	_ "github.com/alimy/mir/mir-example/v4/mirc/routes/v2"
-	_ "github.com/alimy/mir/mir-example/v4/mirc/routes/v3"
 )
 
 //go:generate go run $GOFILE
 func main() {
 	log.Println("generate code start")
-	opts := Options{
+	if err := Generate(
+		Schema("./routes"),
 		UseGin(),
 		UseRequestContext(),
 		SinkPath("auto"),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),
-		AssertType[*gin.Context](),
-	}
-	if err := Generate(opts); err != nil {
+	); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("generate code finish")

@@ -6,17 +6,11 @@ package v1
 
 import (
 	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
 )
-
-func init() {
-	AddEntry(new(Site), new(Admin))
-}
 
 // Site site v1 interface info
 type Site struct {
-	Chain            `mir:"-"`
-	Group            `mir:"v1"`
+	Schema           `mir:"v1,chain"`
 	Index            func(Get, Chain)                         `mir:"/index/"`
 	AnyTopics        func(Chain)                              `mir:"/topics/"`
 	Articles         func(Head, Get, Post, Chain)             `mir:"/articles/:category/"`
@@ -29,8 +23,7 @@ type Site struct {
 
 // Admin admin v1 interface info
 type Admin struct {
-	Chain   `mir:"-"`
-	Group   `mir:"v1"`
+	Schema  `mir:"v1,chain"`
 	User    func(Get, Chain)             `mir:"/user/"`
 	DelUser func(Delete, Chain)          `mir:"/user/"`
 	Teams   func(Head, Get, Post, Chain) `mir:"/teams/:category/"`

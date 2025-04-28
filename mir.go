@@ -4,44 +4,46 @@
 
 package mir
 
-// Group indicator a default group for handler to register to server engine
-type Group any
+type (
+	// Group indicator a default group for handler to register to server engine
+	Group any
 
-// Chain indicator a Handler slice used register Middleware to router by group
-type Chain any
+	// Chain indicator a Handler slice used register Middleware to router by group
+	Chain any
 
-// Context indicator a handler that just use engine's context like use gin engine
-// the handler will just take a function func(c *gin.Context) as handler
-type Context any
+	// Context indicator a handler that just use engine's context like use gin engine
+	// the handler will just take a function func(c *gin.Context) as handler
+	Context any
 
-// Get indicator a GET method handler used placeholder register info in struct tag
-type Get any
+	// Get indicator a GET method handler used placeholder register info in struct tag
+	Get any
 
-// Put indicator a PUT method handler used placeholder register info in struct tag
-type Put any
+	// Put indicator a PUT method handler used placeholder register info in struct tag
+	Put any
 
-// Post indicator a POST method handler used placeholder register info in struct tag
-type Post any
+	// Post indicator a POST method handler used placeholder register info in struct tag
+	Post any
 
-// Delete indicator a DELETE method handler used placeholder register info in struct tag
-type Delete any
+	// Delete indicator a DELETE method handler used placeholder register info in struct tag
+	Delete any
 
-// Head indicator a HEAD method handler used placeholder register info in struct tag
-type Head any
+	// Head indicator a HEAD method handler used placeholder register info in struct tag
+	Head any
 
-// Patch indicator a PATCH method handler used placeholder register info in struct tag
-type Patch any
+	// Patch indicator a PATCH method handler used placeholder register info in struct tag
+	Patch any
 
-// Trace indicator a TRACE method handler used placeholder register info in struct tag
-type Trace any
+	// Trace indicator a TRACE method handler used placeholder register info in struct tag
+	Trace any
 
-// Connect indicator a CONNECT method handler used placeholder register info in struct tag
-type Connect any
+	// Connect indicator a CONNECT method handler used placeholder register info in struct tag
+	Connect any
 
-// Options indicator a OPTIONS method handler used placeholder register info in struct tag
-type Options any
+	// Options indicator a OPTIONS method handler used placeholder register info in struct tag
+	Options any
 
-// Any indicator a Any method handler used placeholder register info in struct tag.
-// This is mean register handler that all http.Method* include(GET, PUT, POST, DELETE,
-// HEAD, PATCH, OPTIONS)
-type Any any
+	// Any indicator a Any method handler used placeholder register info in struct tag.
+	// This is mean register handler that all http.Method* include(GET, PUT, POST, DELETE,
+	// HEAD, PATCH, OPTIONS)
+	Any any
+)

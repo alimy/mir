@@ -5,6 +5,7 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"runtime"
@@ -36,16 +37,21 @@ func Entry[T any]() {
 }
 
 // Generate generate interface code from mir's iface entry
-func Generate(opts core.Options, entries ...any) (err error) {
+func Generate(opts ...core.Option) (err error) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	addEntries(entries...)
+	initOpts := core.InitFrom(opts)
+
+	if initOpts.UseLoad {
+		return generate(initOpts)
+	}
+
+	addEntries(initOpts.Entries...)
 	if len(mirEntries) == 0 {
 		return errors.New("mir entries is empty maybe need add entries first")
 	}
 
-	initOpts := core.InitFrom(opts)
 	p := core.ParserByName(initOpts.ParserName)
 	// use default parser when not set parser name from options
 	if p == nil {
@@ -70,6 +76,20 @@ func Generate(opts core.Options, entries ...any) (err error) {
 	case core.InConcurrentDebugMode, core.InConcurrentMode:
 		err = doInConcurrent(p, g, mirEntries)
 	}
+	return err
+}
+
+func generate(opts *core.InitOpts) error {
+	opts.UseLoad = false
+	conf, err := json.Marshal(opts)
+	if err != nil {
+		return err
+	}
+	return load(opts.SchemaPath, string(conf))
+}
+
+func load(path string, conf string) (err error) {
+	_, err = (&Config{InitOpts: conf, Path: path, BuildFlags: []string{"-tags", "generate load"}}).load()
 	return err
 }
 

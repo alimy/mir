@@ -6,12 +6,7 @@ package v2
 
 import (
 	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
 )
-
-func init() {
-	Entry[Site]()
-}
 
 type AgentInfo struct {
 	Platform  string `json:"platform"`
@@ -54,7 +49,7 @@ type Tweet struct {
 
 // Site site v2 interface info
 type Site struct {
-	Group            `mir:"v2"`
+	Schema           `mir:"v2"`
 	Index            func(Get, Chain)                               `mir:"/index/"`
 	Articles         func(Get)                                      `mir:"/articles/:category/"`
 	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next/" render:"json"`

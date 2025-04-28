@@ -7,16 +7,11 @@ package v3
 import (
 	"github.com/alimy/mir/mir-example/v4/model"
 	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
 )
-
-func init() {
-	Entry[Site]()
-}
 
 // Site site v3 interface info
 type Site struct {
-	Group            `mir:"v3"`
+	Schema           `mir:"v3"`
 	Index            func(Get)                                               `mir:"/index/"`
 	Articles         func(Get)                                               `mir:"/articles/:category/"`
 	NextTweets       func(Any, model.TweetsReq) model.TweetsResp             `mir:"/tweets/next/" render:"jsonp"`

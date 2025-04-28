@@ -6,6 +6,7 @@ package core
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"strings"
 
@@ -50,6 +51,8 @@ type runMode uint8
 
 // InitOpts use for generator or parser init
 type InitOpts struct {
+	SchemaPath        string
+	Entries           []any
 	RunMode           runMode
 	GeneratorName     string
 	ParserName        string
@@ -63,6 +66,7 @@ type InitOpts struct {
 	UseRequestCtx     bool
 	UseNamedBinding   bool
 	UseNamedRender    bool
+	UseLoad           bool
 	NoneQuery         bool
 	Cleanup           bool
 }
@@ -181,6 +185,19 @@ func (m runMode) String() string {
 	return res
 }
 
+func WithEntry(items ...any) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.Entries = append(opts.Entries, items...)
+	})
+}
+
+func WithConf(data string) Option {
+	return optFunc(func(opts *InitOpts) {
+		// TODO: fatal when occurs error
+		_ = json.Unmarshal([]byte(data), opts)
+	})
+}
+
 // RunMode set run mode option
 func RunMode(mode runMode) Option {
 	return optFunc(func(opts *InitOpts) {
@@ -192,6 +209,13 @@ func RunMode(mode runMode) Option {
 func GeneratorName(name string) Option {
 	return optFunc(func(opts *InitOpts) {
 		opts.GeneratorName = name
+	})
+}
+
+func Schema(path string) Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.SchemaPath = path
+		opts.UseLoad = true
 	})
 }
 
