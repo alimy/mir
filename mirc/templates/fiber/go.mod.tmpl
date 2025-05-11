@@ -3,7 +3,7 @@ module {{ .PkgName }}
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.1.0
+	github.com/alimy/mir/v5 v5.0.0
 	github.com/gofiber/fiber/v2 v2.51.0
 )
 
@@ -23,6 +23,6 @@ require (
 
 {{if notEmptyStr .MirPkgName }}
 replace (
-    github.com/alimy/mir/v4 => {{ .MirPkgName }}
+    github.com/alimy/mir/v5 => {{ .MirPkgName }}
 )
 {{end}}

@@ -1,0 +1,57 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Generate Template Project # % go install github.com/alimy/mir/mirc/v4@latest % mirc new -h create template project Usage: mirc new [flags] Flags: -d, --dst string genereted destination target directory (default &#34;.&#34;) -h, --help help for new --mir string mir replace package name or place -p, --pkg string project's package name (default &#34;github.com/alimy/mir-example&#34;) -s, --style string generated engine style eg: gin,chi,mux,hertz,echo,iris,fiber,fiber-v2,macaron,httprouter (default &#34;gin&#34;) % mirc new -d example % tree example example ."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="Generate Template Project"><meta property="og:description" content="Generate Template Project # % go install github.com/alimy/mir/mirc/v4@latest % mirc new -h create template project Usage: mirc new [flags] Flags: -d, --dst string genereted destination target directory (default &#34;.&#34;) -h, --help help for new --mir string mir replace package name or place -p, --pkg string project's package name (default &#34;github.com/alimy/mir-example&#34;) -s, --style string generated engine style eg: gin,chi,mux,hertz,echo,iris,fiber,fiber-v2,macaron,httprouter (default &#34;gin&#34;) % mirc new -d example % tree example example ."><meta property="og:type" content="article"><meta property="og:url" content="https://alimy.github.io/mir/en/docs/tutorials/generate-template-project/"><meta property="article:section" content="docs"><meta property="article:modified_time" content="2023-07-11T10:51:40+08:00"><title>Generate Template Project | Mir Docs</title>
+<link rel=manifest href=/mir/manifest.json><link rel=icon href=/mir/favicon.png type=image/x-icon><link rel=alternate hreflang=zh href=https://alimy.github.io/mir/docs/tutorials/generate-template-project/ title=生成样板项目><link rel=stylesheet href=/mir/book.min.33a48f5432973b8ff9a82679d9e45d67f2c15d4399bd2829269455cfe390b5e8.css integrity="sha256-M6SPVDKXO4/5qCZ52eRdZ/LBXUOZvSgpJpRVz+OQteg=" crossorigin=anonymous><script defer src=/mir/flexsearch.min.js></script><script defer src=/mir/en.search.min.e1f23ac5722ced612d280d36d563ac08b2c53bac88ceaef69211942cb0d2659d.js integrity="sha256-4fI6xXIs7WEtKA021WOsCLLFO6yIzq72khGULLDSZZ0=" crossorigin=anonymous></script><script defer src=/mir/sw.min.cc53640256a4c5a819e5408f192a460fbdab1162f59e2640475ed9eaeba2a25b.js integrity="sha256-zFNkAlakxagZ5UCPGSpGD72rEWL1niZAR17Z6uuiols=" crossorigin=anonymous></script><script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?3a6d014ea0071483644f909a8928f5f1",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/mir/en/><img src=/mir/images/mir-logo.png alt=Logo><span>Mir Docs</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul class=book-languages><li><input type=checkbox id=languages class=toggle>
+<label for=languages class="flex justify-between"><a role=button class="flex align-center"><img src=/mir/svg/translate.svg class=book-icon alt=Languages>
+English</a></label><ul><li><a href=https://alimy.github.io/mir/docs/tutorials/generate-template-project/>中文</a></li></ul></li></ul><ul><li class=book-section-flat><a href=/mir/en/docs/quick-start/>Quck Start</a><ul><li><a href=/mir/en/docs/quick-start/projects-use-go-mir/>Projects That Use go-mir</a></li></ul></li><li class=book-section-flat><span>Turotials</span><ul><li><a href=/mir/en/docs/tutorials/generate-template-project/ class=active>Generate Template Project</a></li><li><a href=/mir/en/docs/tutorials/interface-define/>Interface Define</a></li><li><a href=/mir/en/docs/tutorials/code-generate/>Code Generate</a></li><li><a href=/mir/en/docs/tutorials/servant-implement/>Servant Implement</a></li><li><a href=/mir/en/docs/tutorials/servant-register/>Servant Register</a></li><li><a href=/mir/en/docs/tutorials/app-start/>App Start</a></li></ul></li><li class=book-section-flat><a href=/mir/en/docs/recommends/>Recommends</a><ul></ul></li></ul><ul><li><a href=https://github.com/alimy/mir target=_blank rel=noopener>Github</a></li><li><a href=https://alimy.github.io/ target=_blank rel=noopener>Alimy's Me</a></li><li><a href=https://themes.gohugo.io/hugo-book/ target=_blank rel=noopener>Hugo's Theme</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/mir/svg/menu.svg class=book-icon alt=Menu>
+</label><strong>Generate Template Project</strong>
+<label for=toc-control><img src=/mir/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><ul><li><a href=#generate-template-project>Generate Template Project</a></li></ul></li></ul></nav></aside></header><article class=markdown><h2 id=generate-template-project>Generate Template Project
+<a class=anchor href=#generate-template-project>#</a></h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>% go install github.com/alimy/mir/mirc/v4@latest
+</span></span><span style=display:flex><span>% mirc new -h
+</span></span><span style=display:flex><span>create template project
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Usage:
+</span></span><span style=display:flex><span>  mirc new <span style=color:#f92672>[</span>flags<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Flags:
+</span></span><span style=display:flex><span>  -d, --dst string     genereted destination target directory <span style=color:#f92672>(</span>default <span style=color:#e6db74>&#34;.&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  -h, --help           help <span style=color:#66d9ef>for</span> new
+</span></span><span style=display:flex><span>      --mir string     mir replace package name or place
+</span></span><span style=display:flex><span>  -p, --pkg string     project<span style=color:#960050;background-color:#1e0010>&#39;</span>s package name <span style=color:#f92672>(</span>default <span style=color:#e6db74>&#34;github.com/alimy/mir-example&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>  -s, --style string   generated engine style eg: gin,chi,mux,hertz,echo,iris,fiber,fiber-v2,macaron,httprouter <span style=color:#f92672>(</span>default <span style=color:#e6db74>&#34;gin&#34;</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>% mirc new -d example 
+</span></span><span style=display:flex><span>% tree example
+</span></span><span style=display:flex><span>example
+</span></span><span style=display:flex><span>.
+</span></span><span style=display:flex><span>|-- Makefile
+</span></span><span style=display:flex><span>|-- README.md
+</span></span><span style=display:flex><span>|-- go.mod
+</span></span><span style=display:flex><span>|-- go.sum
+</span></span><span style=display:flex><span>|-- main.go
+</span></span><span style=display:flex><span>|-- mirc
+</span></span><span style=display:flex><span>|   |-- auto
+</span></span><span style=display:flex><span>|   |   <span style=color:#e6db74>`</span>-- api
+</span></span><span style=display:flex><span>|   |       |-- site.go
+</span></span><span style=display:flex><span>|   |       |-- v1
+</span></span><span style=display:flex><span>|   |       |   <span style=color:#e6db74>`</span>-- site.go
+</span></span><span style=display:flex><span>|   |       <span style=color:#e6db74>`</span>-- v2
+</span></span><span style=display:flex><span>|   |           <span style=color:#e6db74>`</span>-- site.go
+</span></span><span style=display:flex><span>|   |-- gen.go
+</span></span><span style=display:flex><span>|   <span style=color:#e6db74>`</span>-- routes
+</span></span><span style=display:flex><span>|       |-- site.go
+</span></span><span style=display:flex><span>|       |-- v1
+</span></span><span style=display:flex><span>|       |   <span style=color:#e6db74>`</span>-- site.go
+</span></span><span style=display:flex><span>|       <span style=color:#e6db74>`</span>-- v2
+</span></span><span style=display:flex><span>|           <span style=color:#e6db74>`</span>-- site.go
+</span></span><span style=display:flex><span><span style=color:#e6db74>`</span>-- servants
+</span></span><span style=display:flex><span>    |-- core.go
+</span></span><span style=display:flex><span>    |-- servants.go
+</span></span><span style=display:flex><span>    |-- site.go
+</span></span><span style=display:flex><span>    |-- site_v1.go
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>`</span>-- site_v2.go
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>% cd example
+</span></span><span style=display:flex><span>% make generate
+</span></span><span style=display:flex><span>% make run
+</span></span></code></pre></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div><a class="flex align-center" href=https://github.com/alimy/mir//commit/9c56a167650ac7aca69bc9f4fcda503d308a5fcc title='Last modified by Michael Li | July 11, 2023' target=_blank rel=noopener><img src=/mir/svg/calendar.svg class=book-icon alt=Calendar>
+<span>July 11, 2023</span></a></div></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><ul><li><a href=#generate-template-project>Generate Template Project</a></li></ul></li></ul></nav></div></aside></main></body></html>

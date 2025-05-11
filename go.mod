@@ -1,4 +1,4 @@
-module github.com/alimy/mir/v4
+module github.com/alimy/mir/v5
 
 go 1.23.0
 

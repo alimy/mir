@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.21.5
 
 require (
-	github.com/alimy/mir/v4 v4.1.0
+	github.com/alimy/mir/v5 v5.0.0
 	github.com/kataras/iris/v12 v12.2.8
 )
 
@@ -60,6 +60,6 @@ require (
 
 {{if notEmptyStr .MirPkgName }}
 replace (
-    github.com/alimy/mir/v4 => {{ .MirPkgName }}
+    github.com/alimy/mir/v5 => {{ .MirPkgName }}
 )
 {{end}}

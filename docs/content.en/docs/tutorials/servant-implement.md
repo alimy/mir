@@ -11,7 +11,7 @@ package servants
 
 import (
 	"github.com/alimy/mir-example/v4/mirc/auto/api"
-	"github.com/alimy/mir/v4"
+	"github.com/alimy/mir/v5"
 	"github.com/gin-gonic/gin"
 )
 

@@ -26,7 +26,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/alimy/mir/v4"
+	"github.com/alimy/mir/v5"
 
 	"golang.org/x/tools/go/ast/astutil"
 	"golang.org/x/tools/go/packages"
@@ -42,12 +42,12 @@ type (
 		Names    []string
 	}
 
-	// Config holds the configuration for loading an ent/schema package.
+	// Config holds the configuration for loading an mir/schema package.
 	Config struct {
 		// InitOpts origin init options
 		InitOpts string
-		// Path is the path for the schema package.
-		Path string
+		// SchemaPath is the path list for the schema package.
+		SchemaPath []string
 		// BuildFlags are forwarded to the package.Config when
 		// loading the schema package.
 		BuildFlags []string
@@ -66,7 +66,7 @@ func (c *Config) Load() error {
 		return fmt.Errorf("mirc/load: parse schema dir: %w", err)
 	}
 	if len(specs) == 0 {
-		return fmt.Errorf("mircc/load: no schema found in: %s", c.Path)
+		return fmt.Errorf("mirc/load: no schema found in: %+v", c.SchemaPath)
 	}
 	var b bytes.Buffer
 	err = buildTmpl.ExecuteTemplate(&b, "main", struct {
@@ -90,7 +90,7 @@ func (c *Config) Load() error {
 	}
 	target := path.Join(targetDir, "main.go")
 	if err := os.WriteFile(target, buf, 0644); err != nil {
-		return fmt.Errorf("entc/load: write file %s: %w", target, err)
+		return fmt.Errorf("mirc/load: write file %s: %w", target, err)
 	}
 	defer os.RemoveAll(targetDir)
 
@@ -100,25 +100,26 @@ func (c *Config) Load() error {
 	return nil
 }
 
-// mirInterface holds the reflect.Type of mir.Interface.
-var mirInterface = reflect.TypeOf(struct{ mir.Interface }{}).Field(0).Type
-
 // load the ent/schema info.
 func (c *Config) load() ([]*SchemaSpec, error) {
+	// mirInterface holds the reflect.Type of mir.Schema interface.
+	mirInterface := reflect.TypeOf(struct{ mir.Schema }{}).Field(0).Type
+
+	patterns := anyPathPatterns(c.SchemaPath)
 	pkgs, err := packages.Load(&packages.Config{
 		BuildFlags: c.BuildFlags,
 		Mode:       packages.NeedName | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedModule,
-	}, anyPathPattern(c.Path), mirInterface.PkgPath())
+	}, append(patterns, mirInterface.PkgPath())...)
 	if err != nil {
 		return nil, fmt.Errorf("loading package: %w", err)
 	}
 	if len(pkgs) < 2 {
 		// Check if the package loading failed due to Go-related
 		// errors, such as 'missing go.sum entry'.
-		if err := golist(c.Path, c.BuildFlags); err != nil {
+		if err := golist(c.BuildFlags, patterns...); err != nil {
 			return nil, err
 		}
-		return nil, fmt.Errorf("missing package information for: %s", c.Path)
+		return nil, fmt.Errorf("missing package information for: %+v", patterns)
 	}
 
 	var (
@@ -173,7 +174,7 @@ func (c *Config) load() ([]*SchemaSpec, error) {
 	for _, it := range specs {
 		if len(it.Names) > 0 {
 			pkgIdx++
-			it.PkgAlias = fmt.Sprintf("p%d", pkgIdx)
+			it.PkgAlias = fmt.Sprintf("s%d", pkgIdx)
 			sort.Strings(it.Names)
 			schemas = append(schemas, it)
 		}
@@ -183,8 +184,10 @@ func (c *Config) load() ([]*SchemaSpec, error) {
 
 func (c *Config) loadError(perr packages.Error) (err error) {
 	if strings.Contains(perr.Msg, "import cycle not allowed") {
-		if cause := c.cycleCause(); cause != "" {
-			perr.Msg += "\n" + cause
+		for _, it := range c.SchemaPath {
+			if cause := c.cycleCause(it); cause != "" {
+				perr.Msg += "\n" + cause
+			}
 		}
 	}
 	err = perr
@@ -195,8 +198,8 @@ func (c *Config) loadError(perr packages.Error) (err error) {
 	return err
 }
 
-func (c *Config) cycleCause() (cause string) {
-	dir, err := parser.ParseDir(token.NewFileSet(), c.Path, nil, 0)
+func (c *Config) cycleCause(path string) (cause string) {
+	dir, err := parser.ParseDir(token.NewFileSet(), path, nil, 0)
 	// Ignore reporting in case of parsing
 	// error, or there no packages to parse.
 	if err != nil || len(dir) == 0 {
@@ -204,7 +207,7 @@ func (c *Config) cycleCause() (cause string) {
 	}
 	// Find the package that contains the schema, or
 	// extract the first package if there is only one.
-	pkg := dir[filepath.Base(c.Path)]
+	pkg := dir[filepath.Base(path)]
 	if pkg == nil {
 		for _, v := range dir {
 			pkg = v
@@ -236,12 +239,12 @@ func (c *Config) cycleCause() (cause string) {
 					if ok {
 						switch x := f.Type.(type) {
 						case *ast.SelectorExpr:
-							if x.Sel.Name == "Schema" || x.Sel.Name == "Mixin" {
+							if x.Sel.Name == "Schema" {
 								embedSchema = true
 							}
 						case *ast.Ident:
 							// A common pattern is to create local base schema to be embedded by other schemas.
-							if name := strings.ToLower(x.Name); name == "schema" || name == "mixin" {
+							if name := strings.ToLower(x.Name); name == "schema" {
 								embedSchema = true
 							}
 						}
@@ -294,51 +297,14 @@ var (
 )
 
 func templates() *template.Template {
-	tmpls, err := schemaTemplates()
-	if err != nil {
-		panic(err)
-	}
 	tmpl := template.Must(template.New("templates").
 		ParseFS(files, "template/main.tmpl"))
-	for _, t := range tmpls {
-		tmpl = template.Must(tmpl.Parse(t))
-	}
 	return tmpl
-}
-
-// schemaTemplates turns the schema.go file and its import block into templates.
-func schemaTemplates() ([]string, error) {
-	var (
-		imports []string
-		code    bytes.Buffer
-		fset    = token.NewFileSet()
-		src, _  = files.ReadFile("schema.go")
-	)
-	f, err := parser.ParseFile(fset, "schema.go", src, parser.AllErrors)
-	if err != nil {
-		return nil, fmt.Errorf("parse schema file: %w", err)
-	}
-	for _, decl := range f.Decls {
-		if decl, ok := decl.(*ast.GenDecl); ok && decl.Tok == token.IMPORT {
-			for _, spec := range decl.Specs {
-				imports = append(imports, spec.(*ast.ImportSpec).Path.Value)
-			}
-			continue
-		}
-		if err := format.Node(&code, fset, decl); err != nil {
-			return nil, fmt.Errorf("format node: %w", err)
-		}
-		code.WriteByte('\n')
-	}
-	return []string{
-		fmt.Sprintf(`{{ define "schema" }} %s {{ end }}`, code.String()),
-		fmt.Sprintf(`{{ define "imports" }} %s {{ end }}`, strings.Join(imports, "\n")),
-	}, nil
 }
 
 // run 'go run' command and return its output.
 func gorun(target string, buildFlags []string) (string, error) {
-	s, err := gocmd("run", target, buildFlags)
+	s, err := gocmd("run", buildFlags, target)
 	if err != nil {
 		return "", fmt.Errorf("mirc/load: %s", err)
 	}
@@ -346,16 +312,16 @@ func gorun(target string, buildFlags []string) (string, error) {
 }
 
 // golist checks if 'go list' can be executed on the given target.
-func golist(target string, buildFlags []string) error {
-	_, err := gocmd("list", target, buildFlags)
+func golist(buildFlags []string, targets ...string) error {
+	_, err := gocmd("list", buildFlags, targets...)
 	return err
 }
 
 // goCmd runs a go command and returns its output.
-func gocmd(command, target string, buildFlags []string) (string, error) {
+func gocmd(command string, buildFlags []string, targets ...string) (string, error) {
 	args := []string{command}
 	args = append(args, buildFlags...)
-	args = append(args, target)
+	args = append(args, targets...)
 	cmd := exec.Command("go", args...)
 	stderr := bytes.NewBuffer(nil)
 	stdout := bytes.NewBuffer(nil)

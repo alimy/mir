@@ -1,19 +1,14 @@
-// Copyright 2024 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package web
 
 import (
-	"github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
+	"github.com/alimy/mir/v5"
+	. "github.com/alimy/mir/v5"
 	"github.com/gin-gonic/gin"
 )
-
-func init() {
-	Entry[Site]()
-}
 
 type AgentInfo struct {
 	Platform  string `json:"platform"`
@@ -59,6 +54,14 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
+type LlmsResp struct {
+	Content string
+}
+
+type VersionResp struct {
+	Ver string
+}
+
 // Bind custom binding but not effect because defined in sampe package with servant interface
 func (r *LoginReq) Bind(c *gin.Context) mir.Error {
 	err := c.ShouldBind(r)
@@ -73,22 +76,33 @@ func (r *LoginResp) Render(c *gin.Context) {
 	c.String(200, "login success")
 }
 
+func (r *LlmsResp) Render(c *gin.Context) {
+	c.String(200, r.Content)
+}
+
 // Site site interface info
 type Site struct {
-	Chain            `mir:"-"`
-	Index            func(Get, Chain)                               `mir:"/index/"`
-	Articles         func(Get)                                      `mir:"/articles/:category/"`
-	AnyTopics        func()                                         `mir:"/topics/"`
-	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next/" binding:"json"`
-	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev/" render:"json"`
-	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/"`
-	Logout           func(Post, LogoutReq)                          `mir:"/user/logout/"`
-	ImageUpload      func(Post, Context)                            `mir:"/upload/image/:name/"`
-	FileUpload       func(Post, Chain, Context)                     `mir:"/upload/file/:name/"`
-	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple/:name/"`
-	Assets           func(Get, Context, LoginReq)                   `mir:"/assets/:name/"`
-	Statics          func(Get, Context)                             `mir:"/statics/:name/"`
-	AnyStaticks      func(Any, Context)                             `mir:"/anystaticks/:name/"`
-	ManyResources    func(Get, Head, Options, Context)              `mir:"/resources/:name/"`
-	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments/:name/"`
+	Schema           `mir:",chain"`
+	Index            func(Get, Chain)                               `mir:"index"`
+	Articles         func(Get)                                      `mir:"articles/:category"`
+	AnyTopics        func()                                         `mir:"topics"`
+	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"tweets/next" binding:"json"`
+	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"tweets/prev" render:"json"`
+	Login            func(Post, LoginReq) LoginResp                 `mir:"user/login"`
+	Logout           func(Post, LogoutReq)                          `mir:"user/logout"`
+	ImageUpload      func(Post, Context)                            `mir:"upload/image/:name"`
+	FileUpload       func(Post, Chain, Context)                     `mir:"upload/file/:name"`
+	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"upload/simple/:name"`
+	Assets           func(Get, Context, LoginReq)                   `mir:"assets/:name"`
+	Statics          func(Get, Context)                             `mir:"statics/:name"`
+	AnyStaticks      func(Any, Context)                             `mir:"anystaticks/:name"`
+	ManyResources    func(Get, Head, Options, Context)              `mir:"resources/:name"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"attachments/:name"`
+}
+
+// AiChat site interface info
+type AiChat struct {
+	Schema
+	Version func(Get) VersionResp `mir:"version"`
+	Llms    func(Get) LlmsResp    `mir:"llms.txt"`
 }

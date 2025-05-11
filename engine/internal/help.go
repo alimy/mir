@@ -9,10 +9,14 @@ import (
 	"strings"
 )
 
-func anyPathPattern(v string) string {
-	cpath := path.Clean(v)
-	if !path.IsAbs(cpath) && !strings.HasPrefix(cpath, "./") && !strings.HasPrefix(cpath, "../") {
-		cpath = path.Join("./", cpath)
+func anyPathPatterns(schemaPath []string) (res []string) {
+	var cpath string
+	for _, it := range schemaPath {
+		cpath = path.Clean(it)
+		if !path.IsAbs(cpath) && !strings.HasPrefix(cpath, "./") && !strings.HasPrefix(cpath, "../") {
+			cpath = "./" + cpath
+		}
+		res = append(res, cpath+"/...")
 	}
-	return cpath + "./..."
+	return
 }

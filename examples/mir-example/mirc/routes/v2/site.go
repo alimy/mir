@@ -1,11 +1,11 @@
-// Copyright 2023 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package v2
 
 import (
-	. "github.com/alimy/mir/v4"
+	. "github.com/alimy/mir/v5"
 )
 
 type AgentInfo struct {
@@ -50,17 +50,17 @@ type Tweet struct {
 // Site site v2 interface info
 type Site struct {
 	Schema           `mir:"v2"`
-	Index            func(Get, Chain)                               `mir:"/index/"`
-	Articles         func(Get)                                      `mir:"/articles/:category/"`
-	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"/tweets/next/" render:"json"`
-	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"/tweets/prev/" binding:"yaml"`
-	Login            func(Post, LoginReq) LoginResp                 `mir:"/user/login/" binding:"json"`
-	Logout           func(Post)                                     `mir:"/user/logout/"`
-	ImageUpload      func(Post, Context)                            `mir:"/upload/image/:name/"`
-	FileUpload       func(Post, Chain, Context)                     `mir:"/upload/file/:name/"`
-	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"/upload/simple/:name/" render:"Jsonp"`
-	Assets           func(Get, Context, LoginReq)                   `mir:"/assets/:name/"`
-	AnyStaticks      func(Any, Context)                             `mir:"/anystaticks/:name/"`
-	ManyResources    func(Get, Head, Options, Context)              `mir:"/resources/:name/"`
-	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"/attachments/:name/" render:"XML"`
+	Index            func(Get, Chain)                               `mir:"index"`
+	Articles         func(Get)                                      `mir:"articles/:category"`
+	NextTweets       func(Any, TweetsReq) TweetsResp                `mir:"tweets/next" render:"json"`
+	PrevTweets       func(Post, Get, Head, TweetsReq) TweetsResp    `mir:"tweets/prev" binding:"yaml"`
+	Login            func(Post, LoginReq) LoginResp                 `mir:"user/login" binding:"json"`
+	Logout           func(Post)                                     `mir:"user/logout"`
+	ImageUpload      func(Post, Context)                            `mir:"upload/image/:name"`
+	FileUpload       func(Post, Chain, Context)                     `mir:"upload/file/:name"`
+	SimpleUpload     func(Post, Chain, Context, LoginReq) LoginResp `mir:"upload/simple/:name/" render:"Jsonp"`
+	Assets           func(Get, Context, LoginReq)                   `mir:"assets/:name"`
+	AnyStaticks      func(Any, Context)                             `mir:"anystaticks/:name"`
+	ManyResources    func(Get, Head, Options, Context)              `mir:"resources/:name"`
+	MultiAttachments func(Get, Head, Options, Chain, Context)       `mir:"attachments/:name/" render:"XML"`
 }

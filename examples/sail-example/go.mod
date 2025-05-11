@@ -1,9 +1,9 @@
-module github.com/alimy/mir/sail-example/v4
+module github.com/alimy/mir/sail-example/v5
 
 go 1.23.0
 
 require (
-	github.com/alimy/mir/v4 v4.2.0
+	github.com/alimy/mir/v5 v5.0.0
 	github.com/alimy/tryst v0.12.0
 	github.com/fatih/color v1.17.0
 	github.com/gin-gonic/gin v1.10.0
@@ -64,4 +64,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/alimy/mir/v4 => ../../
+replace github.com/alimy/mir/v5 => ../../

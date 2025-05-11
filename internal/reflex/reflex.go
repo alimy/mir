@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v4/core"
-	"github.com/alimy/mir/v4/internal/naming"
+	"github.com/alimy/mir/v5/core"
+	"github.com/alimy/mir/v5/internal/naming"
 )
 
 // reflex real parser
@@ -76,7 +76,7 @@ func (r *reflex) IfaceFrom(entry any) (*core.IfaceDescriptor, error) {
 		entryPtrValue = entryValue.Addr()
 	}
 
-	var groupSetuped, chainSetuped bool
+	var groupSetuped, chainSetuped, schemaSetuped bool
 	pkgPath := entryType.PkgPath()
 	// get IfaceDescriptor from entryType and entryPtrType
 	iface := &core.IfaceDescriptor{
@@ -114,9 +114,26 @@ func (r *reflex) IfaceFrom(entry any) (*core.IfaceDescriptor, error) {
 					return nil, errMultChainInfo
 				}
 			}
+			// schema field so just parse schema info only have one field
+			if tagInfo.isSchema {
+				if schemaSetuped {
+					return nil, errMultSchemaInfo
+				}
+				if !groupSetuped {
+					r.inflateGroupInfo(iface, entryValue, tagInfo)
+				}
+				if !chainSetuped {
+					// special process for schema field's chain
+					iface.Chain = tagInfo.schemaChain
+				}
+				schemaSetuped = true
+				break
+			}
 			iface.Fields = append(iface.Fields, r.fieldFrom(tagInfo, iface.UseRequestCtx, pkgPath))
 		case errNotExist:
 			// normal field but had no mir tag info so just break to continue process next field
+		case errNoop:
+			// nothing to do just skip process logic
 		default:
 			return nil, err
 		}
