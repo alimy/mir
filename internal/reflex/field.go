@@ -6,6 +6,7 @@ package reflex
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -242,7 +243,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 
 	// path info. must have path info if not a group field
 	if len(tag) == 0 && !info.isGroup {
-		return nil, errNoPathInfo
+		return nil, fmt.Errorf("invalid tag info by pkg_path:%s entry_field:%s err: %w", pkgPath, info.fieldName, errNoPathInfo)
 	}
 	for i = 0; i < len(tag) && tag[i] != '#'; i++ {
 		if !r.noneQuery && tag[i] == '?' {

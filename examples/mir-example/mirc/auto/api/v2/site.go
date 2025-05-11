@@ -22,8 +22,8 @@ type _render_ interface {
 
 type _default_ interface {
 	Bind(*gin.Context, any) mir.Error
-	BindYaml(*gin.Context, any) mir.Error
 	BindJson(*gin.Context, any) mir.Error
+	BindYaml(*gin.Context, any) mir.Error
 	Render(*gin.Context, any, mir.Error)
 	RenderXML(*gin.Context, any, mir.Error)
 	RenderJsonp(*gin.Context, any, mir.Error)

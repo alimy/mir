@@ -44,6 +44,8 @@ type (
 
 	// Config holds the configuration for loading an mir/schema package.
 	Config struct {
+		// InDebug whether in debug mode
+		InDebug bool
 		// InitOpts origin init options
 		InitOpts string
 		// SchemaPath is the path list for the schema package.
@@ -51,7 +53,6 @@ type (
 		// BuildFlags are forwarded to the package.Config when
 		// loading the schema package.
 		BuildFlags []string
-
 		// AssertTypeImports AssertType function params package path.
 		AssertTypeImports []string
 		// AssertTypeSpec AssertType function spec.
@@ -92,7 +93,10 @@ func (c *Config) Load() error {
 	if err := os.WriteFile(target, buf, 0644); err != nil {
 		return fmt.Errorf("mirc/load: write file %s: %w", target, err)
 	}
-	defer os.RemoveAll(targetDir)
+	// cleanup when not in debug mode
+	if !c.InDebug {
+		defer os.RemoveAll(targetDir)
+	}
 
 	if _, err = gorun(target, c.BuildFlags); err != nil {
 		return err

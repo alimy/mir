@@ -68,6 +68,7 @@ type InitOpts struct {
 	UseNamedRender    bool     `json:"use_named_render,omitzero"`
 	NoneQuery         bool     `json:"none_query,omitzero"`
 	Cleanup           bool     `json:"cleanup,omitzero"`
+	InDebug           bool     `json:"in_debug,omitzero"`
 	UseLoad           bool     `json:"-"`
 }
 
@@ -185,12 +186,21 @@ func (m runMode) String() string {
 	return res
 }
 
+// InDebug set in debug enviroment.
+func InDebug() Option {
+	return optFunc(func(opts *InitOpts) {
+		opts.InDebug = true
+	})
+}
+
+// WithEntry append custom entries.
 func WithEntry(items ...any) Option {
 	return optFunc(func(opts *InitOpts) {
 		opts.Entries = append(opts.Entries, items...)
 	})
 }
 
+// WithConf custom init options for load mode
 func WithConf(data string) Option {
 	return optFunc(func(opts *InitOpts) {
 		// TODO: fatal when occurs error
@@ -212,6 +222,7 @@ func GeneratorName(name string) Option {
 	})
 }
 
+// Schema use Load mode and set schema path list.
 func Schema(path ...string) Option {
 	return optFunc(func(opts *InitOpts) {
 		if len(path) > 0 {

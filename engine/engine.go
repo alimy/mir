@@ -86,12 +86,13 @@ func generate(opts *core.InitOpts) error {
 	if err != nil {
 		return err
 	}
-	return load(opts.GeneratorName, opts.SchemaPath, string(conf))
+	return load(opts.InDebug, opts.GeneratorName, opts.SchemaPath, string(conf))
 }
 
-func load(generatorName string, schemaPath []string, conf string) error {
+func load(indebug bool, generatorName string, schemaPath []string, conf string) error {
 	assertTypeSpec, assertTypeImports := core.AssertTypeSpec(generatorName)
 	loader := enginternal.NewLoader(&enginternal.Config{
+		InDebug:           indebug,
 		InitOpts:          conf,
 		SchemaPath:        schemaPath,
 		BuildFlags:        []string{"-tags", "mir"},
