@@ -1,4 +1,4 @@
-// Copyright 2024 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -7,7 +7,7 @@ package migrate
 import (
 	"fmt"
 
-	"github.com/alimy/mir/sail-example/v4/cmd"
+	"github.com/alimy/mir/sail-example/v5/cmd"
 	"github.com/spf13/cobra"
 )
 

@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -18,7 +18,7 @@ var (
 	BuildTime = ""
 
 	// AppVer version of Mirc
-	AppVer = semver.MustParse("v4.1.0")
+	AppVer = semver.MustParse("v5.0.0")
 )
 
 func ShowInfo() string {

@@ -1,13 +1,13 @@
-// Copyright 2024 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package servants
 
 import (
-	"github.com/alimy/mir/sail-example/v4/internal/servants/bot"
-	"github.com/alimy/mir/sail-example/v4/internal/servants/docs"
-	"github.com/alimy/mir/sail-example/v4/internal/servants/web"
+	"github.com/alimy/mir/sail-example/v5/internal/servants/bot"
+	"github.com/alimy/mir/sail-example/v5/internal/servants/docs"
+	"github.com/alimy/mir/sail-example/v5/internal/servants/web"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,17 +1,12 @@
-// Copyright 2024 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package v1
 
 import (
-	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
+	. "github.com/alimy/mir/v5"
 )
-
-func init() {
-	Entry[User]()
-}
 
 type AgentInfo struct {
 	Platform  string `json:"platform"`
@@ -39,8 +34,7 @@ type LoginResp struct {
 }
 
 type User struct {
-	Chain  `mir:"-"`
-	Group  `mir:"bot/v1"`
-	Login  func(Post, LoginReq) LoginResp `mir:"/user/login/"`
-	Logout func(Post)                     `mir:"/user/logout/"`
+	Schema `mir:"bot/v1,chain"`
+	Login  func(Post, LoginReq) LoginResp `mir:"user/login/"`
+	Logout func(Post)                     `mir:"user/logout/"`
 }

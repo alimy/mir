@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -8,10 +8,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/alimy/mir/v4/core"
+	"github.com/alimy/mir/v5/core"
 
-	_ "github.com/alimy/mir/v4/internal/generator"
-	_ "github.com/alimy/mir/v4/internal/parser"
+	_ "github.com/alimy/mir/v5/internal/generator"
+	_ "github.com/alimy/mir/v5/internal/parser"
 )
 
 type mirCtx struct {

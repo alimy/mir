@@ -1,4 +1,4 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -10,7 +10,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/alimy/mir/v4/assert"
+	"github.com/alimy/mir/v5/assert"
 )
 
 const (
@@ -51,24 +51,24 @@ type runMode uint8
 
 // InitOpts use for generator or parser init
 type InitOpts struct {
-	SchemaPath        string
-	Entries           []any
-	RunMode           runMode
-	GeneratorName     string
-	ParserName        string
-	SinkPath          string
-	DefaultTag        string
-	DefaultBindingTag string
-	DefaultRenderTag  string
-	EnginePkgName     string
-	EngineImportAlias string
-	WatchCtxDone      bool
-	UseRequestCtx     bool
-	UseNamedBinding   bool
-	UseNamedRender    bool
-	UseLoad           bool
-	NoneQuery         bool
-	Cleanup           bool
+	SchemaPath        []string `json:"-"`
+	Entries           []any    `json:"entries,omitempty"`
+	RunMode           runMode  `json:"run_mode,omitzero"`
+	GeneratorName     string   `json:"generator_name,omitzero"`
+	ParserName        string   `json:"parser_name,omitzero"`
+	SinkPath          string   `json:"sink_path,omitzero"`
+	DefaultTag        string   `json:"default_tag,omitzero"`
+	DefaultBindingTag string   `json:"default_binding_tag,omitzero"`
+	DefaultRenderTag  string   `json:"default_render_tag,omitzero"`
+	EnginePkgName     string   `json:"engine_pkg_name,omitzero"`
+	EngineImportAlias string   `json:"engine_import_alias,omitzero"`
+	WatchCtxDone      bool     `json:"watch_ctx_done,omitzero"`
+	UseRequestCtx     bool     `json:"use_request_ctx,omitzero"`
+	UseNamedBinding   bool     `json:"use_named_binding,omitzero"`
+	UseNamedRender    bool     `json:"use_named_render,omitzero"`
+	NoneQuery         bool     `json:"none_query,omitzero"`
+	Cleanup           bool     `json:"cleanup,omitzero"`
+	UseLoad           bool     `json:"-"`
 }
 
 // ParserOpts used for initial parser
@@ -212,10 +212,12 @@ func GeneratorName(name string) Option {
 	})
 }
 
-func Schema(path string) Option {
+func Schema(path ...string) Option {
 	return optFunc(func(opts *InitOpts) {
-		opts.SchemaPath = path
-		opts.UseLoad = true
+		if len(path) > 0 {
+			opts.SchemaPath = path
+			opts.UseLoad = true
+		}
 	})
 }
 

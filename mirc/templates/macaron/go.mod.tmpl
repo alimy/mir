@@ -3,7 +3,7 @@ module {{ .PkgName }}
 go 1.19
 
 require (
-	github.com/alimy/mir/v4 v4.1.0
+	github.com/alimy/mir/v5 v5.0.0
 	gopkg.in/macaron.v1 v1.5.0
 )
 
@@ -19,6 +19,6 @@ require (
 
 {{if notEmptyStr .MirPkgName }}
 replace (
-    github.com/alimy/mir/v4 => {{ .MirPkgName }}
+    github.com/alimy/mir/v5 => {{ .MirPkgName }}
 )
 {{end}}

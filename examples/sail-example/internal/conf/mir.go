@@ -1,7 +1,7 @@
 package conf
 
 import (
-	"github.com/alimy/mir/v4/service"
+	"github.com/alimy/mir/v5/service"
 	"github.com/fatih/color"
 )
 

@@ -1,4 +1,4 @@
-// Copyright 2024 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -11,9 +11,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/alimy/mir/sail-example/v4/cmd"
-	"github.com/alimy/mir/sail-example/v4/internal/conf"
-	"github.com/alimy/mir/sail-example/v4/internal/service"
+	"github.com/alimy/mir/sail-example/v5/cmd"
+	"github.com/alimy/mir/sail-example/v5/internal/conf"
+	"github.com/alimy/mir/sail-example/v5/internal/service"
 
 	"github.com/fatih/color"
 	"github.com/sourcegraph/conc"

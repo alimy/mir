@@ -8,7 +8,7 @@ import (
 	{{if .IsUseRequestContext }}"context"{{end}}
     "net/http"
 
-    "github.com/alimy/mir/v4"
+    "github.com/alimy/mir/v5"
     {{if notEmptyStr .EngineInfo.PkgName }}gin "{{ .EngineInfo.PkgName }}{{else}}"github.com/gin-gonic/gin{{end}}"
 	{{ declareImports .Imports }}
 )

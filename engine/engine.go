@@ -1,4 +1,4 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -11,8 +11,9 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/alimy/mir/v4/core"
-	"github.com/alimy/mir/v4/internal"
+	"github.com/alimy/mir/v5/core"
+	enginternal "github.com/alimy/mir/v5/engine/internal"
+	"github.com/alimy/mir/v5/internal"
 )
 
 var (
@@ -81,16 +82,23 @@ func Generate(opts ...core.Option) (err error) {
 
 func generate(opts *core.InitOpts) error {
 	opts.UseLoad = false
-	conf, err := json.Marshal(opts)
+	conf, err := json.MarshalIndent(opts, "", "    ")
 	if err != nil {
 		return err
 	}
-	return load(opts.SchemaPath, string(conf))
+	return load(opts.GeneratorName, opts.SchemaPath, string(conf))
 }
 
-func load(path string, conf string) (err error) {
-	_, err = (&Config{InitOpts: conf, Path: path, BuildFlags: []string{"-tags", "generate load"}}).load()
-	return err
+func load(generatorName string, schemaPath []string, conf string) error {
+	assertTypeSpec, assertTypeImports := core.AssertTypeSpec(generatorName)
+	loader := enginternal.NewLoader(&enginternal.Config{
+		InitOpts:          conf,
+		SchemaPath:        schemaPath,
+		BuildFlags:        []string{"-tags", "mir"},
+		AssertTypeImports: assertTypeImports,
+		AssertTypeSpec:    assertTypeSpec,
+	})
+	return loader.Load()
 }
 
 func addEntries(entries ...any) {
