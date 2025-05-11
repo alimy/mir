@@ -18,10 +18,10 @@ import (
 func main() {
 	log.Println("generate code start")
 	if err := Generate(
-		Schema("routes"),
 		UseGin(),
-		UseRequestContext(),
+		Schema("routes"),
 		SinkPath("auto"),
+		UseRequestContext(),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),
 	); err != nil {
