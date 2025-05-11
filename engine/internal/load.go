@@ -2,7 +2,7 @@
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
-package engine
+package internal
 
 import (
 	"bytes"
@@ -16,8 +16,10 @@ import (
 	"go/types"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -31,19 +33,13 @@ import (
 )
 
 type (
-	// A SchemaSpec holds a serializable version of an ent.Schema
+	// A SchemaSpec holds a serializable version of an mir.Schema
 	// and its Go package and module information.
 	SchemaSpec struct {
-		// Schemas defines the loaded schema descriptors.
-		// Schemas []*Schema
-
-		// PkgPath is the package path of the loaded
-		// ent.Schema package.
-		PkgPath string
-
-		// Module defines the module information for
-		// the user schema package if exists.
-		Module *packages.Module
+		PkgPath  string
+		PkgAlias string
+		Module   *packages.Module
+		Names    []string
 	}
 
 	// Config holds the configuration for loading an ent/schema package.
@@ -52,30 +48,33 @@ type (
 		InitOpts string
 		// Path is the path for the schema package.
 		Path string
-		// Names are the schema names to load. Empty means all schemas in the directory.
-		Names []string
 		// BuildFlags are forwarded to the package.Config when
 		// loading the schema package.
 		BuildFlags []string
+
+		// AssertTypeImports AssertType function params package path.
+		AssertTypeImports []string
+		// AssertTypeSpec AssertType function spec.
+		AssertTypeSpec string
 	}
 )
 
 // Load loads the schemas package and build the Go plugin with this info.
 func (c *Config) Load() error {
-	spec, err := c.load()
+	specs, err := c.load()
 	if err != nil {
 		return fmt.Errorf("mirc/load: parse schema dir: %w", err)
 	}
-	if len(c.Names) == 0 {
+	if len(specs) == 0 {
 		return fmt.Errorf("mircc/load: no schema found in: %s", c.Path)
 	}
 	var b bytes.Buffer
 	err = buildTmpl.ExecuteTemplate(&b, "main", struct {
 		*Config
-		Package string
+		Schemas []*SchemaSpec
 	}{
 		Config:  c,
-		Package: spec.PkgPath,
+		Schemas: specs,
 	})
 	if err != nil {
 		return fmt.Errorf("mirc/load: execute template: %w", err)
@@ -84,14 +83,16 @@ func (c *Config) Load() error {
 	if err != nil {
 		return fmt.Errorf("mirc/load: format template: %w", err)
 	}
-	if err := os.MkdirAll(".mirc", os.ModePerm); err != nil {
+
+	targetDir := fmt.Sprintf(".mirc_%d", time.Now().Unix())
+	if err := os.MkdirAll(targetDir, os.ModePerm); err != nil {
 		return err
 	}
-	target := fmt.Sprintf(".mirc/main_%d.go", time.Now().Unix())
+	target := path.Join(targetDir, "main.go")
 	if err := os.WriteFile(target, buf, 0644); err != nil {
 		return fmt.Errorf("entc/load: write file %s: %w", target, err)
 	}
-	defer os.RemoveAll(".mirc")
+	defer os.RemoveAll(targetDir)
 
 	if _, err = gorun(target, c.BuildFlags); err != nil {
 		return err
@@ -103,11 +104,11 @@ func (c *Config) Load() error {
 var mirInterface = reflect.TypeOf(struct{ mir.Interface }{}).Field(0).Type
 
 // load the ent/schema info.
-func (c *Config) load() (*SchemaSpec, error) {
+func (c *Config) load() ([]*SchemaSpec, error) {
 	pkgs, err := packages.Load(&packages.Config{
 		BuildFlags: c.BuildFlags,
 		Mode:       packages.NeedName | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedModule,
-	}, c.Path, mirInterface.PkgPath())
+	}, anyPathPattern(c.Path), mirInterface.PkgPath())
 	if err != nil {
 		return nil, fmt.Errorf("loading package: %w", err)
 	}
@@ -119,37 +120,65 @@ func (c *Config) load() (*SchemaSpec, error) {
 		}
 		return nil, fmt.Errorf("missing package information for: %s", c.Path)
 	}
-	entPkg, pkg := pkgs[0], pkgs[1]
-	if len(pkg.Errors) != 0 {
-		return nil, c.loadError(pkg.Errors[0])
-	}
-	if len(entPkg.Errors) != 0 {
-		return nil, entPkg.Errors[0]
-	}
-	if pkgs[0].PkgPath != mirInterface.PkgPath() {
-		entPkg, pkg = pkgs[1], pkgs[0]
-	}
-	var names []string
-	iface := entPkg.Types.Scope().Lookup(mirInterface.Name()).Type().Underlying().(*types.Interface)
-	for k, v := range pkg.TypesInfo.Defs {
-		typ, ok := v.(*types.TypeName)
-		if !ok || !k.IsExported() || !types.Implements(typ.Type(), iface) {
-			continue
+
+	var (
+		mirPkg    *packages.Package
+		mirPkgIdx int
+	)
+	for idx, pkg := range pkgs {
+		if len(pkg.Errors) != 0 {
+			return nil, c.loadError(pkg.Errors[0])
 		}
-		spec, ok := k.Obj.Decl.(*ast.TypeSpec)
-		if !ok {
-			return nil, fmt.Errorf("invalid declaration %T for %s", k.Obj.Decl, k.Name)
+		if pkg.PkgPath == mirInterface.PkgPath() {
+			mirPkg = pkg
+			mirPkgIdx = idx
 		}
-		if _, ok := spec.Type.(*ast.StructType); !ok {
-			return nil, fmt.Errorf("invalid spec type %T for %s", spec.Type, k.Name)
+	}
+	if mirPkg == nil {
+		return nil, fmt.Errorf("missing mir package information")
+	}
+	pkgs = slices.Delete(pkgs, mirPkgIdx, mirPkgIdx+1)
+
+	iface := mirPkg.Types.Scope().Lookup(mirInterface.Name()).Type().Underlying().(*types.Interface)
+	specs := make(map[string]*SchemaSpec, len(pkgs))
+	for _, pkg := range pkgs {
+		schema, exist := specs[pkg.PkgPath]
+		if !exist {
+			schema = &SchemaSpec{
+				PkgPath: pkg.PkgPath,
+				Module:  pkg.Module,
+			}
+			specs[pkg.PkgPath] = schema
 		}
-		names = append(names, k.Name)
+		for k, v := range pkg.TypesInfo.Defs {
+			typ, ok := v.(*types.TypeName)
+			if !ok || !k.IsExported() || !types.Implements(typ.Type(), iface) {
+				continue
+			}
+			spec, ok := k.Obj.Decl.(*ast.TypeSpec)
+			if !ok {
+				return nil, fmt.Errorf("invalid declaration %T for %s", k.Obj.Decl, k.Name)
+			}
+			if _, ok := spec.Type.(*ast.StructType); !ok {
+				return nil, fmt.Errorf("invalid spec type %T for %s", spec.Type, k.Name)
+			}
+			schema.Names = append(schema.Names, k.Name)
+		}
 	}
-	if len(c.Names) == 0 {
-		c.Names = names
+
+	var (
+		schemas []*SchemaSpec
+		pkgIdx  int
+	)
+	for _, it := range specs {
+		if len(it.Names) > 0 {
+			pkgIdx++
+			it.PkgAlias = fmt.Sprintf("p%d", pkgIdx)
+			sort.Strings(it.Names)
+			schemas = append(schemas, it)
+		}
 	}
-	sort.Strings(c.Names)
-	return &SchemaSpec{PkgPath: pkg.PkgPath, Module: pkg.Module}, nil
+	return schemas, nil
 }
 
 func (c *Config) loadError(perr packages.Error) (err error) {

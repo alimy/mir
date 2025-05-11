@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/alimy/mir/v4/core"
+	enginternal "github.com/alimy/mir/v4/engine/internal"
 	"github.com/alimy/mir/v4/internal"
 )
 
@@ -85,12 +86,19 @@ func generate(opts *core.InitOpts) error {
 	if err != nil {
 		return err
 	}
-	return load(opts.SchemaPath, string(conf))
+	return load(opts.GeneratorName, opts.SchemaPath, string(conf))
 }
 
-func load(path string, conf string) (err error) {
-	_, err = (&Config{InitOpts: conf, Path: path, BuildFlags: []string{"-tags", "generate load"}}).load()
-	return err
+func load(generatorName string, path string, conf string) error {
+	assertTypeSpec, assertTypeImports := core.AssertTypeSpec(generatorName)
+	cfg := &enginternal.Config{
+		InitOpts:          conf,
+		Path:              path,
+		BuildFlags:        []string{"-tags", "generate,mirc"},
+		AssertTypeImports: assertTypeImports,
+		AssertTypeSpec:    assertTypeSpec,
+	}
+	return cfg.Load()
 }
 
 func addEntries(entries ...any) {
