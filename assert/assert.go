@@ -1,11 +1,11 @@
-// Copyright 2023 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package assert
 
 import (
-	"github.com/alimy/mir/v4"
+	"github.com/alimy/mir/v5"
 )
 
 var (

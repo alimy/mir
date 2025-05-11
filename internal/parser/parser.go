@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -8,9 +8,9 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/alimy/mir/v4/core"
-	"github.com/alimy/mir/v4/internal/reflex"
-	"github.com/alimy/mir/v4/internal/utils"
+	"github.com/alimy/mir/v5/core"
+	"github.com/alimy/mir/v5/internal/reflex"
+	"github.com/alimy/mir/v5/internal/utils"
 )
 
 var (

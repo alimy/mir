@@ -1,47 +1,60 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package mir
 
-// Group indicator a default group for handler to register to server engine
-type Group any
+type (
+	// Schema is the restful Interface.
+	// It can be embedded in end-user schemas as follows:
+	//
+	//	type WebAPI struct {
+	//		mir.Schema
+	//	}
+	//
+	Schema interface {
+		mustEmbedSchema()
+	}
 
-// Chain indicator a Handler slice used register Middleware to router by group
-type Chain any
+	// Group indicator a default group for handler to register to server engine
+	Group any
 
-// Context indicator a handler that just use engine's context like use gin engine
-// the handler will just take a function func(c *gin.Context) as handler
-type Context any
+	// Chain indicator a Handler slice used register Middleware to router by group
+	Chain any
 
-// Get indicator a GET method handler used placeholder register info in struct tag
-type Get any
+	// Context indicator a handler that just use engine's context like use gin engine
+	// the handler will just take a function func(c *gin.Context) as handler
+	Context any
 
-// Put indicator a PUT method handler used placeholder register info in struct tag
-type Put any
+	// Get indicator a GET method handler used placeholder register info in struct tag
+	Get any
 
-// Post indicator a POST method handler used placeholder register info in struct tag
-type Post any
+	// Put indicator a PUT method handler used placeholder register info in struct tag
+	Put any
 
-// Delete indicator a DELETE method handler used placeholder register info in struct tag
-type Delete any
+	// Post indicator a POST method handler used placeholder register info in struct tag
+	Post any
 
-// Head indicator a HEAD method handler used placeholder register info in struct tag
-type Head any
+	// Delete indicator a DELETE method handler used placeholder register info in struct tag
+	Delete any
 
-// Patch indicator a PATCH method handler used placeholder register info in struct tag
-type Patch any
+	// Head indicator a HEAD method handler used placeholder register info in struct tag
+	Head any
 
-// Trace indicator a TRACE method handler used placeholder register info in struct tag
-type Trace any
+	// Patch indicator a PATCH method handler used placeholder register info in struct tag
+	Patch any
 
-// Connect indicator a CONNECT method handler used placeholder register info in struct tag
-type Connect any
+	// Trace indicator a TRACE method handler used placeholder register info in struct tag
+	Trace any
 
-// Options indicator a OPTIONS method handler used placeholder register info in struct tag
-type Options any
+	// Connect indicator a CONNECT method handler used placeholder register info in struct tag
+	Connect any
 
-// Any indicator a Any method handler used placeholder register info in struct tag.
-// This is mean register handler that all http.Method* include(GET, PUT, POST, DELETE,
-// HEAD, PATCH, OPTIONS)
-type Any any
+	// Options indicator a OPTIONS method handler used placeholder register info in struct tag
+	Options any
+
+	// Any indicator a Any method handler used placeholder register info in struct tag.
+	// This is mean register handler that all http.Method* include(GET, PUT, POST, DELETE,
+	// HEAD, PATCH, OPTIONS)
+	Any any
+)

@@ -10,8 +10,8 @@ title: "接口定义"
 package routes
 
 import (
-	. "github.com/alimy/mir/v4"
-	. "github.com/alimy/mir/v4/engine"
+	. "github.com/alimy/mir/v5"
+	. "github.com/alimy/mir/v5/engine"
 )
 
 func init() {

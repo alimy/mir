@@ -13,13 +13,13 @@ build: fmt
 	go build -o mir mirc/main.go
 
 .PHONY: test
-test: fmt misspell vet
+test:
 	go test ./...
 
 .PHONY: gen-docs
 gen-docs: 
 	@-rm -rf docs/public
-	@cd docs && hugo --minify  --baseURL "https://alimy.me/mir/" && cd -
+	@cd docs && hugo --minify  --baseURL "https://alimy.github.io/mir/" && cd -
 
 .PHONY: run-docs
 run-docs: 
@@ -38,32 +38,6 @@ fmt-check:
 		exit 1; \
 	fi;
 
-.PHONY: lint
-lint:
-	@hash golint > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		go get -u golang.org/x/lint/golint; \
-	fi
-	for PKG in $(PACKAGES); do golint -min_confidence 1.0 -set_exit_status $$PKG || exit 1; done;
-
-.PHONY: misspell-check
-misspell-check:
-	@hash misspell > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell; \
-	fi
-	misspell -error $(GOFILES)
-
-.PHONY: misspell
-misspell:
-	@hash misspell > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
-		GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell; \
-	fi
-	misspell -w $(GOFILES)
-
 .PHONY: fmt
 fmt:
 	$(GOFMT) $(GOFILES)
-
-.PHONY: tools
-tools:
-	GO111MODULE=off go get golang.org/x/lint/golint
-	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell

@@ -16,7 +16,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/alimy/mir/v4"
+	"github.com/alimy/mir/v5"
 	"github.com/gin-gonic/gin"
 )
 

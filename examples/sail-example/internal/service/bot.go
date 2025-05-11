@@ -1,4 +1,4 @@
-// Copyright 2024 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -7,8 +7,8 @@ package service
 import (
 	"fmt"
 
-	"github.com/alimy/mir/sail-example/v4/internal/servants"
-	"github.com/alimy/mir/v4/service"
+	"github.com/alimy/mir/sail-example/v5/internal/servants"
+	"github.com/alimy/mir/v5/service"
 
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"

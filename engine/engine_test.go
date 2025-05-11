@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -6,10 +6,12 @@ package engine
 
 import (
 	"testing"
+
+	"github.com/alimy/mir/v5/core"
 )
 
 func TestGenerate(t *testing.T) {
-	if err := Generate(nil, nil); err == nil {
+	if err := Generate(core.WithEntry(nil)); err == nil {
 		t.Error("want an error but not")
 	}
 	AddEntry(nil)

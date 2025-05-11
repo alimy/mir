@@ -1,4 +1,4 @@
-// Copyright 2022 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v4/internal/utils"
+	"github.com/alimy/mir/v5/internal/utils"
 )
 
 // CheckStruct check struct type is in pkgPath and return other struct type field's

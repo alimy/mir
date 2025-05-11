@@ -7,7 +7,7 @@ package {{ .PkgName }}
 import (
     "net/http"
 
-    "github.com/alimy/mir/v4"
+    "github.com/alimy/mir/v5"
     {{if notEmptyStr .EngineInfo.PkgName }}iris "{{ .EngineInfo.PkgName }}{{else}}"github.com/kataras/iris/v12{{end}}"
 	"{{if notEmptyStr .EngineInfo.PkgName }}{{ .EngineInfo.PkgName }}/context{{else}}github.com/kataras/iris/v12/context{{end}}"
 	{{ declareImports .Imports }}

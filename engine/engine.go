@@ -1,17 +1,19 @@
-// Copyright 2019 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"runtime"
 	"sync"
 
-	"github.com/alimy/mir/v4/core"
-	"github.com/alimy/mir/v4/internal"
+	"github.com/alimy/mir/v5/core"
+	enginternal "github.com/alimy/mir/v5/engine/internal"
+	"github.com/alimy/mir/v5/internal"
 )
 
 var (
@@ -36,16 +38,21 @@ func Entry[T any]() {
 }
 
 // Generate generate interface code from mir's iface entry
-func Generate(opts core.Options, entries ...any) (err error) {
+func Generate(opts ...core.Option) (err error) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	addEntries(entries...)
+	initOpts := core.InitFrom(opts)
+
+	if initOpts.UseLoad {
+		return generate(initOpts)
+	}
+
+	addEntries(initOpts.Entries...)
 	if len(mirEntries) == 0 {
 		return errors.New("mir entries is empty maybe need add entries first")
 	}
 
-	initOpts := core.InitFrom(opts)
 	p := core.ParserByName(initOpts.ParserName)
 	// use default parser when not set parser name from options
 	if p == nil {
@@ -71,6 +78,27 @@ func Generate(opts core.Options, entries ...any) (err error) {
 		err = doInConcurrent(p, g, mirEntries)
 	}
 	return err
+}
+
+func generate(opts *core.InitOpts) error {
+	opts.UseLoad = false
+	conf, err := json.MarshalIndent(opts, "", "    ")
+	if err != nil {
+		return err
+	}
+	return load(opts.GeneratorName, opts.SchemaPath, string(conf))
+}
+
+func load(generatorName string, schemaPath []string, conf string) error {
+	assertTypeSpec, assertTypeImports := core.AssertTypeSpec(generatorName)
+	loader := enginternal.NewLoader(&enginternal.Config{
+		InitOpts:          conf,
+		SchemaPath:        schemaPath,
+		BuildFlags:        []string{"-tags", "mir"},
+		AssertTypeImports: assertTypeImports,
+		AssertTypeSpec:    assertTypeSpec,
+	})
+	return loader.Load()
 }
 
 func addEntries(entries ...any) {

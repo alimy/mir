@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -12,12 +12,12 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/alimy/mir/v4/internal/utils"
+	"github.com/alimy/mir/v5/internal/utils"
 )
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "v4.2.0",
+		MirVer: "5.0.0",
 	}
 )
 

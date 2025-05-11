@@ -1,4 +1,4 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
@@ -10,23 +10,25 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alimy/mir/v4"
-	"github.com/alimy/mir/v4/assert"
-	"github.com/alimy/mir/v4/internal/utils"
+	"github.com/alimy/mir/v5"
+	"github.com/alimy/mir/v5/assert"
+	"github.com/alimy/mir/v5/internal/utils"
 )
 
 var (
 	// error list
-	errNilType       tagError = "nil type is not valide"
-	errNotExist      tagError = "mir struct tag filed not exist"
-	errNoPathInfo    tagError = "mir struct tag not contains path info"
-	errNotValideType tagError = "not valide type, just struct and struct ptr is avalibale"
-	errMultGroupInfo tagError = "multiple group info in struct defined"
-	errMultChainInfo tagError = "multiple chain info in struct defined"
+	errNoop           tagError = "noop"
+	errNilType        tagError = "nil type is not valide"
+	errNotExist       tagError = "mir struct tag filed not exist"
+	errNoPathInfo     tagError = "mir struct tag not contains path info"
+	errNotValideType  tagError = "not valide type, just struct and struct ptr is avalibale"
+	errMultGroupInfo  tagError = "multiple group info in struct defined"
+	errMultChainInfo  tagError = "multiple chain info in struct defined"
+	errMultSchemaInfo tagError = "multiple schema info in struct defined"
 )
 
 const (
-	mirPkgName = "github.com/alimy/mir/v4"
+	mirPkgName = "github.com/alimy/mir/v5"
 )
 
 // tagError indicate error information
@@ -46,12 +48,14 @@ type tagInfo struct {
 	host         string              // host indicate host information in struct tag string
 	path         string              // path indicate path information in struct tag string
 	queries      []string            // queries indicate path information in struct tag string
+	isSchema     bool                // indicate whether a schema field
 	isGroup      bool                // indicate whether a group field
 	isChain      bool                // indicate whether a chain field
 	group        string              // indicate group information in struct tag string
 	chainFunc    string              // indicate chain function information in struct tag string
 	handler      string              // indicate handler information in struct tag string
 	fieldName    string              // indicate field name
+	schemaChain  string
 	isBindIn     bool
 	isRenderOut  bool
 	bindingName  string
@@ -89,7 +93,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 	switch field.Type.Kind() {
 	case reflect.Interface:
 		if field.Type.PkgPath() != mirPkgName {
-			return nil, errors.New("not supported filed type")
+			return nil, errors.New("parser[1] not supported filed type")
 		}
 		switch field.Type.Name() {
 		case "Chain":
@@ -99,9 +103,49 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 			info.isGroup = true
 			info.group = tag
 			return info, nil
+		case "Schema":
+			tagVals := strings.Split(tag, ",")
+			switch len(tagVals) {
+			case 0:
+				// just pass this case
+				return nil, errNoop
+			case 1:
+				info.group = tagVals[0]
+			case 2:
+				fallthrough
+			default:
+				info.group = tagVals[0]
+				if strings.TrimSpace(tagVals[1]) == "chain" {
+					info.schemaChain = "Chain"
+				}
+			}
+			info.isSchema = true
+			info.group = strings.TrimSpace(info.group)
+			return info, nil
 		default:
-			return nil, errors.New("not supported filed type")
+			return nil, errors.New("parser[2] not supported filed type")
 		}
+	case reflect.Struct:
+		if field.Type.Name() != "Schema" || field.Type.PkgPath() != mirPkgName {
+			return nil, errors.New("parser[3] not supported filed type")
+		}
+		tagVals := strings.Split(tag, ",")
+		switch len(tagVals) {
+		case 0:
+			// just pass this case
+			return nil, errNoop
+		case 1:
+			info.group = tagVals[0]
+		case 2:
+			fallthrough
+		default:
+			info.group = tagVals[0]
+			if strings.TrimSpace(tagVals[1]) == "chain" {
+				info.schemaChain = "Chain"
+			}
+		}
+		info.group = strings.TrimSpace(info.group)
+		return info, nil
 	case reflect.Func:
 		ft := field.Type
 		numIn := ft.NumIn()
@@ -183,7 +227,7 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 			info.inOuts = append(info.inOuts, cts...)
 		}
 	default:
-		return nil, errors.New("not supported filed type")
+		return nil, errors.New("parser[4] not supported filed type")
 	}
 
 	// host info

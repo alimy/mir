@@ -1,11 +1,13 @@
-// Copyright 2020 Michael Li <alimy@gility.net>. All rights reserved.
+// Copyright 2025 Michael Li <alimy@gility.net>. All rights reserved.
 // Use of this source code is governed by Apache License 2.0 that
 // can be found in the LICENSE file.
 
 package generator
 
 import (
+	"bytes"
 	"errors"
+	"go/format"
 	"os"
 	"path"
 	"path/filepath"
@@ -13,9 +15,9 @@ import (
 	"sync"
 	"text/template"
 
-	"github.com/alimy/mir/v4/core"
-	"github.com/alimy/mir/v4/internal/naming"
-	"github.com/alimy/mir/v4/internal/utils"
+	"github.com/alimy/mir/v5/core"
+	"github.com/alimy/mir/v5/internal/naming"
+	"github.com/alimy/mir/v5/internal/utils"
 )
 
 func init() {
@@ -43,19 +45,25 @@ type mirWriter struct {
 	tmpl *template.Template
 }
 
-func (w *mirWriter) Write(dirPath string, iface *core.IfaceDescriptor) error {
+func (w *mirWriter) Write(dirPath string, iface *core.IfaceDescriptor) (err error) {
+	var (
+		b   bytes.Buffer
+		buf []byte
+	)
+	if err = w.tmpl.Execute(&b, iface); err != nil {
+		return
+	}
+	if buf, err = format.Source(b.Bytes()); err != nil {
+		return
+	}
+	// write code to file
 	fileName := w.ns.Naming(iface.TypeName) + ".go"
 	filePath := filepath.Join(dirPath, fileName)
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	if err == nil {
-		defer func() {
-			_ = file.Close()
-		}()
-		if err = w.tmpl.Execute(file, iface); err == nil {
-			core.Logus("generated iface: %s.%s to file: %s", iface.PkgName, iface.TypeName, filePath)
-		}
+	if err = os.WriteFile(filePath, buf, 0644); err != nil {
+		return
 	}
-	return err
+	core.Logus("generated iface: %s.%s to file: %s", iface.PkgName, iface.TypeName, filePath)
+	return
 }
 
 // Name name of generator
