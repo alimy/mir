@@ -89,7 +89,7 @@ func (c *Config) Load() error {
 	if err := os.MkdirAll(targetDir, os.ModePerm); err != nil {
 		return err
 	}
-	target := path.Join(targetDir, fmt.Sprintf("main_%d.go", time.Now().Unix()))
+	target := path.Join(targetDir, fmt.Sprintf("main_t%d.go", time.Now().Unix()))
 	if err := os.WriteFile(target, buf, 0644); err != nil {
 		return fmt.Errorf("mirc/load: write file %s: %w", target, err)
 	}

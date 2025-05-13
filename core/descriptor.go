@@ -194,6 +194,7 @@ func (d IfaceDescriptors) Adjust() {
 			}
 		}
 		bindingIds = set.List()
+		sort.Strings(bindingIds)
 	}
 	if isRenderById {
 		set := utils.NewStrSet()
@@ -203,6 +204,7 @@ func (d IfaceDescriptors) Adjust() {
 			}
 		}
 		renderIds = set.List()
+		sort.Strings(renderIds)
 	}
 
 	for _, f := range d {
