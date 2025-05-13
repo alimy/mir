@@ -25,5 +25,8 @@ tmp.out
 # VS Code
 .vscode
 
+# mirc generate files
+.mirc
+
 /examples
 /sail-example

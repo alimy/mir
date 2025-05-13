@@ -24,5 +24,8 @@ tmp.out
 # VS Code
 .vscode
 
+# mirc generate files
+.mirc
+
 /examples
 /mir-example

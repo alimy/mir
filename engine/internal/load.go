@@ -85,11 +85,11 @@ func (c *Config) Load() error {
 		return fmt.Errorf("mirc/load: format template: %w", err)
 	}
 
-	targetDir := fmt.Sprintf(".mirc_%d", time.Now().Unix())
+	targetDir := ".mirc"
 	if err := os.MkdirAll(targetDir, os.ModePerm); err != nil {
 		return err
 	}
-	target := path.Join(targetDir, "main.go")
+	target := path.Join(targetDir, fmt.Sprintf("main_%d.go", time.Now().Unix()))
 	if err := os.WriteFile(target, buf, 0644); err != nil {
 		return fmt.Errorf("mirc/load: write file %s: %w", target, err)
 	}
