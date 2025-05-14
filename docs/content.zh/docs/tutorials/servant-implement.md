@@ -10,53 +10,38 @@ title: "接口实现"
 package servants
 
 import (
-	"github.com/alimy/mir-example/v4/mirc/auto/api"
+	"net/http"
+
+	"github.com/alimy/mir/v5"
+	"github.com/gin-gonic/gin"
+	api "github.com/alimy/mir-example/v5/mirc/auto/api/v1"
 )
 
-type userSrv struct {
-	api.UnimplementedUserServant
-}
 
-type userBinding struct {
-	*api.UnimplementedUserBinding
-}
+type baseSrv struct{}
 
-type userRender struct {
-	*api.UnimplementedUserRender
-}
-
-func newUserSrv() api.Site {
-	return &userSrv{}
-}
-
-func newUserBinding() api.SiteBinding {
-	return &siteBinding{
-		UnimplementedSiteBinding: &api.UnimplementedSiteBinding{
-			BindAny: bindAny,
-		},
-	}
-}
-
-func newUserRender() api.SiteRender {
-	return &siteRender{
-		UnimplementedSiteRender: &api.UnimplementedSiteRender{
-			RenderAny: renderAny,
-		},
-	}
-}
-
-func bindAny(c *gin.Context, obj any) mir.Error {
-	if err != c.ShouldBind(obj); err != nil {
-		return mir.NewError(http.StatusBadRequest, err)
+func (baseSrv) Bind(c *gin.Context, obj any) mir.Error {
+	if err := c.ShouldBind(obj); err != nil {
+		mir.NewError(http.StatusBadRequest, err)
 	}
 	return nil
 }
 
-func renderAny(c *gin.Context, data any, err mir.Error) {
+func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
 	if err == nil {
 		c.JSON(http.StatusOK, data)
 	} else {
 		c.JSON(err.StatusCode(), err.Error())
 	}
 }
+
+type userSrv struct {
+	baseSrv
+	api.UnimplementedUserServant
+}
+
+func newUserSrv() api.Site {
+	return &userSrv{}
+}
+
 ```

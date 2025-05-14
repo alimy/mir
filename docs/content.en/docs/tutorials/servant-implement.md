@@ -10,10 +10,13 @@ title: "Servant Implement"
 package servants
 
 import (
-	"github.com/alimy/mir-example/v4/mirc/auto/api"
+	"net/http"
+
 	"github.com/alimy/mir/v5"
 	"github.com/gin-gonic/gin"
+	api "github.com/alimy/mir-example/v5/mirc/auto/api/v1"
 )
+
 
 type baseSrv struct{}
 
@@ -34,7 +37,6 @@ func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
 
 type userSrv struct {
 	baseSrv
-
 	api.UnimplementedUserServant
 }
 

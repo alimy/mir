@@ -11,7 +11,7 @@ title: "Servant Register"
 package servants
 
 import (
-	"github.com/alimy/mir-example/v4/mirc/auto/api"
+	api "github.com/alimy/mir-example/v4/mirc/auto/api/v1"
 	"github.com/gin-gonic/gin"
 )
 
