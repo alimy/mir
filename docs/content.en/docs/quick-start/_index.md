@@ -24,7 +24,7 @@ Mir is a toolkit to develop RESTful API backend service like develop service of 
 
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/images/mir-arc.png">
+    <img src="https://alimy.github.io/mir/images/mir-arc.png">
   </a>
 </div>
  
