@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/alimy/mir/mirc/v4/templates"
+	"github.com/alimy/mir/mirc/v5/templates"
 	"github.com/spf13/cobra"
 )
 

@@ -5,27 +5,21 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	. "github.com/alimy/mir/v5/core"
 	. "github.com/alimy/mir/v5/engine"
-
-	_ "{{ .PkgName }}/mirc/routes"
-	_ "{{ .PkgName }}/mirc/routes/v1"
-	_ "{{ .PkgName }}/mirc/routes/v2"
 )
 
 //go:generate go run $GOFILE
 func main() {
 	log.Println("generate code start")
-	opts := Options{
+	if err := Generate(
 		UseMux(),
+		Schema("routes"),
 		SinkPath("auto"),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),
-		AssertType2[*http.Request, http.ResponseWriter](),
-	}
-	if err := Generate(opts); err != nil {
+	); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("generate code finish")

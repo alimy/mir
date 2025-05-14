@@ -8,24 +8,18 @@ import (
 
 	. "github.com/alimy/mir/v5/core"
 	. "github.com/alimy/mir/v5/engine"
-	"gopkg.in/macaron.v1"
-
-	_ "{{ .PkgName }}/mirc/routes"
-	_ "{{ .PkgName }}/mirc/routes/v1"
-	_ "{{ .PkgName }}/mirc/routes/v2"
 )
 
 //go:generate go run $GOFILE
 func main() {
 	log.Println("generate code start")
-	opts := Options{
+	if err := Generate(
 		UseMacaron(),
+		Schema("routes"),
 		SinkPath("auto"),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),
-		AssertType[*macaron.Context](),
-	}
-	if err := Generate(opts); err != nil {
+	); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("generate code finish")

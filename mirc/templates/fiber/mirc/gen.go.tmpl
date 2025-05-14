@@ -8,25 +8,19 @@ import (
 
 	. "github.com/alimy/mir/v5/core"
 	. "github.com/alimy/mir/v5/engine"
-	"github.com/gofiber/fiber/v2"
-
-	_ "{{ .PkgName }}/mirc/routes"
-	_ "{{ .PkgName }}/mirc/routes/v1"
-	_ "{{ .PkgName }}/mirc/routes/v2"
 )
 
 //go:generate go run $GOFILE
 func main() {
 	log.Println("generate code start")
-	opts := Options{
+	if err := Generate(
 		UseFiber(),
+		Schema("routes"),
 		SinkPath("auto"),
 		NoneQuery(true),
 		WatchCtxDone(true),
 		RunMode(InSerialMode),
-		AssertType[*fiber.Ctx](),
-	}
-	if err := Generate(opts); err != nil {
+	); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("generate code finish")

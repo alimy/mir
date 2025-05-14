@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/alimy/mir/mirc/v4/version"
+	"github.com/alimy/mir/mirc/v5/version"
 	"github.com/spf13/cobra"
 )
 
@@ -22,10 +22,9 @@ func init() {
 }
 
 func versionRun(_cmd *cobra.Command, _args []string) {
-	if version.BuildTime == "" || version.GitHash == "" {
-		fmt.Printf("v%s\n", version.AppVer)
+	if version.GitHash == "" {
+		fmt.Printf("mirc v%s build(%s)\n", version.AppVer, version.BuildTime())
 	} else {
-		fmt.Printf("v%s\nBuildTime: %s\nGitHash: %s\n",
-			version.AppVer, version.BuildTime, version.GitHash)
+		fmt.Printf("mirc v%s build(%s %s)\n", version.AppVer, version.GitHash, version.BuildTime())
 	}
 }

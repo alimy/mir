@@ -2,12 +2,7 @@ package routes
 
 import (
 	. "github.com/alimy/mir/v5"
-	. "github.com/alimy/mir/v5/engine"
 )
-
-func init() {
-	Entry[Site]()
-}
 
 type AgentInfo struct {
 	Platform  string `json:"platform"`
@@ -55,7 +50,7 @@ type Tweet struct {
 
 // Site site interface info
 type Site struct {
-	Chain            `mir:"-"`
+	Schema           `mir:",chain"`
 	Index            func(Get, Chain)                               `mir:"/index/"`
 	Articles         func(Get)                                      `mir:"/articles/:category/"`
 	AnyTopics        func()                                         `mir:"/topics/"`
