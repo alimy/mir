@@ -4,7 +4,7 @@
 
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/images/mir-logo.png" alt="Logo" width="240" height="240">
+    <img src="https://alimy.github.io/mir/images/mir-logo.png" alt="Logo" width="240" height="240">
   </a>
 
   <h3 align="center">Mir</h3>
@@ -18,7 +18,7 @@ Mir is a toolkit to develop RESTful API backend service like develop service of 
 
 <div align="center">
   <a href="https://github.com/alimy/mir">
-    <img src="https://alimy.me/mir/images/mir-arc.png">
+    <img src="https://alimy.github.io/mir/images/mir-arc.png">
   </a>
 </div>
  
@@ -83,12 +83,7 @@ package v1
 
 import (
 	. "github.com/alimy/mir/v5"
-	. "github.com/alimy/mir/v5/engine"
 )
-
-func init() {
-	AddEntry(new(User))
-}
 
 type LoginReq struct {
 	Name   string `json:"name"`
@@ -101,8 +96,7 @@ type LoginResp struct {
 
 // User user interface info
 type User struct {
-	Chain  Chain                          `mir:"-"`
-	Group  Group                          `mir:"v1"`
+	Schema                                `mir:"v1"`
 	Login  func(Post, LoginReq) LoginResp `mir:"/login/"`
 	Logout func(Post)                     `mir:"/logout/"`
 }
