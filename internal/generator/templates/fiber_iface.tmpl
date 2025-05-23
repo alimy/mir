@@ -14,7 +14,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*fiber.Ctx) mir.Error
+	Bind(*fiber.Ctx) error
 }
 
 type _render_ interface {
@@ -22,8 +22,8 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(*fiber.Ctx, any) mir.Error
-	Render(*fiber.Ctx, any, mir.Error)
+	Bind(*fiber.Ctx, any) error
+	Render(*fiber.Ctx, any, error)
 }
 {{- end }}
 
@@ -36,7 +36,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for fiber
     {{.Chain}}() []any
 {{end}}
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*fiber.Ctx) error{{else}}{{.MethodName}}({{if .IsUseContext }}*fiber.Ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*fiber.Ctx) error{{else}}{{.MethodName}}({{if .IsUseContext }}*fiber.Ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -158,7 +158,7 @@ func ({{$unimplementedServant}}){{.Chain}}() []any {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c *fiber.Ctx) error{{else}}{{.MethodName}}({{if .IsUseContext }}c *fiber.Ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c *fiber.Ctx) error{{else}}{{.MethodName}}({{if .IsUseContext }}c *fiber.Ctx{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		c.Status(http.StatusNotImplemented)
 		c.Write([]byte("method not implemented"))

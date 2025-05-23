@@ -13,7 +13,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*macaron.Context) mir.Error
+	Bind(*macaron.Context) error
 }
 
 type _render_ interface {
@@ -21,8 +21,8 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(*macaron.Context, any) mir.Error
-	Render(*macaron.Context, any, mir.Error)
+	Bind(*macaron.Context, any) error
+	Render(*macaron.Context, any, error)
 }
 {{- end }}
 
@@ -35,7 +35,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for macaron
     {{.Chain}}() []macaron.Handler
 {{end}}
-{{range .Fields}}   {{if .JustUseContext }}{{ .MethodName}}(*macaron.Context){{else}}{{.MethodName}}({{if .IsUseContext }}*macaron.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}   {{if .JustUseContext }}{{ .MethodName}}(*macaron.Context){{else}}{{.MethodName}}({{if .IsUseContext }}*macaron.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -339,7 +339,7 @@ func ({{$unimplementedServant}}){{.Chain}}() []macaron.Handler {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c *macaron.Context){{else}}{{.MethodName}}({{if .IsUseContext }}c *macaron.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c *macaron.Context){{else}}{{.MethodName}}({{if .IsUseContext }}c *macaron.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		c.Resp.WriteHeader(http.StatusNotImplemented)
 		c.Resp.Write([]byte("method not implemented"))

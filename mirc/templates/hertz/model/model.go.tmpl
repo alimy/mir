@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 
-	"github.com/alimy/mir/v5"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -46,7 +45,7 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
-func (r *LoginReq) Bind(context.Context, *app.RequestContext) mir.Error {
+func (r *LoginReq) Bind(context.Context, *app.RequestContext) error {
 	// do something
 	return nil
 }

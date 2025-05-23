@@ -10,10 +10,16 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c echo.Context, obj any) mir.Error {
+func (baseSrv) Bind(c echo.Context, obj any) error {
 	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
 }
 
-func (baseSrv) Render(c echo.Context, data any, err mir.Error) {
-	c.String(http.StatusNotImplemented, "method not implemented")
+func (baseSrv) Render(c echo.Context, data any, err error) {
+	if err == nil {
+		c.JSON(http.StatusOK, data)
+	} else if code, ok := mir.HttpStatusCode(err); ok {
+		c.String(code, err.Error())
+	} else {
+		c.String(http.StatusInternalServerError, err.Error())
+	}
 }

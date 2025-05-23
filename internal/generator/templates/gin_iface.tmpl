@@ -14,7 +14,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*gin.Context) mir.Error
+	Bind(*gin.Context) error
 }
 
 type _render_ interface {
@@ -22,22 +22,22 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(*gin.Context, any) mir.Error
+	Bind(*gin.Context, any) error
 	{{- if .Default.IsBindingByName }}
-	BindByName(string, *gin.Context, any) mir.Error
+	BindByName(string, *gin.Context, any) error
 	{{- end }}
 	{{- if  .Default.IsBindingById }}
 	{{- range .Default.BindingIds }}
-	Bind{{ . }}(*gin.Context, any) mir.Error
+	Bind{{ . }}(*gin.Context, any) error
 	{{- end }}
 	{{- end }}
-	Render(*gin.Context, any, mir.Error)
+	Render(*gin.Context, any, error)
 	{{- if .Default.IsRenderByName }}
-	RenderByName(string, *gin.Context, any, mir.Error)
+	RenderByName(string, *gin.Context, any, error)
 	{{- end }}
 	{{- if .Default.IsRenderById }}
 	{{- range .Default.RenderIds }}
-	Render{{ . }}(*gin.Context, any, mir.Error)
+	Render{{ . }}(*gin.Context, any, error)
 	{{- end }}
 	{{- end }}
 }
@@ -52,7 +52,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for gin
     {{.Chain}}() gin.HandlersChain
 {{end}}
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*gin.Context){{else}}{{.MethodName}}({{if .IsUseRequestContext }}context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}*gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(*gin.Context){{else}}{{.MethodName}}({{if .IsUseRequestContext }}context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}*gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -208,7 +208,7 @@ func ({{$unimplementedServant}}){{.Chain}}() gin.HandlersChain {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c *gin.Context){{else}}{{.MethodName}}({{if .IsUseRequestContext }}c context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c *gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c *gin.Context){{else}}{{.MethodName}}({{if .IsUseRequestContext }}c context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c *gin.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		c.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 	{{else -}}

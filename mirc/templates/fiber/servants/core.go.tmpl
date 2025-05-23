@@ -10,11 +10,19 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c *fiber.Ctx, obj any) mir.Error {
+func (baseSrv) Bind(c *fiber.Ctx, obj any) error {
 	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
 }
 
-func (baseSrv) Render(c *fiber.Ctx, data any, err mir.Error) {
-	c.Status(http.StatusNotImplemented)
-	c.Write([]byte("method not implemented"))
+func (baseSrv) Render(c *fiber.Ctx, data any, err error) {
+	if err == nil {
+		c.Status(http.StatusOK)
+		c.JSON(data)
+	} else if code, ok := mir.HttpStatusCode(err); ok {
+		c.Status(code)
+		c.Write([]byte(err.Error()))
+	} else {
+		c.Status(http.StatusInternalServerError)
+		c.Write([]byte(err.Error()))
+	}
 }

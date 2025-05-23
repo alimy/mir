@@ -17,7 +17,7 @@ import (
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "5.0.1",
+		MirVer: "5.1.0",
 	}
 )
 

@@ -22,7 +22,7 @@ var (
 	BuildTime = sync.OnceValue(getBuildTime)
 
 	// AppVer version of Mirc
-	AppVer = semver.MustParse("v5.0.0")
+	AppVer = semver.MustParse("v5.1.0")
 )
 
 func ShowInfo() string {

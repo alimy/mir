@@ -3,7 +3,7 @@ module {{ .PkgName }}
 go 1.23.0
 
 require (
-	github.com/alimy/mir/v5 v5.0.1
+	github.com/alimy/mir/v5 v5.1.0
 	gopkg.in/macaron.v1 v1.5.0
 )
 
@@ -19,3 +19,9 @@ require (
 	gopkg.in/ini.v1 v1.66.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+{{- if notEmptyStr .MirPkgName }}
+replace (
+    github.com/alimy/mir/v5 => {{ .MirPkgName }}
+)
+{{end -}}

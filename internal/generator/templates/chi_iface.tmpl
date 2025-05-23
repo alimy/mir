@@ -13,7 +13,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*http.Request) mir.Error
+	Bind(*http.Request) error
 }
 
 type _render_ interface {
@@ -21,8 +21,8 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(*http.Request, any) mir.Error
-	Render(http.ResponseWriter, any, mir.Error)
+	Bind(*http.Request, any) error
+	Render(http.ResponseWriter, any, error)
 }
 {{- end }}
 
@@ -35,7 +35,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}    // Chain provide middlewares for chi
     {{.Chain}}() chi.Middlewares
 {{end}}
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(http.ResponseWriter, *http.Request){{else}}{{.MethodName}}({{if .IsUseContext }}http.ResponseWriter, *http.Request{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(http.ResponseWriter, *http.Request){{else}}{{.MethodName}}({{if .IsUseContext }}http.ResponseWriter, *http.Request{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -194,7 +194,7 @@ func ({{$unimplementedServant}}){{.Chain}}() chi.Middlewares {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(rw http.ResponseWriter, hr *http.Request){{else}}{{.MethodName}}({{if .IsUseContext }}rw http.ResponseWriter, hr *http.Request{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(rw http.ResponseWriter, hr *http.Request){{else}}{{.MethodName}}({{if .IsUseContext }}rw http.ResponseWriter, hr *http.Request{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		rw.WriteHeader(http.StatusNotImplemented)
 		rw.Write([]byte("method not implemented"))

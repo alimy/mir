@@ -10,15 +10,17 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c context.Context, ctx *app.RequestContext, obj any) mir.Error {
+func (baseSrv) Bind(c context.Context, ctx *app.RequestContext, obj any) error {
 	// do something
 	return nil
 }
 
-func (baseSrv) Render(c context.Context, ctx *app.RequestContext, data any, err mir.Error) {
+func (baseSrv) Render(c context.Context, ctx *app.RequestContext, data any, err error) {
 	if err == nil {
 		ctx.JSON(http.StatusOK, data)
+	} else if code, ok := mir.HttpStatusCode(err); ok {
+		ctx.JSON(code, err.Error())
 	} else {
-		ctx.JSON(err.StatusCode(), err.Error())
+		ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 }

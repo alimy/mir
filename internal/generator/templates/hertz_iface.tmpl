@@ -15,7 +15,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(context.Context, *app.RequestContext) mir.Error
+	Bind(context.Context, *app.RequestContext) error
 }
 
 type _render_ interface {
@@ -23,8 +23,8 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(context.Context, *app.RequestContext, any) mir.Error
-	Render(context.Context, *app.RequestContext, any, mir.Error)
+	Bind(context.Context, *app.RequestContext, any) error
+	Render(context.Context, *app.RequestContext, any, error)
 }
 {{- end }}
 
@@ -37,7 +37,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for hertz
     {{.Chain}}() []app.HandlerFunc
 {{end}}
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(context.Context, *app.RequestContext){{else}}{{.MethodName}}({{if .IsUseRequestContext }}context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}context.Context, *app.RequestContext{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(context.Context, *app.RequestContext){{else}}{{.MethodName}}({{if .IsUseRequestContext }}context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}context.Context, *app.RequestContext{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -193,7 +193,7 @@ func ({{$unimplementedServant}}){{.Chain}}() []app.HandlerFunc {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c context.Context, ctx *app.RequestContext){{else}}{{.MethodName}}({{if .IsUseRequestContext }}c context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c context.Context, ctx *app.RequestContext{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext}}{{ .MethodName}}(c context.Context, ctx *app.RequestContext){{else}}{{.MethodName}}({{if .IsUseRequestContext }}c context.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c context.Context, ctx *app.RequestContext{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		ctx.String(http.StatusNotImplemented, http.StatusText(http.StatusNotImplemented))
 	{{else -}}

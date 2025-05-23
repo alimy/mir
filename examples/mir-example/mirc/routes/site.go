@@ -5,6 +5,8 @@
 package routes
 
 import (
+	"net/http"
+
 	. "github.com/alimy/mir/v5"
 	"github.com/gin-gonic/gin"
 )
@@ -54,10 +56,10 @@ type Tweet struct {
 }
 
 // Bind custom binding but not effect because defined in sampe package with servant interface
-func (r *LoginReq) Bind(c *gin.Context) Error {
+func (r *LoginReq) Bind(c *gin.Context) error {
 	err := c.ShouldBind(r)
 	if err != nil {
-		return NewError(500, err)
+		return NewError(http.StatusBadRequest, err)
 	}
 	return nil
 }

@@ -10,11 +10,19 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c *macaron.Context, obj any) mir.Error {
+func (baseSrv) Bind(c *macaron.Context, obj any) error {
 	return mir.NewError(http.StatusNotImplemented, errors.New("method not implemented"))
 }
 
-func (baseSrv) Render(c *macaron.Context, data any, err mir.Error) {
-	c.Resp.WriteHeader(http.StatusNotImplemented)
-	c.Resp.Write([]byte("method not implemented"))
+func (baseSrv) Render(c *macaron.Context, data any, err error) {
+	if err == nil {
+		c.Resp.WriteHeader(http.StatusNotImplemented)
+		c.Resp.Write([]byte("method not implemented"))
+	} else if code, ok := mir.HttpStatusCode(err); ok {
+		c.Resp.WriteHeader(code)
+		c.Resp.Write([]byte(err.Error()))
+	} else {
+		c.Resp.WriteHeader(http.StatusInternalServerError)
+		c.Resp.Write([]byte(err.Error()))
+	}
 }

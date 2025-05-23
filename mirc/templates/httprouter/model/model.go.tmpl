@@ -47,7 +47,7 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
-func (r *LoginReq) Bind(hr *http.Request, p httprouter.Params) mir.Error {
+func (r *LoginReq) Bind(hr *http.Request, p httprouter.Params) error {
 	return mir.NewError(http.StatusNotImplemented, errors.New("not implemented"))
 }
 

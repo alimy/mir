@@ -5,6 +5,8 @@
 package model
 
 import (
+	"net/http"
+
 	"github.com/alimy/mir/v5"
 	"github.com/gin-gonic/gin"
 )
@@ -48,10 +50,10 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
-func (r *LoginReq) Bind(c *gin.Context) mir.Error {
+func (r *LoginReq) Bind(c *gin.Context) error {
 	err := c.ShouldBind(r)
 	if err != nil {
-		return mir.NewError(500, err)
+		return mir.NewError(http.StatusBadRequest, err)
 	}
 	return nil
 }

@@ -13,7 +13,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(*http.Request, httprouter.Params) mir.Error
+	Bind(*http.Request, httprouter.Params) error
 }
 
 type _render_ interface {
@@ -21,8 +21,8 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(*http.Request, httprouter.Params, any) mir.Error
-	Render(http.ResponseWriter, any, mir.Error)
+	Bind(*http.Request, httprouter.Params, any) error
+	Render(http.ResponseWriter, any, error)
 }
 {{- end }}
 
@@ -32,7 +32,7 @@ type _default_ interface {
 type {{.TypeName}} interface {
 	_default_
 
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params){{else}}{{.MethodName}}({{if .IsUseContext }}http.ResponseWriter, *http.Request, httprouter.Params{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(http.ResponseWriter, *http.Request, httprouter.Params){{else}}{{.MethodName}}({{if .IsUseContext }}http.ResponseWriter, *http.Request, httprouter.Params{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -124,7 +124,7 @@ func Register{{.TypeName}}Servant(router *httprouter.Router, s {{.TypeName}}) {
 type {{$unimplementedServant}} struct {}
 
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(rw http.ResponseWriter, hr *http.Request, p httprouter.Params){{else}}{{.MethodName}}({{if .IsUseContext }}rw http.ResponseWriter, hr *http.Request, p httprouter.Params{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(rw http.ResponseWriter, hr *http.Request, p httprouter.Params){{else}}{{.MethodName}}({{if .IsUseContext }}rw http.ResponseWriter, hr *http.Request, p httprouter.Params{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		rw.WriteHeader(http.StatusNotImplemented)
 		rw.Write([]byte("method not implemented"))

@@ -13,7 +13,7 @@ import (
 )
 {{- if .DeclareCoreInterface }}
 type _binding_ interface {
-	Bind(echo.Context) mir.Error
+	Bind(echo.Context) error
 }
 
 type _render_ interface {
@@ -21,8 +21,8 @@ type _render_ interface {
 }
 
 type _default_ interface {
-	Bind(echo.Context, any) mir.Error
-	Render(echo.Context, any, mir.Error)
+	Bind(echo.Context, any) error
+	Render(echo.Context, any, error)
 }
 {{- end }}
 
@@ -35,7 +35,7 @@ type {{.TypeName}} interface {
 {{if notEmptyStr .Chain }}// Chain provide handlers chain for echo
     {{.Chain}}() []echo.MiddlewareFunc
 {{end}}
-{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(echo.Context) error{{else}}{{.MethodName}}({{if .IsUseContext }}echo.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}}
+{{range .Fields}}    {{if .JustUseContext }}{{ .MethodName}}(echo.Context) error{{else}}{{.MethodName}}({{if .IsUseContext }}echo.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}*{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}}
 {{end}}
 
     mustEmbedUnimplemented{{.TypeName}}Servant()
@@ -197,7 +197,7 @@ func ({{$unimplementedServant}}){{.Chain}}() []echo.MiddlewareFunc {
 
 {{end}}
 {{range .Fields}}
-func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c echo.Context) error{{else}}{{.MethodName}}({{if .IsUseContext }}c echo.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, mir.Error){{else}}mir.Error{{end}}{{end}} {
+func ({{$unimplementedServant}}){{if .JustUseContext }}{{ .MethodName}}(c echo.Context) error{{else}}{{.MethodName}}({{if .IsUseContext }}c echo.Context{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req *{{ .InName }}{{end}}) {{if notEmptyStr .OutName }}(*{{ .OutName}}, error){{else}}error{{end}}{{end}} {
 	{{if .JustUseContext -}}
 		return c.String(http.StatusNotImplemented, "method not implemented")
 	{{else -}}

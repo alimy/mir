@@ -9,17 +9,19 @@ import (
 
 type baseSrv struct{}
 
-func (baseSrv) Bind(c *gin.Context, obj any) mir.Error {
+func (baseSrv) Bind(c *gin.Context, obj any) error {
 	if err := c.ShouldBind(obj); err != nil {
 		mir.NewError(http.StatusBadRequest, err)
 	}
 	return nil
 }
 
-func (baseSrv) Render(c *gin.Context, data any, err mir.Error) {
+func (baseSrv) Render(c *gin.Context, data any, err error) {
 	if err == nil {
 		c.JSON(http.StatusOK, data)
+	} else if code, ok := mir.HttpStatusCode(err); ok {
+		c.JSON(code, err.Error())
 	} else {
-		c.JSON(err.StatusCode(), err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
 	}
 }
