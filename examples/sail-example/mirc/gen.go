@@ -12,12 +12,6 @@ import (
 
 	. "github.com/alimy/mir/v5/core"
 	. "github.com/alimy/mir/v5/engine"
-
-	_ "github.com/alimy/mir/sail-example/v5/mirc/bot/v1"
-	_ "github.com/alimy/mir/sail-example/v5/mirc/web"
-	_ "github.com/alimy/mir/sail-example/v5/mirc/web/v1"
-	_ "github.com/alimy/mir/sail-example/v5/mirc/web/v2"
-	_ "github.com/alimy/mir/sail-example/v5/mirc/web/v3"
 )
 
 //go:generate go run $GOFILE
