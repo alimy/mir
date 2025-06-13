@@ -3,7 +3,7 @@ package core
 func AssertTypeSpec(style string) (spec string, imports []string) {
 	switch style {
 	case GeneratorChi:
-		spec, imports = "AssertType[*chi.Context]", []string{"github.com/go-chi/chi/v5"}
+		spec, imports = "AssertType2[*http.Request, http.ResponseWriter]", []string{"net/http"}
 	case GeneratorMux:
 		spec, imports = "AssertType2[*http.Request, http.ResponseWriter]", []string{"net/http"}
 	case GeneratorHertz:
