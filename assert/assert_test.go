@@ -6,8 +6,6 @@ package assert
 
 import (
 	"testing"
-
-	"github.com/alimy/mir/v5"
 )
 
 type (
@@ -18,7 +16,7 @@ type (
 	fakeObjectType2 struct{}
 )
 
-func (fakeObjectType) Bind(_c fakeCtx) mir.Error {
+func (fakeObjectType) Bind(_c fakeCtx) error {
 	// nothing
 	return nil
 }
@@ -27,7 +25,7 @@ func (fakeObjectType) Render(_c fakeCtx) {
 	// nothing
 }
 
-func (fakeObjectType2) Bind(_c fakeBindingCtx) mir.Error {
+func (fakeObjectType2) Bind(_c fakeBindingCtx) error {
 	// nothing
 	return nil
 }
