@@ -4,10 +4,6 @@
 
 package assert
 
-import (
-	"github.com/alimy/mir/v5"
-)
-
 var (
 	_typeAssertor TypeAssertor = anyTypeAssertor[fakeType]{}
 )
@@ -17,12 +13,12 @@ type fakeType struct{}
 
 // Binding[T] binding interface for custom T context
 type Binding[T any] interface {
-	Bind(T) mir.Error
+	Bind(T) error
 }
 
 // Binding2[R, P] binding interface for custom R, P context
 type Binding2[R, P any] interface {
-	Bind(R, P) mir.Error
+	Bind(R, P) error
 }
 
 // Render[T] render interface for custom T context
