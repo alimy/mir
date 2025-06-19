@@ -119,13 +119,13 @@ func declareTypes(inOuts []reflect.Type, pkgPath string, imports map[string]stri
 	if len(inOuts) == 0 {
 		return ""
 	}
-	var err error
 
 	// write types that in inOuts to buffer
 	indent := "    "
 	buf := &bytes.Buffer{}
+	var err error
 	for _, t := range inOuts {
-		err := reflex.WriteStruct(buf, t, pkgPath, imports, indent)
+		err = reflex.WriteStruct(buf, t, pkgPath, imports, indent)
 		if err != nil {
 			break
 		}
