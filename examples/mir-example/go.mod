@@ -1,10 +1,10 @@
 module github.com/alimy/mir/mir-example/v5
 
-go 1.23.0
+go 1.24.0
 
 require (
-	github.com/alimy/mir/v5 v5.0.0
-	github.com/gin-gonic/gin v1.10.0
+	github.com/alimy/mir/v5 v5.4.0
+	github.com/gin-gonic/gin v1.10.1
 )
 
 require (

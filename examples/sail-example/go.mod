@@ -1,12 +1,12 @@
 module github.com/alimy/mir/sail-example/v5
 
-go 1.23.0
+go 1.24.0
 
 require (
-	github.com/alimy/mir/v5 v5.0.0
-	github.com/alimy/tryst v1.1.0
+	github.com/alimy/mir/v5 v5.4.0
+	github.com/alimy/tryst v1.2.0
 	github.com/fatih/color v1.18.0
-	github.com/gin-gonic/gin v1.10.0
+	github.com/gin-gonic/gin v1.10.1
 	github.com/sourcegraph/conc v0.3.0
 	github.com/spf13/cobra v1.9.1
 )

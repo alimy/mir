@@ -1,10 +1,10 @@
 module github.com/alimy/mir/v5
 
-go 1.23.0
+go 1.24.0
 
-require golang.org/x/tools v0.33.0
+require golang.org/x/tools v0.36.0
 
 require (
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/mod v0.27.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
 )
