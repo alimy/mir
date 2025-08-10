@@ -5,12 +5,8 @@ GOFILES := $(shell find . -name "*.go" -type f)
 default: ci
 
 .PHONY: ci
-ci: misspell vet
+ci: vet
 	go test ./...
-
-.PHONY: build
-build: fmt
-	go build -o mir mirc/main.go
 
 .PHONY: test
 test:
