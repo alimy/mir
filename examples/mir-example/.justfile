@@ -1,6 +1,6 @@
 #!/usr/bin/env -S just --justfile
 
-target := if os_family() == "windows" { "exampes.exe" } else { "examples" }
+TARGET := if os_family() == "windows" { "mir-exampe.exe" } else { "mir-example" }
 
 alias serve := run
 alias gen := generate
@@ -17,7 +17,7 @@ help:
 [group("develop")]
 build:
   @echo "Building code..."
-  @go build -o {{target}}
+  @go build -o {{TARGET}}
 
 [doc("run code")]
 [group("develop")]
@@ -55,3 +55,9 @@ vet:
 fmt:
   @echo "Formatting code..."
   @go fmt ./...
+
+[doc("clean project")]
+[group("develop")]
+clean:
+  @echo "Clean project..."
+  @-rm -f {{TARGET}}
