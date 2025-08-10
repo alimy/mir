@@ -6,19 +6,10 @@ TAGS := "go_json"
 BUILD_VERSION := `git describe --tags --always`
 BUILD_DATE := `date +'%Y-%m-%d %H:%M:%S %Z'`
 SHA_SHORT := `git rev-parse --short HEAD`
-
-LDFLAGS := shell('echo \
-  "-X $1$2/internal/conf.version=$3$1 \
-   -X $1$2/internal/conf.buildDate=$4$1 \
-   -X $1$2/internal/conf.commitID=$5$1 \
-   -X $1$2/internal/conf.buildTags=$6$1"', 
-  "'", 
-  MOD_NAME, 
-  BUILD_VERSION, 
-  BUILD_DATE,
-  SHA_SHORT,
-  TAGS,
-)
+LDFLAGS := ("-X " + quote(MOD_NAME + "/internal/conf.version=" + BUILD_VERSION) + 
+         " -X " + quote(MOD_NAME + "/internal/conf.buildDate=" + BUILD_DATE) + 
+         " -X " + quote(MOD_NAME + "/internal/conf.commitID=" + SHA_SHORT) + 
+         " -X " + quote(MOD_NAME + "/internal/conf.buildTags=" + TAGS))
 
 alias serve := run
 alias gen := generate
