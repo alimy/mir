@@ -11,6 +11,16 @@ var (
 // fakeType just a fake type for default type assertor
 type fakeType struct{}
 
+// Precheck[T] Prechecker interface for custom T context
+type Prechecker[T any] interface {
+	Precheck(T) error
+}
+
+// Prechecker2[R, P] Prechecker interface for custom R, P context
+type Prechecker2[R, P any] interface {
+	Precheck(R, P) error
+}
+
 // Binding[T] binding interface for custom T context
 type Binding[T any] interface {
 	Bind(T) error
@@ -33,6 +43,7 @@ type Render2[C, T any] interface {
 
 // TypeAssertor type assert for Binding and Render interface
 type TypeAssertor interface {
+	AssertPrechecker(any) bool
 	AssertBinding(any) bool
 	AssertRender(any) bool
 }
@@ -60,6 +71,11 @@ func RegisterType3[B, P, R any]() {
 // RegisterType4[C, T] register custom TypeAssertor to assert C, T interface
 func RegisterType4[C, T any]() {
 	_typeAssertor = anyTypeAssertor4[C, T]{}
+}
+
+// AssertPrechecker assert Prechecker interface for obj
+func AssertPrechecker(obj any) bool {
+	return _typeAssertor.AssertPrechecker(obj)
 }
 
 // AssertBinding assert Binding interface for obj

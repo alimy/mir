@@ -17,7 +17,7 @@ import (
 
 var (
 	VerInfo = &VersionInfo{
-		MirVer: "5.3",
+		MirVer: "5.4",
 	}
 )
 
@@ -44,7 +44,10 @@ type FieldDescriptor struct {
 	IsFieldChain        bool
 	IsUseContext        bool
 	IsUseRequestContext bool
-	IsBindIn            bool
+	IsPrecheckIn        bool // use precheck for in param
+	IsBindIn            bool // use bind for in param
+	IsVerifyIn          bool // use verify for in param
+	IsAdjustIn          bool // use adjust for in param
 	IsRenderOut         bool
 	BindingName         string
 	RenderName          string

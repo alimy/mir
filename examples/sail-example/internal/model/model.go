@@ -25,9 +25,10 @@ type UserInfo struct {
 }
 
 type LoginReq struct {
-	AgentInfo AgentInfo `json:"agent_info"`
-	Name      string    `json:"name"`
-	Passwd    string    `json:"passwd"`
+	AgentInfo  AgentInfo `json:"agent_info"`
+	Name       string    `json:"name"`
+	Passwd     string    `json:"passwd"`
+	TempUserID string    `json:"-"`
 }
 
 type LoginResp struct {
@@ -50,12 +51,30 @@ type Tweet struct {
 	Content string `json:"content"`
 }
 
+func (r *TweetsReq) Precheck(c *gin.Context) error {
+	if origin := c.GetHeader("Origin"); origin != "example.com" {
+		return mir.Errorln(http.StatusForbidden, http.StatusText(http.StatusForbidden))
+	}
+	return nil
+}
+
+func (r *TweetsReq) Verify() error {
+	if len(r.Date) == 0 {
+		return mir.Errorln(http.StatusBadRequest, "empty date is not allowed")
+	}
+	return nil
+}
+
 func (r *LoginReq) Bind(c *gin.Context) error {
 	err := c.ShouldBind(r)
 	if err != nil {
 		return mir.NewError(http.StatusBadRequest, err)
 	}
 	return nil
+}
+
+func (r *LoginReq) Adjust() {
+	r.TempUserID = r.AgentInfo.UserAgent + r.Name
 }
 
 func (r *LoginResp) Render(c *gin.Context) {

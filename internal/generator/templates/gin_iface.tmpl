@@ -13,14 +13,6 @@ import (
 	{{ declareImports .Imports }}
 )
 {{- if .DeclareCoreInterface }}
-type _binding_ interface {
-	Bind(*gin.Context) error
-}
-
-type _render_ interface {
-	Render(*gin.Context)
-}
-
 type _default_ interface {
 	Bind(*gin.Context, any) error
 	{{- if .Default.IsBindingByName }}
@@ -92,9 +84,14 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	{{end -}}
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
+	{{if .IsPrecheckIn -}}
+	if err := req.Precheck(c); err != nil {
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
+		return
+	}
+	{{end -}}
 	{{if .IsBindIn -}}
-	var bv _binding_ = req
-	if err := bv.Bind(c); err != nil {
+	if err := req.Bind(c); err != nil {
 	{{- else -}}
 	if err := {{if .IsUseNamedBinding }}{{if .UseBindingById}}s.Bind{{.BindingId}}({{else}}s.BindByName("{{.BindingName}}",{{end}} c, req){{else}}s.Bind(c, req){{end}}; err != nil {
 	{{- end }}
@@ -102,6 +99,15 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		return
 	}
 	{{- end }}
+	{{if .IsVerifyIn -}}
+	if err := req.Verify(); err != nil {
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
+		return
+	}
+	{{end -}}
+	{{if .IsAdjustIn -}}
+	req.Adjust()
+	{{end -}}
 	{{if notEmptyStr .OutName -}}
 	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName }}req{{end}})
 	{{if .IsRenderOut -}}
@@ -109,8 +115,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
-	var rv _render_ = resp
-	rv.Render(c)
+	resp.Render(c)
 	{{- else -}}
 	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, resp, err)
 	{{- end }}
@@ -128,9 +133,14 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 	{{end -}}
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
+	{{if .IsPrecheckIn -}}
+	if err := req.Precheck(c); err != nil {
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
+		return
+	}
+	{{end -}}
 	{{if .IsBindIn -}}
-	var bv _binding_ = req
-	if err := bv.Bind(c); err != nil {
+	if err := req.Bind(c); err != nil {
 	{{- else -}}
 	if err := {{if .IsUseNamedBinding }}{{if .UseBindingById}}s.Bind{{.BindingId}}({{else}}s.BindByName("{{.BindingName}}",{{end}} c, req){{else}}s.Bind(c, req){{end}}; err != nil {
 	{{- end }}
@@ -138,6 +148,15 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		return
 	}
 	{{- end }}
+	{{if .IsVerifyIn -}}
+	if err := req.Verify(); err != nil {
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
+		return
+	}
+	{{end -}}
+	{{if .IsAdjustIn -}}
+	req.Adjust()
+	{{end -}}
 	{{if notEmptyStr .OutName -}}
 	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
@@ -145,8 +164,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
-	var rv _render_ = resp
-	rv.Render(c)
+	resp.Render(c)
 	{{- else -}}
 	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, resp, err)
 	{{- end }}
@@ -165,9 +183,14 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 			{{end -}}
 	{{if notEmptyStr .InName -}}
 	req := new({{.InName}})
+	{{if .IsPrecheckIn -}}
+	if err := req.Precheck(c); err != nil {
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
+		return
+	}
+	{{end -}}
 	{{if .IsBindIn -}}
-	var bv _binding_ = req
-	if err := bv.Bind(c); err != nil {
+	if err := req.Bind(c); err != nil {
 	{{- else -}}
 	if err := {{if .IsUseNamedBinding }}{{if .UseBindingById}}s.Bind{{.BindingId}}({{else}}s.BindByName("{{.BindingName}}",{{end}} c, req){{else}}s.Bind(c, req){{end}}; err != nil {
 	{{- end }}
@@ -175,6 +198,15 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		return
 	}
 	{{- end }}
+	{{if .IsVerifyIn -}}
+	if err := req.Verify(); err != nil {
+		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
+		return
+	}
+	{{end -}}
+	{{if .IsAdjustIn -}}
+	req.Adjust()
+	{{end -}}
 	{{if notEmptyStr .OutName -}}
 	resp, err := s.{{ .MethodName}}({{if .IsUseRequestContext }}c.Request.Context(){{if notEmptyStr .InName }}, {{end}}{{end}}{{if .IsUseContext }}c{{if notEmptyStr .InName }}, {{end}}{{end}}{{if notEmptyStr .InName}}req{{end}})
 	{{if .IsRenderOut -}}
@@ -182,8 +214,7 @@ func Register{{.TypeName}}Servant(e *gin.Engine, s {{.TypeName}}{{if .IsUseField
 		{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, nil, err)
 		return
 	}
-	var rv _render_ = resp
-	rv.Render(c)
+	resp.Render(c)
 	{{- else -}}
 	{{if .IsUseNamedRender }}{{if .UseRenderById}}s.Render{{.RenderId}}({{else}}s.RenderByName("{{.RenderName}}",{{end}} {{else}}s.Render({{end}}c, resp, err)
 	{{- end }}

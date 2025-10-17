@@ -57,7 +57,10 @@ type tagInfo struct {
 	handler      string              // indicate handler information in struct tag string
 	fieldName    string              // indicate field name
 	schemaChain  string
+	isPrecheckIn bool
 	isBindIn     bool
+	isVerifyIn   bool
+	isAdjustIn   bool
 	isRenderOut  bool
 	bindingName  string
 	renderName   string
@@ -164,7 +167,11 @@ func (r *reflex) tagInfoFrom(field reflect.StructField, pkgPath string) (*tagInf
 				}
 				info.in = it
 				if it.PkgPath() != pkgPath {
-					info.isBindIn = assert.AssertBinding(reflect.New(it).Interface())
+					obj := reflect.New(it).Interface()
+					info.isPrecheckIn = assert.AssertPrechecker(obj)
+					info.isBindIn = assert.AssertBinding(obj)
+					_, info.isVerifyIn = obj.(interface{ Verify() error })
+					_, info.isAdjustIn = obj.(interface{ Adjust() })
 				}
 				info.inOuts = append(info.inOuts, cts...)
 
